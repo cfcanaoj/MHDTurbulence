@@ -67,7 +67,7 @@ end program data_analysis
 subroutine ReadData
   use fieldmod
   implicit none   
-  character(20),parameter::dirname="bindata/"
+  character(20),parameter::dirname="./bindata/"
   character(40)::filename
   integer,parameter::unitinp=13
   integer,parameter::unitbin=14
@@ -113,7 +113,7 @@ subroutine ReadData
 
   write(filename,'(a3,i5.5,a4)')"bin",incr,".dat"
   filename = trim(dirname)//filename
-  open(unitbin,file=filename,status='old',form='binary')
+  open(unitbin,file=filename,status='old',form='unformatted', access='stream')
   read(unitbin)x1b(:),x1a(:)
   read(unitbin)x2b(:),x2a(:)
   read(unitbin)x3b(:),x3a(:)

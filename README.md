@@ -14,7 +14,7 @@ After you login the server, `g00.cfca.nao.ac.jp`, follow the instruction.
 To run the code, you need to compile 'Simulation.f90' in GPU server.
     
     cd src
-    make Simulation.x
+    make
     
 Then `Simulation.x`is made in `../exe` directory.
 
@@ -32,11 +32,11 @@ To analyze the data, let us make `Analysis.x` in GPU server..
     
     cd ../analysis
     ln -s ../exe/bindata .
-    make Analysis.x
+    make
     
 Now you have many time-snapshots of data. To count it, use a script.
     
-    CountBindata.sh
+    ./CountBindata.sh
    
 See the file, `cat control.dat`. You can know the number of files.
 Then preparation is done. Run the analyis.
