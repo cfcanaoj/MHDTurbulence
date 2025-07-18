@@ -4,8 +4,8 @@
 After you login the server, `g00.cfca.nao.ac.jp`, follow the instruction.
 
     cd /gwork0/<username>
-    git clone git@github.com:cfcanaoj/gpuhydro gpuhydro
-    cd gpuhydro/DTf90openaccc
+    git clone git@github.com:cfcanaoj/MHDTurbulence MHDTurbulence
+    cd MHDTurbulence
     
 
 ## How to run
@@ -13,13 +13,16 @@ After you login the server, `g00.cfca.nao.ac.jp`, follow the instruction.
 ### compile 
 To run the code, you need to compile 'Simulation.f90' in GPU server.
     
+    cd src
     make Simulation.x
     
-Then `Simulation.x`is made in this directory.
+Then `Simulation.x`is made in `../exe` directory.
 
 ### run
 Let's run the code.
     
+    cd ../exe
+    cp ../misc/sj_g00.sh
     sbatch sj_g00.sh
     
 The simulation data is saved in `bindata/`.
@@ -27,6 +30,7 @@ The simulation data is saved in `bindata/`.
 ### analysis
 To analyze the data, let us make `Analysis.x` in GPU server..
     
+    cd ../analysis
     make Analysis.x
     
 Now you have many time-snapshots of data. To count it, use a script.
