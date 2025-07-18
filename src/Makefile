@@ -1,13 +1,12 @@
 
 exed := ../exe
-dird := bindata
 
 exe=Simulation.x
 ana=Analysis.x
 
 all: ${exed}/${exe}
 
-.PHONY: all clean allclean
+.PHONY: all clean
 
 #################
 # Fortran
@@ -23,22 +22,16 @@ fopt = -g -traceback -O2
 .f90.o: 
 	${fc} ${fopt} ${foptopenacc} -c $< 
 
-OBJS=main.o mpiroutines.o
+OBJS = main.o mpiroutines.o
 
 mpiroutines.o:
 main.o: main.f90  mpiroutines.o 
 
 ${exed}/${exe}: ${OBJS}
-	${fc} ${fopt} ${foptopenacc} ${OBJS} -o ${exe}
-
-${ana}: Analysis.f90
-	${fc} ${fopt} ${foptopenacc} $< -o ${ana}
+	${fc} ${fopt} ${foptopenacc} ${OBJS} -o $@
 
 #################
 # clean up
 #################
 clean:
-	rm -f ${exe} ${ana} *.o *.mod *~
-
-allclean:
-	rm -fr ${dirm} ${dirf} ${dird} ${dirf}
+	rm -f ${exed}/${exe} ${ana} *.o *.mod *~
