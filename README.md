@@ -31,6 +31,7 @@ The simulation data is saved in `bindata/`.
 To analyze the data, let us make `Analysis.x` in GPU server..
     
     cd ../analysis
+    ln -s ../exe/bindata .
     make Analysis.x
     
 Now you have many time-snapshots of data. To count it, use a script.
