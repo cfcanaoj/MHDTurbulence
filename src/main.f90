@@ -102,6 +102,7 @@ program main
   call InitializeMPI
   if(myid_w == 0) print *, "setup grids and fields"
   if(myid_w == 0) print *, "grid size for x y z",ngrid1*ntiles(1),ngrid2*ntiles(2),ngrid3*ntiles(3)
+  if(myid_w == 0 .and. nooutput ) print *, "Intermediate results are not outputed"
   call GenerateGrid
   call GenerateProblem
   call ConsvVariable
