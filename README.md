@@ -105,5 +105,5 @@ Then 1D Fourier transformation is given.
 
 $$\hat{X}_{\rm 1D} dk = \sqrt{ \hat{X}_{{\rm 2D},c}^2+\hat{X}_{{\rm 2D},s}^2} dk_x dk_y $$
 
-
-
+# Results
+Typical results are shown [here](https://www.notion.so/Turbulence-Studies-numerical-experiments-e4836ad642684f8f992d54a1f7e22635).
