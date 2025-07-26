@@ -2205,6 +2205,9 @@ end subroutine  EvaulateCh
 end subroutine  DampPsi
 
 subroutine Output(is_final)
+  !! Output the grid and variables.
+  !! The grid data contain the information of cell center and cell edge.
+  !! The variable data contains that of  cell center.
   use basicmod
   use mpiiomod
   use mpimod
@@ -2232,6 +2235,7 @@ subroutine Output(is_final)
   jee = je
   kee = ke
   
+  !> Include the information of the cell edge!
   if(coords(1) .eq. ntiles(1)-1) iee = ie+1
   if(coords(2) .eq. ntiles(2)-1) jee = je+1
   if(coords(3) .eq. ntiles(3)-1) kee = ke+1
@@ -2260,6 +2264,7 @@ subroutine Output(is_final)
 
   if(time .lt. tout+dtout .and. .not. is_final) return
 
+  !> Information of meta data.
   if(myid_w == 0)then
   write(filename,'(a3,i5.5,a4)')"unf",nout,".dat"
   filename = trim(dirname)//filename
@@ -2272,15 +2277,16 @@ subroutine Output(is_final)
   close(unitout)
   endif
 
-  gridX(1,1:iee-is+1) = x1b(is:iee)
-  gridX(2,1:iee-is+1) = x1a(is:iee)
+  gridX(1,1:iee-is+1) = x1b(is:iee) !! the final grid point is not necessary but outputed.  
+  gridX(2,1:iee-is+1) = x1a(is:iee) !! the final grid is necessary. 
   
-  gridY(1,1:jee-js+1) = x2b(js:jee)
-  gridY(2,1:jee-js+1) = x2a(js:jee)
+  gridY(1,1:jee-js+1) = x2b(js:jee) !! the final grid point is not necessary but outputed.
+  gridY(2,1:jee-js+1) = x2a(js:jee) !! the final grid is necessary.
 
-  gridZ(1,1:kee-ks+1) = x3b(ks:kee)
-  gridZ(2,1:kee-ks+1) = x3a(ks:kee)
+  gridZ(1,1:kee-ks+1) = x3b(ks:kee) !! the final grid point is not necessary but outputed.
+  gridZ(2,1:kee-ks+1) = x3a(ks:kee) !! the final grid is necessary.
 
+  !> The cell center value 
   data3D(1,1:npart(1),1:npart(2),1:npart(3)) =  d(is:ie,js:je,ks:ke)
   data3D(2,1:npart(1),1:npart(2),1:npart(3)) = v1(is:ie,js:je,ks:ke)
   data3D(3,1:npart(1),1:npart(2),1:npart(3)) = v2(is:ie,js:je,ks:ke)
