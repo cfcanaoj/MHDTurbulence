@@ -46,40 +46,101 @@ program data_analysis
   stop
 end program data_analysis
 
+
 subroutine ReadData
+  !! Read binary data.
+  !! Grid data contains the information of cell edge.
+  !! Variable data contains the information of cell center.
   use fieldmod
   implicit none   
-  character(20),parameter::dirname="bindata/"
+  character(20),parameter::dirname="./bindata/"
   character(40)::filename
-  integer,parameter::unitinp=13
-  integer,parameter::unitbin=14
+  integer::unitunf,unitvar,unitgrd
+  integer,parameter:: gs=1
   character(8)::dummy
   logical,save:: is_inited
+  real(8),dimension(:,:,:,:),allocatable,save:: data3D
+  real(8),dimension(:,:),allocatable,save:: gridX,gridY,gridZ
   data is_inited / .false. /
+  integer:: i,j,k
 
   write(filename,'(a3,i5.5,a4)')"unf",incr,".dat"
   filename = trim(dirname)//filename
-  open(unitinp,file=filename,status='old',form='formatted')
-  read(unitinp,*) dummy,time,dt
-  read(unitinp,*) dummy,izone,igs
-  read(unitinp,*) dummy,jzone,jgs
-  read(unitinp,*) dummy,kzone,kgs
-  close(unitinp)
-  in= izone+2*igs
-  jn= jzone+2*jgs
-  kn= kzone+2*kgs
+  open(newunit=unitunf,file=filename,status='old',form='formatted',action="READ")
+  read(unitunf,*) dummy,time,dt
+  read(unitunf,*) dummy,izone
+  read(unitunf,*) dummy,jzone
+  read(unitunf,*) dummy,kzone
+  close(unitunf)
+  
+  print *, "Reading data T=",time,"dt",dt
+  print *, "grid",izone,jzone,kzone
+ 
+  in = izone + 2*gs !! +2*gs corresponds to  the inner and outer ghost grid
+  jn = jzone + 2*gs !! +2*gs corresponds to  the inner and outer ghost grid
+  kn = kzone + 2*gs !! +2*gs corresponds to  the inner and outer ghost grid
 
-  is=1+igs
-  js=1+jgs
-  ks=1+kgs
-  ie=in-igs
-  je=jn-jgs
-  ke=kn-kgs
+  is = 1 + gs 
+  js = 1 + gs
+  ks = 1 + gs 
 
+  ie = in-gs
+  je = jn-gs
+  ke = kn-gs
+
+  !> Read grid data.
   if(.not. is_inited)then
-     allocate( x1b(in),x1a(in))
-     allocate( x2b(jn),x2a(jn))
-     allocate( x3b(kn),x3a(kn))
+     allocate( gridX(2,izone+1))
+     allocate( gridY(2,jzone+1))
+     allocate( gridZ(2,kzone+1))
+     
+     filename = trim(dirname)//"g1dDT"
+     print *, filename
+     open(newunit=unitgrd,file=filename,status='old',form='unformatted',access="stream",action="READ")
+     read(unitgrd) gridX(:,:)
+     close(unitgrd)
+     
+     filename = trim(dirname)//"g2dDT"
+     open(newunit=unitgrd,file=filename,status='old',form='unformatted',access="stream",action="READ")
+     read(unitgrd) gridY(:,:)
+     close(unitgrd)
+     
+     filename = trim(dirname)//"g3dDT"
+     open(newunit=unitgrd,file=filename,status='old',form='unformatted',access="stream",action="READ")
+     read(unitgrd) gridZ(:,:)
+     close(unitgrd)
+  
+  endif
+
+  !> Map grid data.
+  if(.not. is_inited)then
+     allocate( x1b(in),x1a(in+1))
+     allocate( x2b(jn),x2a(jn+1))
+     allocate( x3b(kn),x3a(kn+1))
+     
+     x1b(is:ie  ) = gridX(1,1:izone  )
+     x1a(is:ie+1) = gridX(2,1:izone+1)
+     
+     x2b(js:je  ) = gridY(1,1:jzone  )
+     x2a(js:je+1) = gridY(2,1:jzone+1)
+     
+     x3b(ks:ke  ) = gridZ(1,1:kzone  )
+     x3a(ks:ke+1) = gridZ(2,1:kzone+1)
+  endif
+  
+  
+  !> Read variable data.
+  if(.not. is_inited)then
+     allocate( data3D(9,izone,jzone,kzone))
+  endif
+  
+  write(filename,'(a6,i5.5)')"d3dDT.",incr
+  filename = trim(dirname)//filename
+  open(newunit=unitvar,file=filename,status='old',form='unformatted', access='stream')
+  read(unitvar) data3D(1:9,1:izone,1:jzone,1:kzone)
+  close(unitvar)
+  
+   if(.not. is_inited)then      
      allocate( d(in,jn,kn))
      allocate(v1(in,jn,kn))
      allocate(v2(in,jn,kn))
@@ -89,30 +150,120 @@ subroutine ReadData
      allocate(b3(in,jn,kn))
      allocate(bp(in,jn,kn))
      allocate( p(in,jn,kn))
-     is_inited = .true.
   endif
 
-  write(filename,'(a3,i5.5,a4)')"bin",incr,".dat"
-  filename = trim(dirname)//filename
-  open(unitbin,file=filename,status='old',form='binary')
-  read(unitbin)x1b(:),x1a(:)
-  read(unitbin)x2b(:),x2a(:)
-  read(unitbin)x3b(:),x3a(:)
-  read(unitbin)  d(:,:,:)
-  read(unitbin) v1(:,:,:)
-  read(unitbin) v2(:,:,:)
-  read(unitbin) v3(:,:,:)
-  read(unitbin) b1(:,:,:)
-  read(unitbin) b2(:,:,:)
-  read(unitbin) b3(:,:,:)
-  read(unitbin) bp(:,:,:)
-  read(unitbin)  p(:,:,:)
-  close(unitbin)
-  
-  dx = x1b(2)-x1b(1)
-  dy = x2b(2)-x2b(1)
-  dz = x3b(2)-x3b(1)
+   d(is:ie,js:je,ks:ke) = data3D(1,1:izone,1:jzone,1:kzone)
+  v1(is:ie,js:je,ks:ke) = data3D(2,1:izone,1:jzone,1:kzone)
+  v2(is:ie,js:je,ks:ke) = data3D(3,1:izone,1:jzone,1:kzone)
+  v3(is:ie,js:je,ks:ke) = data3D(4,1:izone,1:jzone,1:kzone)
+  b1(is:ie,js:je,ks:ke) = data3D(5,1:izone,1:jzone,1:kzone)
+  b2(is:ie,js:je,ks:ke) = data3D(6,1:izone,1:jzone,1:kzone)
+  b3(is:ie,js:je,ks:ke) = data3D(7,1:izone,1:jzone,1:kzone)
+  bp(is:ie,js:je,ks:ke) = data3D(8,1:izone,1:jzone,1:kzone)
+   p(is:ie,js:je,ks:ke) = data3D(9,1:izone,1:jzone,1:kzone)
 
+  !> Boundary condition
+   if(.not. is_inited)then
+      dx = x1a(is+1)-x1a(is)
+      dy = x2a(js+1)-x2a(js)
+      dz = x3a(ks+1)-x3a(ks)
+      do i=1,gs
+         x1b(is-i) = x1b(is) - i *dx
+         x1a(is-i) = x1a(is) - i *dx
+      enddo
+      do j=1,gs
+         x2b(js-j) = x2b(js) - j *dy
+         x2a(js-j) = x2a(js) - j *dy
+      enddo
+      do k=1,gs
+         x3b(ks-k) = x3b(ks) - k *dz
+         x3a(ks-k) = x3a(ks) - k *dz
+      enddo
+
+      do i=1,gs
+         x1b(ie  +i) = x1b(ie  ) + i *dx
+         x1a(ie+1+i) = x1a(ie+1) + i *dx
+      enddo
+      do j=1,gs
+         x2b(je  +j) = x2b(je  ) + j *dy
+         x2a(je+1+j) = x2a(je+1) + j *dy
+      enddo
+      do k=1,gs
+         x3b(ke  +k) = x3b(ke  ) + k *dz
+         x3a(ke+1+k) = x3a(ke+1) + k *dz
+      enddo
+   endif
+
+   !> periodic boundary
+   do i=1,gs
+       d(is-i,js:je,ks:ke) =  d(ie+1-i,js:je,ks:ke)
+      v1(is-i,js:je,ks:ke) = v1(ie+1-i,js:je,ks:ke)
+      v2(is-i,js:je,ks:ke) = v2(ie+1-i,js:je,ks:ke)
+      v3(is-i,js:je,ks:ke) = v3(ie+1-i,js:je,ks:ke)
+      b1(is-i,js:je,ks:ke) = b1(ie+1-i,js:je,ks:ke)
+      b2(is-i,js:je,ks:ke) = b2(ie+1-i,js:je,ks:ke)
+      b3(is-i,js:je,ks:ke) = b3(ie+1-i,js:je,ks:ke)
+      bp(is-i,js:je,ks:ke) = bp(ie+1-i,js:je,ks:ke)
+       p(is-i,js:je,ks:ke) =  p(ie+1-i,js:je,ks:ke)
+    
+       d(ie+i,js:je,ks:ke) =  d(is-1+i,js:je,ks:ke)
+      v1(ie+i,js:je,ks:ke) = v1(is-1+i,js:je,ks:ke)
+      v2(ie+i,js:je,ks:ke) = v2(is-1+i,js:je,ks:ke)
+      v3(ie+i,js:je,ks:ke) = v3(is-1+i,js:je,ks:ke)
+      b1(ie+i,js:je,ks:ke) = b1(is-1+i,js:je,ks:ke)
+      b2(ie+i,js:je,ks:ke) = b2(is-1+i,js:je,ks:ke)
+      b3(ie+i,js:je,ks:ke) = b3(is-1+i,js:je,ks:ke)
+      bp(ie+i,js:je,ks:ke) = bp(is-1+i,js:je,ks:ke)
+       p(ie+i,js:je,ks:ke) =  p(is-1+i,js:je,ks:ke)
+   enddo
+
+
+     do j=1,gs
+       d(is:ie,js-j,ks:ke) =  d(is:ie,je+1-j,ks:ke)
+      v1(is:ie,js-j,ks:ke) = v1(is:ie,je+1-j,ks:ke)
+      v2(is:ie,js-j,ks:ke) = v2(is:ie,je+1-j,ks:ke)
+      v3(is:ie,js-j,ks:ke) = v3(is:ie,je+1-j,ks:ke)
+      b1(is:ie,js-j,ks:ke) = b1(is:ie,je+1-j,ks:ke)
+      b2(is:ie,js-j,ks:ke) = b2(is:ie,je+1-j,ks:ke)
+      b3(is:ie,js-j,ks:ke) = b3(is:ie,je+1-j,ks:ke)
+      bp(is:ie,js-j,ks:ke) = bp(is:ie,je+1-j,ks:ke)
+       p(is:ie,js-j,ks:ke) =  p(is:ie,je+1-j,ks:ke)
+    
+       d(is:ie,je+j,ks:ke) =  d(is:ie,js-1+j,ks:ke)
+      v1(is:ie,je+j,ks:ke) = v1(is:ie,js-1+j,ks:ke)
+      v2(is:ie,je+j,ks:ke) = v2(is:ie,js-1+j,ks:ke)
+      v3(is:ie,je+j,ks:ke) = v3(is:ie,js-1+j,ks:ke)
+      b1(is:ie,je+j,ks:ke) = b1(is:ie,js-1+j,ks:ke)
+      b2(is:ie,je+j,ks:ke) = b2(is:ie,js-1+j,ks:ke)
+      b3(is:ie,je+j,ks:ke) = b3(is:ie,js-1+j,ks:ke)
+      bp(is:ie,je+j,ks:ke) = bp(is:ie,js-1+j,ks:ke)
+       p(is:ie,je+j,ks:ke) =  p(is:ie,js-1+j,ks:ke)
+   enddo
+
+   do k=1,gs
+       d(is:ie,js:je,ks-k) =  d(is:ie,js:je,ke+1-k)
+      v1(is:ie,js:je,ks-k) = v1(is:ie,js:je,ke+1-k)
+      v2(is:ie,js:je,ks-k) = v2(is:ie,js:je,ke+1-k)
+      v3(is:ie,js:je,ks-k) = v3(is:ie,js:je,ke+1-k)
+      b1(is:ie,js:je,ks-k) = b1(is:ie,js:je,ke+1-k)
+      b2(is:ie,js:je,ks-k) = b2(is:ie,js:je,ke+1-k)
+      b3(is:ie,js:je,ks-k) = b3(is:ie,js:je,ke+1-k)
+      bp(is:ie,js:je,ks-k) = bp(is:ie,js:je,ke+1-k)
+       p(is:ie,js:je,ks-k) =  p(is:ie,js:je,ke+1-k)
+    
+       d(is:ie,js:je,ke+k) =  d(is:ie,js:je,ks-1+k)
+      v1(is:ie,js:je,ke+k) = v1(is:ie,js:je,ks-1+k)
+      v2(is:ie,js:je,ke+k) = v2(is:ie,js:je,ks-1+k)
+      v3(is:ie,js:je,ke+k) = v3(is:ie,js:je,ks-1+k)
+      b1(is:ie,js:je,ke+k) = b1(is:ie,js:je,ks-1+k)
+      b2(is:ie,js:je,ke+k) = b2(is:ie,js:je,ks-1+k)
+      b3(is:ie,js:je,ke+k) = b3(is:ie,js:je,ks-1+k)
+      bp(is:ie,js:je,ke+k) = bp(is:ie,js:je,ks-1+k)
+       p(is:ie,js:je,ke+k) =  p(is:ie,js:je,ks-1+k)
+    enddo
+ 
+  is_inited = .true.
+    
   return
 end subroutine ReadData
 
