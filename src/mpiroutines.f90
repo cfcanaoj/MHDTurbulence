@@ -119,6 +119,7 @@ module mpiiomod
   implicit none
   private
   integer::SAG1D,SAG2D,SAG3D,SAD3D
+  integer :: commG1D,commG2D,commG3D
   
   integer,dimension(3):: ntotal
   integer,dimension(3):: npart
@@ -165,7 +166,8 @@ contains
     integer(kind=MPI_OFFSET_KIND) idisp
     data idisp / 0 /
 
-
+    integer::color,key
+    
 !   print *, "p1"
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 1D GRID PREPARE
@@ -191,9 +193,14 @@ contains
        
        call MPI_TYPE_COMMIT(SAG1D,ierr)
 
+      color =  coords(2)*ntiles(3)+coords(3)
+      key   =  coords(1)
+      call MPI_COMM_SPLIT(comm3d,color,key,commG1D,ierr)
+      
+      color1D: if(color == 0) then
       write(usrfile,"(a3,a2)")'g1d',id
       fpathbin = trim(datadir)//usrfile
-      call MPI_FILE_OPEN(MPI_COMM_WORLD, &
+      call MPI_FILE_OPEN(commG1D, &
      &                         fpathbin, &  ! file path
      &  MPI_MODE_WRONLY+MPI_MODE_CREATE, &
      &            MPI_INFO_NULL,unitg1d,ierr)
@@ -213,7 +220,8 @@ contains
      & mpi_status_ignore, &
      & ierr)
       call MPI_FILE_CLOSE(unitg1d,ierr)
-      
+   endif color1D
+   
    endif init1D
 !   print *, "p2"
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -238,10 +246,15 @@ contains
      & ierr)
       call MPI_TYPE_COMMIT(SAG2D,ierr)
          
+      color =  coords(3)*ntiles(1)+coords(1)
+      key   =  coords(2)
+      call MPI_COMM_SPLIT(comm3d,color,key,commG2D,ierr)
+      
+      color2D: if(color == 0) then
       write(usrfile,"(a3,a2)")'g2d',id
       fpathbin = trim(datadir)//usrfile
  
-      call MPI_FILE_OPEN(MPI_COMM_WORLD, &
+      call MPI_FILE_OPEN(commG2D, &
      &                         fpathbin, & ! file path
      &  MPI_MODE_WRONLY+MPI_MODE_CREATE, &
      &            MPI_INFO_NULL,unitg2d,ierr)
@@ -260,8 +273,8 @@ contains
      & mpi_status_ignore,&
      & ierr)
       call MPI_FILE_CLOSE(unitg2d,ierr)
-
-      endif init2D
+     endif color2D
+     endif init2D
       
       init3D: if(.not. is_inited )then
          Asize(1) = nvarg
@@ -280,6 +293,10 @@ contains
      & ierr)
          call MPI_TYPE_COMMIT(SAG3D,ierr)
 
+      color =  coords(1)*ntiles(2)+coords(2)
+      key   =  coords(3)
+      call MPI_COMM_SPLIT(comm3d,color,key,commG3D,ierr)
+      color3D: if (color == 0) then
       write(usrfile,"(a3,a2)")'g3d',id
       fpathbin = trim(datadir)//usrfile
       
@@ -302,7 +319,7 @@ contains
      & mpi_status_ignore, &
      & ierr)
       call MPI_FILE_CLOSE(unitg3d,ierr)
-      
+      endif color3D
    endif init3D
           
     initdata: if(.not. is_inited )then

@@ -72,8 +72,7 @@ subroutine ReadData
   implicit none   
   character(20),parameter::dirname="./bindata/"
   character(40)::filename
-  integer::unitinp,unitvar,unitgrd
-  data unitgrd / 122 /
+  integer::unitunf,unitvar,unitgrd
   integer,parameter:: gs=1
   character(8)::dummy
   logical,save:: is_inited
@@ -84,59 +83,69 @@ subroutine ReadData
 
   write(filename,'(a3,i5.5,a4)')"unf",incr,".dat"
   filename = trim(dirname)//filename
-  open(unitinp,file=filename,status='old',form='formatted')
-  read(unitinp,*) dummy,time,dt
-  read(unitinp,*) dummy,izone
-  read(unitinp,*) dummy,jzone
-  read(unitinp,*) dummy,kzone
-  close(unitinp)
-  print *, "Reading data T=",time,"dt",dt,"grid",izone,jzone,kzone
+  open(newunit=unitunf,file=filename,status='old',form='formatted',action="READ")
+  read(unitunf,*) dummy,time,dt
+  read(unitunf,*) dummy,izone
+  read(unitunf,*) dummy,jzone
+  read(unitunf,*) dummy,kzone
+  close(unitunf)
+  
+  print *, "Reading data T=",time,"dt",dt
+  print *, "grid",izone,jzone,kzone
  
-  in=izone +2*gs !! +2*gs corresponds to  the inner and outer ghost grid
-  jn=jzone +2*gs !! +2*gs corresponds to  the inner and outer ghost grid
-  kn=kzone +2*gs !! +2*gs corresponds to  the inner and outer ghost grid
+  in = izone + 2*gs !! +2*gs corresponds to  the inner and outer ghost grid
+  jn = jzone + 2*gs !! +2*gs corresponds to  the inner and outer ghost grid
+  kn = kzone + 2*gs !! +2*gs corresponds to  the inner and outer ghost grid
 
-  is= 1 + gs 
-  js= 1 + gs
-  ks= 1 + gs 
+  is = 1 + gs 
+  js = 1 + gs
+  ks = 1 + gs 
 
-  ie=in-gs
-  je=jn-gs
-  ke=kn-gs
+  ie = in-gs
+  je = jn-gs
+  ke = kn-gs
 
   !> Read grid data.
   if(.not. is_inited)then
-     allocate( data3D(9,izone,jzone,kzone))
      allocate( gridX(2,izone+1))
      allocate( gridY(2,jzone+1))
      allocate( gridZ(2,kzone+1))
-  endif
-  
-  if(.not. is_inited)then
+     
      filename = trim(dirname)//"g1dDT"
      print *, filename
-     open(newunit=unitgrd,file=filename,status='old',form='unformatted',access="stream")
-     read(unitgrd,*) gridX(2,is:ie+1)
+     open(newunit=unitgrd,file=filename,status='old',form='unformatted',access="stream",action="READ")
+     read(unitgrd) gridX(:,:)
      close(unitgrd)
-     x1b(is:ie  ) = gridX(1,is:ie  )
-     x1a(is:ie+1) = gridX(2,is:ie+1)
      
      filename = trim(dirname)//"g2dDT"
-     open(newunit=unitgrd,file=filename,status='old',form='unformatted',access="stream")
-     read(unitgrd,*) gridY(2,js:je+1)
+     open(newunit=unitgrd,file=filename,status='old',form='unformatted',access="stream",action="READ")
+     read(unitgrd) gridY(:,:)
      close(unitgrd)
-     x2b(js:je  ) = gridY(1,js:je  )
-     x2a(js:je+1) = gridY(2,js:je+1)
      
      filename = trim(dirname)//"g3dDT"
-     open(newunit=unitgrd,file=filename,status='old',form='unformatted',access="stream")
-     read(unitgrd,*) gridZ(2,ks:ke+1)
+     open(newunit=unitgrd,file=filename,status='old',form='unformatted',access="stream",action="READ")
+     read(unitgrd) gridZ(:,:)
      close(unitgrd)
-     x3b(ks:ke  ) = gridZ(1,ks:ke  )
-     x3a(ks:ke+1) = gridZ(2,ks:ke+1)
   
   endif
 
+
+  !> Map grid data.
+  if(.not. is_inited)then
+     allocate( x1b(in),x1a(in+1))
+     allocate( x2b(jn),x2a(jn+1))
+     allocate( x3b(kn),x3a(kn+1))
+     
+     x1b(is:ie  ) = gridX(1,1:izone  )
+     x1a(is:ie+1) = gridX(2,1:izone+1)
+     
+     x2b(js:je  ) = gridY(1,1:jzone  )
+     x2a(js:je+1) = gridY(2,1:jzone+1)
+     
+     x3b(ks:ke  ) = gridZ(1,1:kzone  )
+     x3a(ks:ke+1) = gridZ(2,1:kzone+1)
+  endif
+  
   
   !> Read variable data.
   if(.not. is_inited)then
@@ -146,7 +155,7 @@ subroutine ReadData
   write(filename,'(a6,i5.5)')"d3dDT.",incr
   filename = trim(dirname)//filename
   open(newunit=unitvar,file=filename,status='old',form='unformatted', access='stream')
-  read(unitvar,*) data3D(1:9,is:ie,js:je,ks:ke)
+  read(unitvar) data3D(1:9,1:izone,1:jzone,1:kzone)
   close(unitvar)
   
    if(.not. is_inited)then      
@@ -161,15 +170,15 @@ subroutine ReadData
      allocate( p(in,jn,kn))
   endif
 
-   d(is:ie,js:je,ks:ke) = data3D(1,is:ie,js:je,ks:ke)
-  v1(is:ie,js:je,ks:ke) = data3D(2,is:ie,js:je,ks:ke)
-  v2(is:ie,js:je,ks:ke) = data3D(3,is:ie,js:je,ks:ke)
-  v3(is:ie,js:je,ks:ke) = data3D(4,is:ie,js:je,ks:ke)
-  b1(is:ie,js:je,ks:ke) = data3D(5,is:ie,js:je,ks:ke)
-  b2(is:ie,js:je,ks:ke) = data3D(6,is:ie,js:je,ks:ke)
-  b3(is:ie,js:je,ks:ke) = data3D(7,is:ie,js:je,ks:ke)
-  bp(is:ie,js:je,ks:ke) = data3D(8,is:ie,js:je,ks:ke)
-   p(is:ie,js:je,ks:ke) = data3D(9,is:ie,js:je,ks:ke)
+   d(is:ie,js:je,ks:ke) = data3D(1,1:izone,1:jzone,1:kzone)
+  v1(is:ie,js:je,ks:ke) = data3D(2,1:izone,1:jzone,1:kzone)
+  v2(is:ie,js:je,ks:ke) = data3D(3,1:izone,1:jzone,1:kzone)
+  v3(is:ie,js:je,ks:ke) = data3D(4,1:izone,1:jzone,1:kzone)
+  b1(is:ie,js:je,ks:ke) = data3D(5,1:izone,1:jzone,1:kzone)
+  b2(is:ie,js:je,ks:ke) = data3D(6,1:izone,1:jzone,1:kzone)
+  b3(is:ie,js:je,ks:ke) = data3D(7,1:izone,1:jzone,1:kzone)
+  bp(is:ie,js:je,ks:ke) = data3D(8,1:izone,1:jzone,1:kzone)
+   p(is:ie,js:je,ks:ke) = data3D(9,1:izone,1:jzone,1:kzone)
   
   !> Boundary condition
    if(.not. is_inited)then

@@ -13,8 +13,10 @@ all: ${exed}/${exe}
 #################
 
 fc= mpif90
-foptopenacc = -Minfo=accel -acc -mcmodel=medium
 fopt = -g -traceback -O2
+foptopenacc = -Minfo=accel -acc -mcmodel=medium
+
+#fopt = -g -traceback -O2
 #fopt = -g -traceback -check all -fpe0
 
 .SUFFIXES: .f90 .o
