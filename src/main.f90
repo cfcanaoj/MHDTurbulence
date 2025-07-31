@@ -302,13 +302,7 @@ subroutine BoundaryCondition
   real(8),dimension(in,mgn,kn,nbc):: varrecvYstt,varrecvYend
   real(8),dimension(in,jn,mgn,nbc):: varrecvZstt,varrecvZend
   integer::i,j,k
-!$acc declare create(varsendXstt,varsendXend)
-!$acc declare create(varsendYstt,varsendYend)
-!$acc declare create(varsendZstt,varsendZend)
-!$acc declare create(varrecvXstt,varrecvXend)
-!$acc declare create(varrecvYstt,varrecvYend)
-!$acc declare create(varrecvZstt,varrecvZend)
-
+!$acc data create(varsendXstt,varsendXend,varsendYstt,varsendYend,varsendZstt,varsendZend,varrecvXstt,varrecvXend,varrecvYstt,varrecvYend,varrecvZstt,varrecvZend)
 
 !$acc kernels
 !$acc loop collapse(3) independent
@@ -479,7 +473,7 @@ subroutine BoundaryCondition
   enddo
   enddo
 !$acc end kernels
-
+!$acc end data
   
   return
 end subroutine BoundaryCondition
@@ -728,8 +722,8 @@ subroutine TimestepControl
   real(8)::ctot
   integer::i,j,k
   real(8):: bufinp(2),bufout(2)
-!$acc declare create(bufinp,bufout)
-!$acc declare create(dtmin,theid)
+  
+!$acc data create(bufinp,bufout,dtmin,theid)
 !$acc kernels
   dtmin=1.0d90
 !$acc loop collapse(3) reduction(min:dtmin)  
@@ -759,6 +753,7 @@ subroutine TimestepControl
   dt = 0.05d0 * dtmin
 !$acc end kernels
 !$acc update host (dt)
+!$acc end data  
   return
 end subroutine TimestepControl
 
@@ -864,10 +859,7 @@ end subroutine TimestepControl
       real(8),dimension(mflx):: nflux
       real(8):: ptl,css,cts 
 
-!$acc declare create(leftco,rigtco)
-!$acc declare create(leftpr,rigtpr)
-
-!$acc data present(leftco,rigtco,leftpr,rigtpr)
+!$acc data create(leftco,rigtco,leftpr,rigtpr)
       
 !$acc kernels      
 !$acc loop collapse(3) independent private(dsv,dsvp,dsvm)
@@ -1062,10 +1054,7 @@ end subroutine TimestepControl
       real(8),dimension(2*mflx+madd):: leftst,rigtst
       real(8),dimension(mflx):: nflux
       real(8):: ptl,css,cts 
-!$acc declare create(leftco,rigtco)
-!$acc declare create(leftpr,rigtpr)
-
-!$acc data present(leftco,rigtco,leftpr,rigtpr)
+!$acc data create(leftco,rigtco,leftpr,rigtpr)
 
 !$acc kernels
 !$acc loop collapse(3) independent private(dsv,dsvp,dsvm)
@@ -1255,10 +1244,7 @@ end subroutine TimestepControl
       real(8),dimension(mflx):: nflux
       real(8):: ptl,css,cts 
 
-!$acc declare create(leftco,rigtco)
-!$acc declare create(leftpr,rigtpr)
-
-!$acc data present(leftco,rigtco,leftpr,rigtpr)
+!$acc data create(leftco,rigtco,leftpr,rigtpr)
 
 !$acc kernels
 !$acc loop collapse(3) independent private(dsv,dsvp,dsvm)
@@ -2121,9 +2107,8 @@ subroutine EvaulateCh
   real(8),parameter:: huge=1.0d90
   integer::theid
   real(8):: bufinp(2),bufout(2)
-!$acc declare create(bufinp,bufout)
-!$acc declare create(chd)
-!$acc declare create(theid)
+
+!$acc data create(bufinp,bufout,chd,theid)
 !$acc kernels
   chd = 0.0d0
   ch1l = 0.0d0; ch2l = 0.0d0; ch3l = 0.0d0
@@ -2167,7 +2152,7 @@ subroutine EvaulateCh
   theid = int(bufout(2)) 
   chg      =      chd
 !$acc end kernels
-
+!$acc end data
   return
 end subroutine  EvaulateCh
 
