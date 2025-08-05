@@ -2,7 +2,6 @@
 exed := ../exe
 
 exe=Simulation.x
-ana=Analysis.x
 
 all: ${exed}/${exe}
 
@@ -24,10 +23,12 @@ foptopenacc = -Minfo=accel -acc -mcmodel=medium
 .f90.o: 
 	${fc} ${fopt} ${foptopenacc} -c $< 
 
-OBJS = main.o mpiroutines.o
+OBJS = main.o boundary.o mhd.o mpiroutines.o
 
-mpiroutines.o:
-main.o: main.f90  mpiroutines.o 
+mpiroutines.o: mpiroutines.f90
+mhd.o: mhd.f90 mpiroutines.o
+boundary.o: boundary.f90 mhd.o mpiroutines.o 
+main.o: main.f90 boundary.o mhd.o mpiroutines.o
 
 ${exed}/${exe}: ${OBJS}
 	${fc} ${fopt} ${foptopenacc} ${OBJS} -o $@
@@ -36,4 +37,4 @@ ${exed}/${exe}: ${OBJS}
 # clean up
 #################
 clean:
-	rm -f ${exed}/${exe} ${ana} *.o *.mod *~
+	rm -f ${exed}/${exe} *.o *.mod *~
