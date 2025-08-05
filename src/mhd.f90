@@ -169,9 +169,7 @@ subroutine TimestepControl
   integer::theid
   real(8)::ctot
   integer::i,j,k
-  real(8):: bufinp(2),bufout(2)
-  
-!$acc data create(bufinp,bufout,dtmin,theid)
+
 !$acc kernels
   dtmin=1.0d90
 !$acc loop collapse(3) reduction(min:dtmin)  
@@ -194,14 +192,14 @@ subroutine TimestepControl
   bufinp(1) = dtmin
   bufinp(2) = dble(myid_w)
 !$acc end kernels
-  call MPIminfind(bufinp,bufout)
+  call MPIminfind
 !$acc kernels
   dtmin =     bufout(1)
   theid = int(bufout(2))
   dt = 0.05d0 * dtmin
 !$acc end kernels
 !$acc update host (dt)
-!$acc end data  
+  
   return
 end subroutine TimestepControl
 
@@ -1554,9 +1552,8 @@ subroutine EvaulateCh
   real(8):: cts,css,cms
   real(8),parameter:: huge=1.0d90
   integer::theid
-  real(8):: bufinp(2),bufout(2)
 
-!$acc data create(bufinp,bufout,chd,theid)
+!$acc data create(chd,theid)
 !$acc kernels
   chd = 0.0d0
   ch1l = 0.0d0; ch2l = 0.0d0; ch3l = 0.0d0
@@ -1594,7 +1591,7 @@ subroutine EvaulateCh
   bufinp(1) = chd
   bufinp(2) = dble(myid_w)
 !$acc end kernels
-  call MPImaxfind(bufinp,bufout)
+  call MPImaxfind
 !$acc kernels
   chd = bufout(1)
   theid = int(bufout(2)) 

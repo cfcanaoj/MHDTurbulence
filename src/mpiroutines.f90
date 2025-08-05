@@ -15,6 +15,10 @@ module mpimod
   integer :: nreq, nsub
   integer ::   gpuid, ngpus
 !$acc declare create(myid_w)
+  
+  real(8),dimension(2):: bufinp, bufout(2)
+!$acc declare create(bufinp,bufout)
+
 contains
 subroutine InitializeMPI
   use openacc
@@ -84,10 +88,8 @@ subroutine FinalizeMPI
   call MPI_FINALIZE(ierr)
 end subroutine FinalizeMPI
 
-subroutine MPIminfind(bufinp, bufout)
+subroutine MPIminfind
   implicit none
-  real(8),intent(in) :: bufinp(2)
-  real(8),intent(out):: bufout(2)
 
 !$acc host_data use_device(bufinp,bufout)
        call MPI_ALLREDUCE( bufinp(1), bufout(1), 1 &
@@ -97,10 +99,8 @@ subroutine MPIminfind(bufinp, bufout)
 
 end subroutine MPIminfind
 
-subroutine MPImaxfind(bufinp, bufout)
+subroutine MPImaxfind
   implicit none
-  real(8),intent(in) :: bufinp(2)
-  real(8),intent(out):: bufout(2)
 !$acc host_data use_device(bufinp,bufout)
        call MPI_ALLREDUCE( bufinp(1), bufout(1), 1 &
      &                   , MPI_2DOUBLE_PRECISION   &

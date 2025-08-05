@@ -15,13 +15,13 @@ module mpiiomod
   character(len= 2),parameter :: id ="DT"
   character(len=10),parameter :: datadir="bindata/"
     
-  real(8),dimension(:,:),allocatable,save :: gridX, gridY, gridZ
-  real(8),dimension(:,:,:,:),allocatable,save :: data3D
-  public ntotal,npart
-  public nvars,nvarg
+  real(8),dimension(:,:),allocatable:: gridX, gridY, gridZ
+  real(8),dimension(:,:,:,:),allocatable:: data3D
+  public:: ntotal,npart
+  public:: nvars,nvarg
   
-  public gridX,gridY,gridZ,data3D
-  public MPIOutputBindary
+  public:: gridX,gridY,gridZ,data3D
+  public:: MPIOutputBindary
 contains  
   subroutine MPIOutputBindary(timeid)
     use mpimod
@@ -34,10 +34,8 @@ contains
     integer::itot,jtot,ktot
       
     integer strtoi 
-    character(len=15) :: unffile
     character(len=40)::usrfile
     character(len=30) :: fpathbin,fpathunf
-    integer, parameter :: unitunf=560
     integer,save:: unitd3d,unitg1d, unitg2d, unitg3d, unitg0d
     data unitd3d / 512 /
     data unitg1d / 513 /
@@ -56,12 +54,10 @@ contains
 
     integer::color,key
     
-!   print *, "p1"
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 1D GRID PREPARE
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!    
     init1D: if(.not. is_inited )then
-
        Asize(1) = nvarg
        Ssize(1) = nvarg
        Start(1) = 0
@@ -108,7 +104,7 @@ contains
      & mpi_status_ignore, &
      & ierr)
       call MPI_FILE_CLOSE(unitg1d,ierr)
-   endif color1D
+      endif color1D
    
    endif init1D
 !   print *, "p2"
@@ -162,17 +158,17 @@ contains
      & ierr)
       call MPI_FILE_CLOSE(unitg2d,ierr)
      endif color2D
-     endif init2D
+   endif init2D
       
-      init3D: if(.not. is_inited )then
-         Asize(1) = nvarg
-         Ssize(1) = nvarg
-         Start(1) = 0
-         Asize(2) = ntotal(3)+1  ! total kzones+edge
-         Ssize(2) = npart(3) ! kzones in 1 process
-         if(coords(3) .eq. ntiles(3)-1)Ssize(2)=Ssize(2)+1  ! + edge
-         Start(2) = npart(3) * coords(3)
-         call MPI_TYPE_CREATE_SUBARRAY(&
+   init3D: if(.not. is_inited )then
+      Asize(1) = nvarg
+      Ssize(1) = nvarg
+      Start(1) = 0
+      Asize(2) = ntotal(3)+1  ! total kzones+edge
+      Ssize(2) = npart(3) ! kzones in 1 process
+      if(coords(3) .eq. ntiles(3)-1)Ssize(2)=Ssize(2)+1  ! + edge
+      Start(2) = npart(3) * coords(3)
+      call MPI_TYPE_CREATE_SUBARRAY(&
      & 2, & ! dimension of array
      & Asize,Ssize,Start, &
      & MPI_ORDER_FORTRAN, &
@@ -188,7 +184,7 @@ contains
       write(usrfile,"(a3,a2)")'g3d',id
       fpathbin = trim(datadir)//usrfile
       
-      call MPI_FILE_OPEN(MPI_COMM_WORLD,&
+      call MPI_FILE_OPEN(commG3D,&
      &                         fpathbin,&  ! file path
      &  MPI_MODE_WRONLY+MPI_MODE_CREATE,&
      &            MPI_INFO_NULL,unitg3d,ierr)
@@ -287,7 +283,6 @@ subroutine Output(is_final)
   integer::nout
   data nout / 1 /
   integer,parameter::unitout=17
-  integer,parameter::unitbin=13
   integer,parameter:: gs=1
   integer,parameter:: nvar=9
 
@@ -315,8 +310,8 @@ subroutine Output(is_final)
      ntotal(2) = ngrid2*ntiles(2)
      ntotal(3) = ngrid3*ntiles(3)
      
-     nvarg = 2
-     nvars = 9
+     nvarg = 2 !! number of the variables for grid
+     nvars = 9 !! number of the variables for variable
      
      allocate(gridX(nvarg,1:iee-is+1))
      allocate(gridY(nvarg,1:jee-js+1))
@@ -363,7 +358,7 @@ subroutine Output(is_final)
   data3D(8,1:npart(1),1:npart(2),1:npart(3)) = bp(is:ie,js:je,ks:ke)
   data3D(9,1:npart(1),1:npart(2),1:npart(3)) =  p(is:ie,js:je,ks:ke)
 
-  if(myid_w==0)print *, "output:",nout,time
+  if(myid_w==0) print *, "output:",nout,time
 
   call MPIOutputBindary(nout)
       

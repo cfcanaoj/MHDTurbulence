@@ -6,7 +6,7 @@ program main
   implicit none
   real(8)::time_begin,time_end
   logical::is_final
-  logical,parameter::nooutput=.true.
+  logical,parameter::nooutput=.false.
   data is_final /.false./
   call InitializeMPI
   if(myid_w == 0) print *, "setup grids and fields"
@@ -17,7 +17,7 @@ program main
   call ConsvVariable
   if(myid_w == 0) print *, "entering main loop"
 ! main loop
-  if(myid_w == 0 .and. .not. nooutput )                        print *,"step","time","dt"
+  if(myid_w == 0 .and. .not. nooutput )                        print *,"step ","time ","dt"
   time_begin = omp_get_wtime()
   mloop: do nhy=1,nhymax
      call TimestepControl
@@ -32,7 +32,7 @@ program main
      call DampPsi
      call PrimVariable
      time=time+dt
-     if(myid_w == 0 .and. .not. nooutput ) call Output(.false.)
+     if(.not. nooutput ) call Output(.false.)
      if(time > timemax) exit mloop
   enddo mloop
 
