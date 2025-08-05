@@ -23,12 +23,13 @@ foptopenacc = -Minfo=accel -acc -mcmodel=medium
 .f90.o: 
 	${fc} ${fopt} ${foptopenacc} -c $< 
 
-OBJS = main.o boundary.o mhd.o mpiroutines.o
+OBJS = main.o output.o boundary.o mhd.o mpiroutines.o
 
 mpiroutines.o: mpiroutines.f90
 mhd.o: mhd.f90 mpiroutines.o
 boundary.o: boundary.f90 mhd.o mpiroutines.o 
-main.o: main.f90 boundary.o mhd.o mpiroutines.o
+output.o: output.f90 boundary.o mhd.o mpiroutines.o
+main.o: main.f90 output.o boundary.o mhd.o mpiroutines.o
 
 ${exed}/${exe}: ${OBJS}
 	${fc} ${fopt} ${foptopenacc} ${OBJS} -o $@

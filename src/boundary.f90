@@ -103,9 +103,9 @@ subroutine BoundaryCondition
   enddo
 !$acc end kernels
 
-  call XbcSendRecv(varsendXstt,varsendXend,varrecvXstt,varrecvXend)
-  call YbcSendRecv(varsendYstt,varsendYend,varrecvYstt,varrecvYend)
-  call ZbcSendRecv(varsendZstt,varsendZend,varrecvZstt,varrecvZend)
+  call XbcSendRecv
+  call YbcSendRecv
+  call ZbcSendRecv
   
 !$acc kernels
 !$acc loop collapse(3) independent
@@ -194,13 +194,11 @@ subroutine BoundaryCondition
   return
 end subroutine BoundaryCondition
 
-subroutine XbcSendRecv(varsendXstt,varsendXend,varrecvXstt,varrecvXend)
+subroutine XbcSendRecv
   use   mpimod
   use basicmod
   use mpi
   implicit none
-  real(8),dimension(mgn,jn,kn,nbc),intent(in) ::varsendXstt,varsendXend
-  real(8),dimension(mgn,jn,kn,nbc),intent(out)::varrecvXstt,varrecvXend
   integer::i,j,k,n
   
   if(ntiles(1) == 1) then
@@ -250,13 +248,11 @@ subroutine XbcSendRecv(varsendXstt,varsendXend,varrecvXstt,varrecvXend)
   return
 end subroutine XbcSendRecv
 
-subroutine YbcSendRecv(varsendYstt,varsendYend,varrecvYstt,varrecvYend)
+subroutine YbcSendRecv
   use   mpimod
   use basicmod
   use mpi
   implicit none
-  real(8),dimension(in,mgn,kn,nbc),intent(in) ::varsendYstt,varsendYend
-  real(8),dimension(in,mgn,kn,nbc),intent(out)::varrecvYstt,varrecvYend
   integer::i,j,k,n
 
   if(ntiles(2) == 1) then
@@ -304,13 +300,11 @@ subroutine YbcSendRecv(varsendYstt,varsendYend,varrecvYstt,varrecvYend)
   return
 end subroutine YbcSendRecv
 
-subroutine ZbcSendRecv(varsendZstt,varsendZend,varrecvZstt,varrecvZend)
+subroutine ZbcSendRecv
   use   mpimod
   use basicmod
   use mpi
   implicit none
-  real(8),dimension(in,jn,mgn,nbc),intent(in) ::varsendZstt,varsendZend
-  real(8),dimension(in,jn,mgn,nbc),intent(out)::varrecvZstt,varrecvZend
   integer::i,j,k,n
   
   if(ntiles(3) == 1) then

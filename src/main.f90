@@ -6,7 +6,7 @@ program main
   implicit none
   real(8)::time_begin,time_end
   logical::is_final
-  logical,parameter::nooutput=.true.
+  logical,parameter::nooutput=.false.
   data is_final /.false./
   call InitializeMPI
   if(myid_w == 0) print *, "setup grids and fields"
@@ -21,7 +21,7 @@ program main
   time_begin = omp_get_wtime()
   mloop: do nhy=1,nhymax
      call TimestepControl
-     if(mod(nhy,nhydis) .eq. 0  .and. .not. nooutput ) print *,nhy,time,dt
+     if(mod(nhy,nhydis) .eq. 0  .and. .not. nooutput .and. myid_w == 0) print *,nhy,time,dt
      call BoundaryCondition
      call StateVevtor
      call EvaulateCh
@@ -201,115 +201,3 @@ subroutine GenerateProblem
       
   return
 end subroutine GenerateProblem
-      
-subroutine Output(is_final)
-  !! Output the grid and variables.
-  !! The grid data contain the information of cell center and cell edge.
-  !! The variable data contains that of  cell center.
-  use basicmod
-  use mpiiomod
-  use mpimod
-  implicit none
-  integer::i,j,k
-  integer::iee,jee,kee
-  character(20),parameter::dirname="bindata/"
-  character(40)::filename
-  real(8),save::tout
-  data tout / 0.0d0 /
-  integer::nout
-  data nout / 1 /
-  integer,parameter::unitout=17
-  integer,parameter::unitbin=13
-  integer,parameter:: gs=1
-  integer,parameter:: nvar=9
-
-  logical, intent(in):: is_final
-
-  logical, save:: is_inited
-  data is_inited /.false./
-
-
-  iee = ie
-  jee = je
-  kee = ke
-  
-  !> Include the information of the cell edge!
-  if(coords(1) .eq. ntiles(1)-1) iee = ie+1
-  if(coords(2) .eq. ntiles(2)-1) jee = je+1
-  if(coords(3) .eq. ntiles(3)-1) kee = ke+1
-  
-  if (.not. is_inited) then
-     npart(1) = ngrid1
-     npart(2) = ngrid2
-     npart(3) = ngrid3
-  
-     ntotal(1) = ngrid1*ntiles(1)
-     ntotal(2) = ngrid2*ntiles(2)
-     ntotal(3) = ngrid3*ntiles(3)
-     
-     nvarg = 2
-     nvars = 9
-     
-     allocate(gridX(nvarg,1:iee-is+1))
-     allocate(gridY(nvarg,1:jee-js+1))
-     allocate(gridZ(nvarg,1:kee-ks+1))
-
-     allocate(data3D(nvars,ngrid1,ngrid2,ngrid3))
-     
-     call makedirs("bindata")
-     is_inited =.true.
-  endif
-
-  if(time .lt. tout+dtout .and. .not. is_final) return
-
-  !> Information of meta data.
-  if(myid_w == 0)then
-  write(filename,'(a3,i5.5,a4)')"unf",nout,".dat"
-  filename = trim(dirname)//filename
-
-  open(unitout,file=filename,status='replace',form='formatted')
-  write(unitout,'(a2,2(1x,E12.3))') "# ",time,dt
-  write(unitout,'(a2,1x,i5)') "# ",ngrid1*ntiles(1)
-  write(unitout,'(a2,1x,i5)') "# ",ngrid2*ntiles(2)
-  write(unitout,'(a2,1x,i5)') "# ",ngrid3*ntiles(3)
-  close(unitout)
-  endif
-
-  gridX(1,1:iee-is+1) = x1b(is:iee) !! the final grid point is not necessary but outputed.  
-  gridX(2,1:iee-is+1) = x1a(is:iee) !! the final grid is necessary. 
-  
-  gridY(1,1:jee-js+1) = x2b(js:jee) !! the final grid point is not necessary but outputed.
-  gridY(2,1:jee-js+1) = x2a(js:jee) !! the final grid is necessary.
-
-  gridZ(1,1:kee-ks+1) = x3b(ks:kee) !! the final grid point is not necessary but outputed.
-  gridZ(2,1:kee-ks+1) = x3a(ks:kee) !! the final grid is necessary.
-
-  !> The cell center value 
-  data3D(1,1:npart(1),1:npart(2),1:npart(3)) =  d(is:ie,js:je,ks:ke)
-  data3D(2,1:npart(1),1:npart(2),1:npart(3)) = v1(is:ie,js:je,ks:ke)
-  data3D(3,1:npart(1),1:npart(2),1:npart(3)) = v2(is:ie,js:je,ks:ke)
-  data3D(4,1:npart(1),1:npart(2),1:npart(3)) = v3(is:ie,js:je,ks:ke)
-  data3D(5,1:npart(1),1:npart(2),1:npart(3)) = b1(is:ie,js:je,ks:ke)
-  data3D(6,1:npart(1),1:npart(2),1:npart(3)) = b2(is:ie,js:je,ks:ke)
-  data3D(7,1:npart(1),1:npart(2),1:npart(3)) = b3(is:ie,js:je,ks:ke)
-  data3D(8,1:npart(1),1:npart(2),1:npart(3)) = bp(is:ie,js:je,ks:ke)
-  data3D(9,1:npart(1),1:npart(2),1:npart(3)) =  p(is:ie,js:je,ks:ke)
-
-  if(myid_w==0)print *, "output:",nout,time
-
-  call MPIOutputBindary(nout)
-      
-  nout=nout+1
-  tout=time
-  return
-!         write(6,*) "bpf2",nflux2(mbps,i,j,k)
-end subroutine Output
-      
-subroutine makedirs(outdir)
-  implicit none
-  character(len=*), intent(in) :: outdir
-  character(len=256) command
-  write(command, *) 'if [ ! -d ', trim(outdir), ' ]; then mkdir -p ', trim(outdir), '; fi'
-!  write(*, *) trim(command)
-  call system(command)
-end subroutine makedirs
