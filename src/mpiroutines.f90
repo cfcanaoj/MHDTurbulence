@@ -16,7 +16,7 @@ module mpimod
   integer ::   gpuid, ngpus
 !$acc declare create(myid_w)
   
-  real(8),dimension(2):: bufinp, bufout(2)
+  real(8),dimension(2):: bufinp, bufout
 !$acc declare create(bufinp,bufout)
 
 contains
