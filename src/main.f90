@@ -6,7 +6,7 @@ program main
   implicit none
   real(8)::time_begin,time_end
   logical::is_final
-  logical,parameter::nooutput=.false.
+  logical,parameter::nooutput=.true.
   data is_final /.false./
   call InitializeMPI
   if(myid_w == 0) print *, "setup grids and fields"

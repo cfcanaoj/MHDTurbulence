@@ -2,25 +2,34 @@ module boundarymod
   use basicmod
   implicit none
   private
-  real(8),dimension(mgn,jn,kn,nbc):: varsendXstt,varsendXend
-  real(8),dimension(in,mgn,kn,nbc):: varsendYstt,varsendYend
-  real(8),dimension(in,jn,mgn,nbc):: varsendZstt,varsendZend
-  real(8),dimension(mgn,jn,kn,nbc):: varrecvXstt,varrecvXend
-  real(8),dimension(in,mgn,kn,nbc):: varrecvYstt,varrecvYend
-  real(8),dimension(in,jn,mgn,nbc):: varrecvZstt,varrecvZend
-
-!$acc declare create(varsendXstt,varsendXend)
-!$acc declare create(varsendYstt,varsendYend)
-!$acc declare create(varsendZstt,varsendZend)
-!$acc declare create(varrecvXstt,varrecvXend)
-!$acc declare create(varrecvYstt,varrecvYend)
-!$acc declare create(varrecvZstt,varrecvZend)
-  
+!!  real(8),dimension(mgn,jn,kn,nbc):: varsendXstt,varsendXend
+!!  real(8),dimension(in,mgn,kn,nbc):: varsendYstt,varsendYend
+!!  real(8),dimension(in,jn,mgn,nbc):: varsendZstt,varsendZend
+!!  real(8),dimension(mgn,jn,kn,nbc):: varrecvXstt,varrecvXend
+!!  real(8),dimension(in,mgn,kn,nbc):: varrecvYstt,varrecvYend
+!!  real(8),dimension(in,jn,mgn,nbc):: varrecvZstt,varrecvZend
+!!
+!!!$acc declare create(varsendXstt,varsendXend)
+!!!$acc declare create(varsendYstt,varsendYend)
+!!!$acc declare create(varsendZstt,varsendZend)
+!!!$acc declare create(varrecvXstt,varrecvXend)
+!!!$acc declare create(varrecvYstt,varrecvYend)
+!!!$acc declare create(varrecvZstt,varrecvZend)
+!!  
   public:: BoundaryCondition
 contains
-subroutine BoundaryCondition
-  integer::i,j,k
+  subroutine BoundaryCondition
+    implicit none
+    integer::i,j,k
+    real(8),dimension(mgn,jn,kn,nbc):: varsendXstt,varsendXend
+    real(8),dimension(in,mgn,kn,nbc):: varsendYstt,varsendYend
+    real(8),dimension(in,jn,mgn,nbc):: varsendZstt,varsendZend
+    real(8),dimension(mgn,jn,kn,nbc):: varrecvXstt,varrecvXend
+    real(8),dimension(in,mgn,kn,nbc):: varrecvYstt,varrecvYend
+    real(8),dimension(in,jn,mgn,nbc):: varrecvZstt,varrecvZend
 
+!$acc data create(varsendXstt,varsendXend,varsendYstt,varsendYend,varsendZstt,varsendZend,varrecvXstt,varrecvXend,varrecvYstt,varrecvYend,varrecvZstt,varrecvZend)
+  
 !$acc kernels
 !$acc loop collapse(3) independent
   do k=1,kn-1
@@ -103,9 +112,9 @@ subroutine BoundaryCondition
   enddo
 !$acc end kernels
 
-  call XbcSendRecv
-  call YbcSendRecv
-  call ZbcSendRecv
+  call XbcSendRecv(varsendXstt,varsendXend,varrecvXstt,varrecvXend)
+  call YbcSendRecv(varsendYstt,varsendYend,varrecvYstt,varrecvYend)
+  call ZbcSendRecv(varsendZstt,varsendZend,varrecvZstt,varrecvZend)
   
 !$acc kernels
 !$acc loop collapse(3) independent
@@ -189,16 +198,17 @@ subroutine BoundaryCondition
   enddo
   enddo
   enddo
-!$acc end kernels
+!$acc end kernels  
+!$acc end data
   
   return
 end subroutine BoundaryCondition
 
-subroutine XbcSendRecv
-  use   mpimod
-  use basicmod
-  use mpi
+subroutine XbcSendRecv(varsendXstt,varsendXend,varrecvXstt,varrecvXend)
+  use mpimod
   implicit none
+  real(8),dimension(mgn,jn,kn,nbc),intent(in) ::varsendXstt,varsendXend
+  real(8),dimension(mgn,jn,kn,nbc),intent(out)::varrecvXstt,varrecvXend
   integer::i,j,k,n
   
   if(ntiles(1) == 1) then
@@ -248,11 +258,11 @@ subroutine XbcSendRecv
   return
 end subroutine XbcSendRecv
 
-subroutine YbcSendRecv
-  use   mpimod
-  use basicmod
-  use mpi
+subroutine YbcSendRecv(varsendYstt,varsendYend,varrecvYstt,varrecvYend)
+  use mpimod
   implicit none
+  real(8),dimension(in,mgn,kn,nbc),intent(in) ::varsendYstt,varsendYend
+  real(8),dimension(in,mgn,kn,nbc),intent(out)::varrecvYstt,varrecvYend
   integer::i,j,k,n
 
   if(ntiles(2) == 1) then
@@ -300,11 +310,11 @@ subroutine YbcSendRecv
   return
 end subroutine YbcSendRecv
 
-subroutine ZbcSendRecv
-  use   mpimod
-  use basicmod
-  use mpi
+subroutine ZbcSendRecv(varsendZstt,varsendZend,varrecvZstt,varrecvZend)
+  use mpimod
   implicit none
+  real(8),dimension(in,jn,mgn,nbc),intent(in) ::varsendZstt,varsendZend
+  real(8),dimension(in,jn,mgn,nbc),intent(out)::varrecvZstt,varrecvZend
   integer::i,j,k,n
   
   if(ntiles(3) == 1) then

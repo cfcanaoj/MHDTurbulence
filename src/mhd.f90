@@ -189,13 +189,13 @@ subroutine TimestepControl
   enddo
   enddo
   enddo
-  bufinp(1) = dtmin
-  bufinp(2) = dble(myid_w)
+  bufinpmin(1) = dtmin
+  bufinpmin(2) = dble(myid_w)
 !$acc end kernels
   call MPIminfind
 !$acc kernels
-  dtmin =     bufout(1)
-  theid = int(bufout(2))
+  dtmin =     bufoutmin(1)
+  theid = int(bufoutmin(2))
   dt = 0.05d0 * dtmin
 !$acc end kernels
 !$acc update host (dt)
@@ -1553,7 +1553,6 @@ subroutine EvaulateCh
   real(8),parameter:: huge=1.0d90
   integer::theid
 
-!$acc data create(chd,theid)
 !$acc kernels
   chd = 0.0d0
   ch1l = 0.0d0; ch2l = 0.0d0; ch3l = 0.0d0
@@ -1588,16 +1587,16 @@ subroutine EvaulateCh
   enddo
   enddo
   enddo
-  bufinp(1) = chd
-  bufinp(2) = dble(myid_w)
+  bufinpmax(1) = chd
+  bufinpmax(2) = dble(myid_w)
 !$acc end kernels
   call MPImaxfind
 !$acc kernels
-  chd = bufout(1)
-  theid = int(bufout(2)) 
+  chd = bufoutmax(1)
+  theid = int(bufoutmax(2)) 
   chg      =      chd
 !$acc end kernels
-!$acc end data
+  
   return
 end subroutine  EvaulateCh
 
