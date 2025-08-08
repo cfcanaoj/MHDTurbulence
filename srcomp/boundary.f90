@@ -104,6 +104,7 @@ contains
   enddo
 !$omp end target
 
+
   call XbcSendRecv
   call YbcSendRecv
   call ZbcSendRecv
@@ -215,8 +216,7 @@ subroutine XbcSendRecv
   
   else
 
-!$omp target update from(varsendxstt,varsendxend,varrecvxstt,&
-!$omp varrecvxend)
+!$omp target update from(varsendXstt,varsendXend)
      nreq = nreq + 1         
      call MPI_IRECV(varrecvXstt,mgn*jn*kn*nbc &
     & , MPI_DOUBLE &
@@ -239,8 +239,7 @@ subroutine XbcSendRecv
 
      if(nreq .ne. 0) call MPI_WAITALL ( nreq, req, stat, ierr )
      nreq = 0
-!$omp target update to(varsendxstt,varsendxend,varrecvxstt,&
-!$omp varrecvxend)
+!$omp target update to(varrecvXstt,varrecvXend)
 
   endif
 
@@ -266,8 +265,7 @@ subroutine YbcSendRecv
 !$omp end target
   else
 
-!$omp target update from(varsendystt,varsendyend,varrecvystt,&
-!$omp varrecvyend)
+!$omp target update from(varsendYstt,varsendYend)
      nreq = nreq + 1         
      call MPI_IRECV(varrecvYstt,mgn*in*kn*nbc &
     & , MPI_DOUBLE &
@@ -290,8 +288,7 @@ subroutine YbcSendRecv
 
      if(nreq .ne. 0) call MPI_WAITALL ( nreq, req, stat, ierr )
      nreq = 0
-!$omp target update to(varsendystt,varsendyend,varrecvystt,&
-!$omp varrecvyend)
+!$omp target update to(varrecvYstt,varrecvYend)
   endif
 
   return
@@ -317,8 +314,7 @@ subroutine ZbcSendRecv
 !$omp end target
   else
 
-!$omp target update from(varsendzstt,varsendzend,varrecvzstt,&
-!$omp varrecvzend)
+!$omp target update from(varsendZstt,varsendZend)
      nreq = nreq + 1         
      call MPI_IRECV(varrecvZstt,mgn*in*jn*nbc &
     & , MPI_DOUBLE &
@@ -341,8 +337,7 @@ subroutine ZbcSendRecv
 
      if(nreq .ne. 0) call MPI_WAITALL ( nreq, req, stat, ierr )
      nreq = 0
-!$omp target update to(varsendzstt,varsendzend,varrecvzstt,&
-!$omp varrecvzend)
+!$omp target update to(varrecvZstt,varrecvZend)
   endif
 
   return
