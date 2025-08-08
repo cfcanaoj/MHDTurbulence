@@ -125,7 +125,7 @@
       use eosmod  
       implicit none
       integer::i,j,k
-!$omp target defaultmap(none)
+!$omp target defaultmap(tofrom:scalar)
 !$omp loop order(concurrent) collapse(3)
       do k=ks,ke
       do j=js,je
@@ -170,9 +170,10 @@ subroutine TimestepControl
   real(8)::ctot
   integer::i,j,k
 
+!$omp target data map(alloc:dtmin)
 !$omp target
   dtmin=1.0d90
-!$omp loop reduction(min:dtmin) collapse(3)
+!$omp loop reduction(min:dtmin) collapse(3) private(ctot,dtl1,dtl2,dtl3,dtlocal)
   do k=ks,ke
   do j=js,je
   do i=is,ie
@@ -193,13 +194,13 @@ subroutine TimestepControl
   bufinpmin(2) = dble(myid_w)
 !$omp end target
   call MPIminfind
-!$omp target defaultmap(none)
+!$omp target
   dtmin =     bufoutmin(1)
   theid = int(bufoutmin(2))
   dt = 0.05d0 * dtmin
 !$omp end target
+!$omp end target data
 !$omp target update from(dt)
-  
   return
 end subroutine TimestepControl
 
@@ -296,7 +297,6 @@ end subroutine TimestepControl
       subroutine NumericalFlux1
       use basicmod, only: is,ie,in,js,je,jn,ks,ke,kn
       use fluxmod
-      use mpimod
       implicit none
       integer::i,j,k
       real(8),dimension(nhyd):: dsvp,dsvm,dsvc,dsv
@@ -306,10 +306,9 @@ end subroutine TimestepControl
       real(8),dimension(mflx):: nflux
       real(8):: ptl,css,cts 
 
-      print *, "p1",myid_w
-!$omp target data map(alloc:leftco,rigtco,leftpr,rigtpr)
-      
-!$omp target defaultmap(tofrom:scalar)
+!$omp target data map(alloc:leftpr,rigtpr,leftco,rigtco)
+
+!$omp target
 !$omp loop private(dsv,dsvp,dsvm) order(concurrent) collapse(3)
       do k=ks,ke
       do j=js,je
@@ -325,9 +324,8 @@ end subroutine TimestepControl
       enddo
       enddo
 !$omp end target
-
-      print *, "p2",myid_w
-!$omp target defaultmap(tofrom:scalar)
+      
+!$omp target
 !$omp loop private(ptl,css,cts) order(concurrent) collapse(3)
       do k=ks,ke
       do j=js,je
@@ -456,8 +454,8 @@ end subroutine TimestepControl
       enddo
       enddo
 !$omp end target
-      print *, "p2",myid_w
-!$omp target defaultmap(tofrom:scalar)
+      
+!$omp target
 !$omp loop private(leftst,rigtst,nflux) order(concurrent) collapse(3)
       do k=ks,ke
       do j=js,je
@@ -488,8 +486,6 @@ end subroutine TimestepControl
       enddo
 !$omp end target
 !$omp end target data
-
-      print *, "p3",myid_w
       return
       end subroutine Numericalflux1
 
@@ -506,7 +502,7 @@ end subroutine TimestepControl
       real(8):: ptl,css,cts 
 !$omp target data map(alloc:leftco,rigtco,leftpr,rigtpr)
 
-!$omp target defaultmap(none)
+!$omp target defaultmap(tofrom:scalar)
 !$omp loop private(dsv,dsvp,dsvm) order(concurrent) collapse(3)
       do k=ks,ke
       do i=is,ie
@@ -527,7 +523,7 @@ end subroutine TimestepControl
        enddo
 !$omp end target
 
-!$omp target defaultmap(none)
+!$omp target defaultmap(tofrom:scalar)
 !$omp loop private(ptl,css,cts) order(concurrent) collapse(3)
       do k=ks,ke
       do i=is,ie
@@ -647,7 +643,7 @@ end subroutine TimestepControl
       enddo
 !$omp end target
 
-!$omp target defaultmap(none)
+!$omp target defaultmap(tofrom:scalar)
 !$omp loop private(leftst,rigtst,nflux) order(concurrent) collapse(3)
       do k=ks,ke
       do i=is,ie
@@ -696,7 +692,7 @@ end subroutine TimestepControl
 
 !$omp target data map(alloc:leftco,rigtco,leftpr,rigtpr)
 
-!$omp target defaultmap(none)
+!$omp target defaultmap(tofrom:scalar)
 !$omp loop private(dsv,dsvp,dsvm) order(concurrent) collapse(3)
       do j=js,je
       do i=is,ie
@@ -714,7 +710,7 @@ end subroutine TimestepControl
        enddo
 !$omp end target
 
-!$omp target defaultmap(none)
+!$omp target defaultmap(tofrom:scalar)
 !$omp loop private(ptl,css,cts) order(concurrent) collapse(3)
       do j=js,je
       do i=is,ie
@@ -839,7 +835,7 @@ end subroutine TimestepControl
       enddo
 !$omp end target
 
-!$omp target defaultmap(none)
+!$omp target defaultmap(tofrom:scalar)
 !$omp loop private(leftst,rigtst,nflux) order(concurrent) collapse(3)
       do j=js,je
       do i=is,ie
@@ -1440,7 +1436,7 @@ end subroutine TimestepControl
       implicit none
       integer::i,j,k
 
-!$omp target defaultmap(none)
+!$omp target defaultmap(tofrom:scalar)
 !$omp loop order(concurrent) collapse(3)
       do k=ks,ke
       do j=js,je
@@ -1557,7 +1553,7 @@ subroutine EvaulateCh
   real(8),parameter:: huge=1.0d90
   integer::theid
 
-!$omp target defaultmap(none)
+!$omp target defaultmap(tofrom:scalar)
   chd = 0.0d0
   ch1l = 0.0d0; ch2l = 0.0d0; ch3l = 0.0d0
   dhd = huge
@@ -1595,11 +1591,12 @@ subroutine EvaulateCh
   bufinpmax(2) = dble(myid_w)
 !$omp end target
   call MPImaxfind
-!$omp target defaultmap(none)
-  chd =       bufoutmax(1)
+!$omp target defaultmap(tofrom:scalar)
+  chd = bufoutmax(1)
   theid = int(bufoutmax(2)) 
   chg      =      chd
 !$omp end target
+  
   return
 end subroutine  EvaulateCh
 
@@ -1613,7 +1610,7 @@ end subroutine  EvaulateCh
       real(8):: dhl,dh1l,dh2l,dh3l
       real(8),parameter:: huge=1.0d90 
 
-!$omp target defaultmap(none)
+!$omp target defaultmap(tofrom:scalar)
       dh1l=huge
       dh2l=huge
       dh3l=huge

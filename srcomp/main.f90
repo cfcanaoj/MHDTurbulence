@@ -27,12 +27,15 @@ program main
      if(mod(nhy,nhydis) .eq. 0  .and. .not. nooutput .and. myid_w == 0) print *,nhy,time,dt
      if(debugmode) print *,"BoundaryCondition"
      call BoundaryCondition
+     if(debugmode) print *,"StateVector"
      call StateVevtor
      if(debugmode) print *,"EvaulateCh"
      call EvaulateCh
-     if(debugmode) print *,"NumericalFlux"
+     if(debugmode) print *,"NumericalFlux1"
      call NumericalFlux1
+     if(debugmode) print *,"NumericalFlux2"
      call NumericalFlux2
+     if(debugmode) print *,"NumericalFlux3"
      call NumericalFlux3
      if(debugmode) print *,"UpdateConsv"
      call UpdateConsv
