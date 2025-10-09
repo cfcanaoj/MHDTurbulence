@@ -6,7 +6,8 @@
 #SBATCH --ntasks-per-node=64
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=100G
-#SBATCH -o slmlog%J.out
+#SBATCH -o out%j.log
+#SBATCH -e err%j.log
 #SBATCH --time=1:00:00
 
 source /work/opt/local/bin/enable-oneapi.sh
