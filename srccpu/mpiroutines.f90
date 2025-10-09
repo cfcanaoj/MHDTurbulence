@@ -30,7 +30,7 @@ subroutine InitializeMPI
   
   ntiles(1)=4
   ntiles(2)=4
-  ntiles(3)=4
+  ntiles(3)=6
   periodic(1)=.true.
   periodic(2)=.true.
   periodic(3)=.true.

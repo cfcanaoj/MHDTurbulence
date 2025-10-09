@@ -2,8 +2,8 @@
 #SBATCH --job-name=MHDturbulence
 #SBATCH --partition=M-large-cfca
 #SBATCH --nodes=1
-#SBATCH --ntasks=64
-#SBATCH --ntasks-per-node=64
+#SBATCH --ntasks=96
+#SBATCH --ntasks-per-node=96
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=100G
 #SBATCH -o out%j.log
