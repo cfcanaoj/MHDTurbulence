@@ -377,4 +377,3 @@ subroutine makedirs(outdir)
   call system(command)
 end subroutine makedirs
 
-! Code was translated using: /gwork0/takiwkkz/MHDturbArxiv/acctoomp/src/intel-application-migration-tool-for-openacc-to-openmp -suppress-openacc output.f90
