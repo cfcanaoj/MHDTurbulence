@@ -6,8 +6,8 @@ program main
   implicit none
   real(8)::time_begin,time_end
   logical::is_final
-  logical,parameter::nooutput=.true.
-  logical,parameter::debugmode=.true.
+  logical,parameter::nooutput=.false.
+  logical,parameter::debugmode=.false.
   data is_final /.false./
   call InitializeMPI
   if(myid_w == 0) print *, "setup grids and fields"
@@ -22,26 +22,26 @@ program main
   time_begin = omp_get_wtime()
   mloop: do nhy=1,nhymax
      
-     if(debugmode) print *,"TimestepControl"
+     if(debugmode .and. myid_w == 0) print *,"TimestepControl"
      call TimestepControl
      if(mod(nhy,nhydis) .eq. 0  .and. .not. nooutput .and. myid_w == 0) print *,nhy,time,dt
-     if(debugmode) print *,"BoundaryCondition"
+     if(debugmode .and. myid_w == 0) print *,"BoundaryCondition"
      call BoundaryCondition
-     if(debugmode) print *,"StateVector"
+     if(debugmode .and. myid_w == 0) print *,"StateVector"
      call StateVevtor
-     if(debugmode) print *,"EvaulateCh"
+     if(debugmode .and. myid_w == 0) print *,"EvaulateCh"
      call EvaulateCh
-     if(debugmode) print *,"NumericalFlux1"
+     if(debugmode .and. myid_w == 0) print *,"NumericalFlux1"
      call NumericalFlux1
-     if(debugmode) print *,"NumericalFlux2"
+     if(debugmode .and. myid_w == 0) print *,"NumericalFlux2"
      call NumericalFlux2
-     if(debugmode) print *,"NumericalFlux3"
+     if(debugmode .and. myid_w == 0) print *,"NumericalFlux3"
      call NumericalFlux3
-     if(debugmode) print *,"UpdateConsv"
+     if(debugmode .and. myid_w == 0) print *,"UpdateConsv"
      call UpdateConsv
-     if(debugmode) print *,"DampPsi"
+     if(debugmode .and. myid_w == 0) print *,"DampPsi"
      call DampPsi
-     if(debugmode) print *,"PrimVariable"
+     if(debugmode .and. myid_w == 0) print *,"PrimVariable"
      call PrimVariable
      time=time+dt
      if(.not. nooutput ) call Output(.false.)
@@ -110,10 +110,6 @@ subroutine GenerateGrid
      x3b(k) = 0.5d0*(x3a(k+1)+x3a(k))
   enddo
 
-!$omp target update to(x1a,x1b)
-!$omp target update to(x2a,x2b)
-!$omp target update to(x3a,x3b)
-  
   return
 end subroutine GenerateGrid
 
@@ -159,7 +155,6 @@ subroutine GenerateProblem
 ! isotermal
        csiso= sqrt(eint/d0)
        p0 = d0 *csiso**2       
-!$omp target update to(csiso)
        
       do k=ks,ke
       do j=js,je
@@ -206,12 +201,7 @@ subroutine GenerateProblem
       
       if(myid_w ==0 )print *,"initial profile is set"
       call BoundaryCondition
-
-!$omp target update to(d,v1,v2,v3)
-!$omp target update to(p,ei,cs)
-!$omp target update to(b1,b2,b3,bp)
       
   return
 end subroutine GenerateProblem
 
-! Code was translated using: /gwork0/takiwkkz/MHDturbArxiv/acctoomp/src/intel-application-migration-tool-for-openacc-to-openmp -suppress-openacc main.f90
