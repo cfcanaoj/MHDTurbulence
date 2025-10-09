@@ -6,7 +6,7 @@ program main
   implicit none
   real(8)::time_begin,time_end
   logical::is_final
-  logical,parameter::nooutput=.false.
+  logical,parameter::nooutput=.true.
   logical,parameter::debugmode=.false.
   data is_final /.false./
   call InitializeMPI
