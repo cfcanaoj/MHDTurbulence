@@ -41,7 +41,6 @@
       implicit none
 ! adiabatic
 !      real(8),parameter::gam=5.0d0/3.0d0 !! adiabatic index
-!!$acc declare create(gam)
 ! isothermal
       real(8)::csiso  !! isothemal sound speed
       end module eosmod
@@ -450,8 +449,6 @@ end subroutine TimestepControl
       real(8),dimension(mflx):: nflux
       real(8):: ptl,css,cts,etot
 
-!$acc kernels
-!$acc loop collapse(2) independent private(j, Pleftc1, Pleftc2, Plefte,Prigtc1, Prigtc2, Prigte,dsv,dsvp,dsvm,etot,ptl,css,cts,leftco,rigtco,nflux)
       do k=ks,ke
       do i=is,ie
       do j=js,je+1
@@ -613,7 +610,6 @@ end subroutine TimestepControl
       enddo
       enddo
       enddo
-!$acc end kernels
       
       return
       end subroutine Numericalflux2
@@ -630,8 +626,6 @@ end subroutine TimestepControl
       real(8),dimension(mflx):: nflux
       real(8):: ptl,css,cts,etot
 
-!$acc kernels
-!$acc loop collapse(2) independent private(k, Pleftc1, Pleftc2, Plefte,Prigtc1, Prigtc2, Prigte,dsv,dsvp,dsvm,etot,ptl,css,cts,leftco,rigtco,nflux)
       do j=js,je
       do i=is,ie
       do k=ks,ke+1
@@ -793,7 +787,6 @@ end subroutine TimestepControl
       enddo
       enddo
       enddo
-!$acc end kernels
 
       return
       end subroutine Numericalflux3
