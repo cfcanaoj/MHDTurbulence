@@ -13,10 +13,16 @@ After you login the server, `g00.cfca.nao.ac.jp`, follow the instruction.
 ### compile 
 To run the code, you need to compile 'Simulation.f90' in GPU server.
     
-    cd src
+    cd srcacc
     make
     
-Then `Simulation.x`is made in `../exe` directory.
+Then `Simulation.x`is made in `../exe` directory. This is OpenACC version. If you want to use different version, go to the relevent directory shown below.
+
+|directory|GPU/CPU|Parallelization|
+|:---|:---:|:---|
+|`srcacc`|GPU|MPI OpenACC|
+|`srcomp`|GPU|MPI OpenMP|
+|`srccpu`|CPU|MPI|
 
 ### run
 Let's run the code.
@@ -26,6 +32,15 @@ Let's run the code.
     sbatch sj_g00.sh
     
 The simulation data is saved in `bindata/`.
+
+The batch file depends on your parallelization scheme and environment.
+
+|directory|GPU/CPU|Parallelization|
+|:---|:---:|:---|
+|`sj_g00.sh`|GPU|MPI OpenACC|
+|`sj_g00.sh`|GPU|MPI OpenMP|
+|`sj_xd.sh`|CPU|MPI|
+
 
 ### analysis
 To analyze the data, let us make `Analysis.x` in GPU server..
