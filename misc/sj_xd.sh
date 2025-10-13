@@ -19,9 +19,9 @@ cd ${SLURM_SUBMIT_DIR}
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK}
 export KMP_AFFINITY=compact
 
-date >& log.$SLURM_JOB_ID
-time srun -c ${SLURM_CPUS_PER_TASK} ./Simulation.x >> log.$SLURM_JOB_ID
-date >> log.$SLURM_JOB_ID
+date >& out${SLURM_JOB_ID}.log
+time srun -c ${SLURM_CPUS_PER_TASK} ./Simulation.x >> out${SLURM_JOB_ID}.log
+date >> out${SLURM_JOB_ID}.log
 
 
 
