@@ -8,9 +8,9 @@
       real(8),parameter:: timemax=5.0d0
       real(8),parameter:: dtout=5.0d0/600
 
-      integer,parameter::ngrid1=120
-      integer,parameter::ngrid2=120
-      integer,parameter::ngrid3= 80
+      integer,parameter::ngrid1=60
+      integer,parameter::ngrid2=60
+      integer,parameter::ngrid3=40
       integer,parameter::mgn=2
       integer,parameter::in=ngrid1+2*mgn+1 &
      &                  ,jn=ngrid2+2*mgn+1 &
