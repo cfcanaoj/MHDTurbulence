@@ -13,4 +13,7 @@
 # squeue
 
 module load nvhpc
-mpiexec -n 4 ./Simulation.x
+date >& out${SLURM_JOB_ID}.log
+time mpiexec -n 4 ./Simulation.x >> out${SLURM_JOB_ID}.log
+date >> out${SLURM_JOB_ID}.log
+
