@@ -13,12 +13,12 @@ module mpimod
   logical :: reorder
   integer :: n1m, n1p, n2m, n2p, n3m, n3p
   integer :: nreq, nsub
-  integer ::   gpuid, ngpus
+  
   real(8),dimension(2):: bufinpmin, bufoutmin
   real(8),dimension(2):: bufinpmax, bufoutmax
+
 contains
 subroutine InitializeMPI
-  use omp_lib
   implicit none
   integer::key,color
   integer::np_hyd
@@ -65,17 +65,8 @@ subroutine InitializeMPI
   !
   call MPI_CART_COORDS( comm3d, myid, 3, coords, ierr )
 
-! this version do not use GPU
-!  ngpus = omp_get_num_devices()
-!  if(myid_w == 0) then
-!     print *, "num of GPUs = ", ngpus
-!  end if
-
-!  gpuid = mod(myid_w, ngpus)
-!  if(ngpus == 0) gpuid = -1
-!  if(gpuid >= 0) then
-!     call omp_set_default_device(gpuid)
-!  end if
+!> debug  
+  call MPI_Comm_set_errhandler(comm3d, MPI_ERRORS_RETURN, ierr)
   
   return
 end subroutine InitializeMPI
@@ -87,18 +78,28 @@ end subroutine FinalizeMPI
 
 subroutine MPIminfind
   implicit none
-
+  integer :: err_len
+  character(len=MPI_MAX_ERROR_STRING) :: err_string
        call MPI_ALLREDUCE( bufinpmin(1), bufoutmin(1), 1 &
      &                   , MPI_2DOUBLE_PRECISION   &
      &                   , MPI_MINLOC, comm3d, ierr)      
-
+       if (ierr /= MPI_SUCCESS) then
+          call MPI_Error_string(ierr, err_string, err_len, ierr)
+          print *,"error in MPIminfind", trim(err_string)
+       endif
 end subroutine MPIminfind
 
 subroutine MPImaxfind
   implicit none
+  integer :: err_len
+  character(len=MPI_MAX_ERROR_STRING) :: err_string
        call MPI_ALLREDUCE( bufinpmax(1), bufoutmax(1), 1 &
      &                   , MPI_2DOUBLE_PRECISION   &
      &                   , MPI_MAXLOC, comm3d, ierr)
+       if (ierr /= MPI_SUCCESS) then
+          call MPI_Error_string(ierr, err_string, err_len, ierr)
+          print *,"error in MPIminfind", trim(err_string)
+       endif
 end subroutine MPImaxfind
 
 end module mpimod
