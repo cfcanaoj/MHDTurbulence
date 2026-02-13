@@ -94,26 +94,19 @@ namespace hydflux_mod {
     }
   };
 
-  inline constexpr int mconsv{10},madd{3}; //!
-  // left/right state array layout: [conserved(0..mconsv-1), flux(mconsv..2*mconsv-1), extras(2*mconsv..2*mconsv+madd-1)]
+  inline constexpr int mconsv{9},madd{3}; //!
   inline constexpr int mudn{ 0},muvu{ 1},muvv{ 2},muvw{ 3},muet{ 4},
                                 mubu{ 5},mubv{ 6},mubw{ 7},mubp{ 8},
-                                muxc{ 9},
-                       mfdn{10},mfvu{11},mfvv{12},mfvw{13},mfet{14},
-                       mfbu{15},mfbv{16},mfbw{17},mfbp{18},
-                       mfxc{19},
-                       mcsp{20},mvel{21},mpre{22};
-  // conserved variables in U
+                       mfdn{ 9},mfvu{10},mfvv{11},mfvw{12},mfet{13},
+                       mfbu{14},mfbv{15},mfbw{16},mfbp{17},
+                       mcsp{18},mvel{19},mpre{20};
   inline constexpr int mden{ 0},mrv1{ 1},mrv2{ 2},mrv3{ 3},meto{ 4},
                                 mbm1{ 5},mbm2{ 6},mbm3{ 7},mbps{ 8},
-                                mxc { 9},
                                 mrvu{ 1},mrvv{ 2},mrvw{ 3},
                                 mbmu{ 5},mbmv{ 6},mbmw{ 7};
-  // primitive variables in P
-  inline constexpr int nprim{12}; //!
+  inline constexpr int nprim{11}; //!
   inline constexpr int nden{0},nve1{1},nve2{2},nve3{3},nene{4},npre{5},ncsp{6},
-                               nbm1{7},nbm2{8},nbm3{9},nbps{10},
-                               nxc {11};
+                               nbm1{7},nbm2{8},nbm3{9},nbps{10};
 
   extern GridArray<double> G;
   extern FieldArray<double> P; //! P(nprim ,ktot,jtot,itot)

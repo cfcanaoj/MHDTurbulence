@@ -428,15 +428,6 @@ void HLLD(const double (&leftst)[2*mconsv+madd],const double (&rigtst)[2*mconsv+
                         +(fbyr+(byrst-byr)*msr+(byrdst-byrst)*msrst)*mins1;
            nflux[mbmw] = (fbzl+(bzlst-bzl)*msl+(bzldst-bzlst)*mslst)*maxs1
                         +(fbzr+(bzrst-bzr)*msr+(bzrdst-bzrst)*msrst)*mins1;
-
-           // passive scalar (rho*Xcomp) flux: HLLE using the same outer wave speeds (sl,sr)
-           if (sl >= 0.0e0) {
-             nflux[muxc] = leftst[mfxc];
-           } else if (sr <= 0.0e0) {
-             nflux[muxc] = rigtst[mfxc];
-           } else {
-             nflux[muxc] = (sr*leftst[mfxc] - sl*rigtst[mfxc] + sl*sr*(rigtst[muxc]-leftst[muxc]))/(sr-sl);
-           }
 }
 #pragma omp end declare target
 
@@ -490,7 +481,6 @@ void GetNumericalFlux1(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Clefte[mubv] = Plefte[nbm2]; // b_y
 	Clefte[mubw] = Plefte[nbm3]; // b_z
 	Clefte[mubp] = Plefte[nbps]; // psi
-	Clefte[muxc] = Plefte[nxc]*Plefte[nden]; // rho*Xcomp
 	
         double  ptl = Plefte[npre] + ( Plefte[nbm1]*Plefte[nbm1]
                                       +Plefte[nbm2]*Plefte[nbm2]
@@ -514,7 +504,6 @@ void GetNumericalFlux1(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Clefte[mfbw] =  Plefte[nbm3]*Plefte[nve1]
 	               -Plefte[nve3]*Plefte[nbm1];
 	Clefte[mfbp] = 0.0e0;  // psi
-	Clefte[mfxc] = Plefte[nden]*Plefte[nxc]*Plefte[nve1]; // (rho*X)*v_x
      
 	double css = Plefte[ncsp]*Plefte[ncsp];
         double cts =  css // c_s^2*c_a^2;
@@ -559,7 +548,6 @@ void GetNumericalFlux1(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Crigte[mubv] = Prigte[nbm2]; // b_y
 	Crigte[mubw] = Prigte[nbm3]; // b_z
 	Crigte[mubp] = Prigte[nbps]; // psi
-	Crigte[muxc] = Prigte[nxc]*Prigte[nden]; // rho*Xcomp
 	// total pressure
                  ptl = Prigte[npre] + ( Prigte[nbm1]*Prigte[nbm1]
                                        +Prigte[nbm2]*Prigte[nbm2]
@@ -583,7 +571,6 @@ void GetNumericalFlux1(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Crigte[mfbw] =  Prigte[nbm3]*Prigte[nve1]
 	               -Prigte[nve3]*Prigte[nbm1];
 	Crigte[mfbp] = 0.0e0;  // psi
-	Crigte[mfxc] = Prigte[nden]*Prigte[nxc]*Prigte[nve1]; // (rho*X)*v_x
      
 	       css = Prigte[ncsp]*Prigte[ncsp];
                cts =  css // c_s^2*c_a^2;
@@ -606,7 +593,6 @@ void GetNumericalFlux1(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	 Fx(mrv2,k,j,i) = numflux[mrvv];
 	 Fx(mrv3,k,j,i) = numflux[mrvw];
 	 Fx(meto,k,j,i) = numflux[meto];
-	 Fx(mxc ,k,j,i) = numflux[muxc];
 	 //Fx(mbm1,k,j,i) = numflux[mbmu];
 	 Fx(mbm2,k,j,i) = numflux[mbmv];
 	 Fx(mbm3,k,j,i) = numflux[mbmw];
@@ -669,7 +655,6 @@ void GetNumericalFlux2(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Clefte[mubu] = Plefte[nbm2]; // b_y
 	Clefte[mubv] = Plefte[nbm3]; // b_z
 	Clefte[mubp] = Plefte[nbps]; // psi
-	Clefte[muxc] = Plefte[nxc]*Plefte[nden]; // rho*Xcomp
 	
         double  ptl = Plefte[npre] + ( Plefte[nbm1]*Plefte[nbm1]
                                       +Plefte[nbm2]*Plefte[nbm2]
@@ -693,7 +678,6 @@ void GetNumericalFlux2(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Clefte[mfbv] =  Plefte[nbm3]*Plefte[nve2]
 	              - Plefte[nve3]*Plefte[nbm2];
 	Clefte[mfbp] = 0.0e0;  // psi
-	Clefte[mfxc] = Plefte[nden]*Plefte[nxc]*Plefte[nve1]; // (rho*X)*v_x
      
 	double css = Plefte[ncsp]*Plefte[ncsp];
         double cts =  css // c_s^2*c_a^2;
@@ -738,7 +722,6 @@ void GetNumericalFlux2(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Crigte[mubu] = Prigte[nbm2]; // b_y
 	Crigte[mubv] = Prigte[nbm3]; // b_z
 	Crigte[mubp] = Prigte[nbps]; // psi
-	Crigte[muxc] = Prigte[nxc]*Prigte[nden]; // rho*Xcomp
 	// total pressure
                  ptl = Prigte[npre] + ( Prigte[nbm1]*Prigte[nbm1]
                                        +Prigte[nbm2]*Prigte[nbm2]
@@ -763,7 +746,6 @@ void GetNumericalFlux2(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Crigte[mfbv] =  Prigte[nbm3]*Prigte[nve2]
 	               -Prigte[nve3]*Prigte[nbm2];
 	Crigte[mfbp] = 0.0e0;  // psi
-	Crigte[mfxc] = Prigte[nden]*Prigte[nxc]*Prigte[nve1]; // (rho*X)*v_x
      
 	       css = Prigte[ncsp]*Prigte[ncsp];
                cts =  css // c_s^2*c_a^2;
@@ -785,7 +767,6 @@ void GetNumericalFlux2(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	 Fy(mrv2,k,j,i) = numflux[mrvu];
 	 Fy(mrv3,k,j,i) = numflux[mrvv];
 	 Fy(meto,k,j,i) = numflux[meto];
-	 Fy(mxc ,k,j,i) = numflux[muxc];
 	 Fy(mbm1,k,j,i) = numflux[mbmw];
 	 //Fx(mbm2,k,j,i) = numflux[mbmu];
 	 Fy(mbm3,k,j,i) = numflux[mbmv];
@@ -848,7 +829,6 @@ void GetNumericalFlux3(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Clefte[mubw] = Plefte[nbm2]; // b_y
 	Clefte[mubu] = Plefte[nbm3]; // b_z
 	Clefte[mubp] = Plefte[nbps]; // psi
-	Clefte[muxc] = Plefte[nxc]*Plefte[nden]; // rho*Xcomp
 	
         double  ptl = Plefte[npre] + ( Plefte[nbm1]*Plefte[nbm1]
                                       +Plefte[nbm2]*Plefte[nbm2]
@@ -872,7 +852,6 @@ void GetNumericalFlux3(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	              - Plefte[nve2]*Plefte[nbm3];
 	Clefte[mfbu] = 0.0e0;
 	Clefte[mfbp] = 0.0e0;  // psi
-	Clefte[mfxc] = Plefte[nden]*Plefte[nxc]*Plefte[nve1]; // (rho*X)*v_x
      
 	double css = Plefte[ncsp]*Plefte[ncsp];
         double cts =  css // c_s^2*c_a^2;
@@ -917,7 +896,6 @@ void GetNumericalFlux3(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Crigte[mubw] = Prigte[nbm2]; // b_y
 	Crigte[mubu] = Prigte[nbm3]; // b_z
 	Crigte[mubp] = Prigte[nbps]; // psi
-	Crigte[muxc] = Prigte[nxc]*Prigte[nden]; // rho*Xcomp
 	// total pressure
                  ptl = Prigte[npre] + ( Prigte[nbm1]*Prigte[nbm1]
                                        +Prigte[nbm2]*Prigte[nbm2]
@@ -942,7 +920,6 @@ void GetNumericalFlux3(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	               -Prigte[nve2]*Prigte[nbm3];
 	Crigte[mfbu] = 0.0e0;
 	Crigte[mfbp] = 0.0e0;  // psi
-	Crigte[mfxc] = Prigte[nden]*Prigte[nxc]*Prigte[nve1]; // (rho*X)*v_x
      
 	       css = Prigte[ncsp]*Prigte[ncsp];
                cts =  css // c_s^2*c_a^2;
@@ -964,7 +941,6 @@ void GetNumericalFlux3(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	 Fz(mrv2,k,j,i) = numflux[mrvw];
 	 Fz(mrv3,k,j,i) = numflux[mrvu];
 	 Fz(meto,k,j,i) = numflux[meto];
-	 Fz(mxc ,k,j,i) = numflux[muxc];
 	 Fz(mbm1,k,j,i) = numflux[mbmv];
 	 Fz(mbm2,k,j,i) = numflux[mbmw];
 	 //Fz(mbm3,k,j,i) = numflux[mbm];
@@ -1023,7 +999,6 @@ void UpdatePrimitvP(const FieldArray<double>& U,FieldArray<double>& P){
 	 P(nbm2,k,j,i) =  U(mbm2,k,j,i);
 	 P(nbm3,k,j,i) =  U(mbm3,k,j,i);
 	 P(nbps,k,j,i) =  U(mbps,k,j,i);
-	 P(nxc ,k,j,i) =  U(mxc ,k,j,i)/U(mden,k,j,i);
 	 
       }
 }

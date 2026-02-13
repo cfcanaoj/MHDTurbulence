@@ -1,5 +1,5 @@
-#ifndef MPI_DATAIO_HPP_
-#define MPI_DATAIO_HPP_
+#ifndef OUTPUT_HPP_
+#define OUTPUT_HPP_
 
 #include "mpi_config.hpp"
 namespace mpi = mpi_config_mod;
@@ -61,6 +61,12 @@ namespace mpi_dataio_mod {
   extern int npart[mpi::ndim];
   extern int nvars, nvarg;
 
+  // Follow the Fortran version (output.f90):
+  //   logical,parameter :: binaryout = .true.
+  // If true  -> MPI binary output (+ XMF)
+  // If false -> ASCII output (unf%05d.dat)
+  extern bool binaryout;
+
   extern GridArray<double> gridXout;
   extern GridArray<double> gridYout;
   extern GridArray<double> gridZout;
@@ -68,6 +74,14 @@ namespace mpi_dataio_mod {
   extern FieldArray<double> Fieldout;
 
   void MPIOutputBindary(int timeid);  
+
+  // ASCII output for quick check (like Fortran's ASC_WRITE). This writes only
+  // a small header file `bindata/unf%05d.dat` with time/dt and local sizes.
+  void ASC_WRITE(int timeid, double time, double dt,
+                 int ngrid1_local, int ngrid2_local, int ngrid3_local);
 }
+void Output1D(bool is_final);
+void Output(bool is_final);
+
 
 #endif 
