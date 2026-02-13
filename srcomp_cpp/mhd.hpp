@@ -118,7 +118,8 @@ namespace hydflux_mod {
   extern FieldArray<double> P; //! P(nprim ,ktot,jtot,itot)
   extern FieldArray<double> U; //! U(mconsv,ktot,jtot,itot)
   extern FieldArray<double> Fx,Fy,Fz;
-  extern double csiso;
+  //extern double csiso;
+  extern double gam;
   extern double chg;
   
   void AllocateHydroVariables(GridArray<double>& G,FieldArray<double>& U,FieldArray<double>& Fx,FieldArray<double>& Fy,FieldArray<double>& Fz,FieldArray<double>& P);

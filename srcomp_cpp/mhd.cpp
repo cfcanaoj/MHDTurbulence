@@ -23,8 +23,10 @@ namespace hydflux_mod {
   FieldArray<double> U; //! U(mconsv,ktot,jtot,itot)
   FieldArray<double> Fx,Fy,Fz;
   FieldArray<double> P; //! P(nprim,ktot,jtot,itot)
-  double csiso;
   double chg;
+  double gam = 1.4;// adiabatic
+  //  double csiso; // isothermal
+   
 #pragma omp end declare target
 
 auto assoc = [&](void* host_ptr, size_t bytes, int dev) {
@@ -1060,8 +1062,10 @@ void UpdatePrimitvP(const FieldArray<double>& U,FieldArray<double>& P){
 			      +U(mbm2,k,j,i)*U(mbm2,k,j,i)
 			      +U(mbm3,k,j,i)*U(mbm3,k,j,i));
          P(nene,k,j,i) =  (U(meto,k,j,i)-ekin-emag)/U(mden,k,j,i);//specific internal energy
-	 P(npre,k,j,i) =  U(mden,k,j,i) * csiso * csiso;
-	 P(ncsp,k,j,i) =  csiso;
+	 //P(npre,k,j,i) =  U(mden,k,j,i) * csiso * csiso;
+         P(npre,k,j,i) = P(nene,k,j,i) * P(nden,k,j,i) * (gam-1.0); 
+	 //P(ncsp,k,j,i) =  csiso;
+	 P(ncsp,k,j,i) = sqrt(P(nene,k,j,i) * gam * (gam-1.0));
 	 P(nbm1,k,j,i) =  U(mbm1,k,j,i);
 	 P(nbm2,k,j,i) =  U(mbm2,k,j,i);
 	 P(nbm3,k,j,i) =  U(mbm3,k,j,i);

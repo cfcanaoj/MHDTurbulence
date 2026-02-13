@@ -89,9 +89,11 @@ static void GenerateProblem(hydflux_mod::GridArray<double>& G,hydflux_mod::Field
   const double rrv = 1.0e-2;
 
   // Isothermal: choose csiso so that p = rho*csiso^2 matches Fortran p=1 when rho=1
-  csiso = 1.0;
+  //csiso = 1.0;
+  //#pragma omp target update to (csiso)
+  
   chg   = 0.0;
-#pragma omp target update to (csiso, chg)
+#pragma omp target update to (chg)
 
   // Base profile (fill including ghost cells to avoid uninitialized values)
   for (int k = ks-ngh; k <= ke+ngh; ++k)
@@ -117,10 +119,11 @@ static void GenerateProblem(hydflux_mod::GridArray<double>& G,hydflux_mod::Field
         P(nbm3,k,j,i) = 0.0;
         P(nbps,k,j,i) = 0.0;
 
-        P(ncsp,k,j,i) = csiso;
         // specific internal energy is not used in the isothermal closure, but keep it consistent
-        P(nene,k,j,i) = P(npre,k,j,i) / P(nden,k,j,i);
-
+        P(nene,k,j,i) = P(npre,k,j,i) /(gam-1.0);
+	P(ncsp,k,j,i) = sqrt(P(npre,k,j,i)/P(nden,k,j,i));
+	  
+	  //P(ncsp,k,j,i) = csiso;
         // Composition (Fortran: Xcomp(1)=0.5*(tanh((y+0.5)/wid)-tanh((y-0.5)/wid)))
         for (int n=0; n<ncomp; ++n) {
           (void)n; // for future multi-comp extension
