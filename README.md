@@ -142,10 +142,7 @@ Check `output.f90` as follows.
 ```
 The data is damped as `bindata/unf?????.dat`, `bindata/field?????.bin`, `bindata/grid1D.bin`, `bindata/grid2D.bin`, and `bindata/grid3D.bin`. 
 
----
-## Analysis
-
-### Build the analysis tool
+#### Build the analysis tool
 
 ```bash
 cd ../analysis
@@ -168,7 +165,7 @@ sbatch sj_g00_ana.sh
 
 Outputs are saved in `output/`.
 
-### 2D plots and animation
+#### 2D plots and animation
 
 Copy `bindata/` and `output/` to the analysis server and:
 
@@ -179,13 +176,10 @@ make movie
 
 Images are saved in `figures/`, movies in `movie/anivor`.
 
-### Spectrum
+#### Spectrum
 
 ```bash
 make spectrum
 ```
 
 ---
-
-# Results
-Typical results are shown [here](https://www.notion.so/Turbulence-Studies-numerical-experiments-e4836ad642684f8f992d54a1f7e22635).
