@@ -83,15 +83,12 @@ namespace mpi_dataio_mod {
   // bindata/grid*D.bin and bindata/field%05d.bin.
   void WriteXDMF(double time, int nout);
 
-  // ASCII snapshot output similar to Fortran ASC_WRITE:
-  // ascdata/snap%03d-%05d.csv (per MPI rank)
-  void ASC_Write(int nout);
-
 }
 
 void Output(bool is_forced);
 
-// Backward-compatible wrapper (older code called ASC_WRITE at global scope)
-inline void ASC_WRITE(int nout) { mpi_dataio_mod::ASC_Write(nout); }
+// ASCII snapshot output:
+// ascdata/snap%03d-%05d.csv (per MPI rank)
+void ASC_write(int nout);
 
 #endif 
