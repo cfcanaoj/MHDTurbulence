@@ -13,7 +13,7 @@
 #include <chrono>
 
 #include "resolution.hpp"
-#include "hydro.hpp"
+#include "mhd.hpp"
 #include "boundary.hpp"
 
 #include "main.hpp"

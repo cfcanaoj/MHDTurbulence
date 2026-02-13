@@ -11,7 +11,7 @@
 #include<sys/stat.h>
 #include "mpi_config.hpp"
 #include "output.hpp"
-#include "hydro.hpp"
+#include "mhd.hpp"
 #include "resolution.hpp"
 
 // ==================================================

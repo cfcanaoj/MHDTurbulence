@@ -1,5 +1,5 @@
 /**
- * @file hydro.cpp
+ * @file mhd.cpp
  * @brief 
  * @author Tomoya Takiwaki
  * @date 2025-08-21
@@ -11,7 +11,7 @@
 #include <omp.h>
 
 #include "resolution.hpp"
-#include "hydro.hpp"
+#include "mhd.hpp"
 
 #include "mpi_config.hpp"
 

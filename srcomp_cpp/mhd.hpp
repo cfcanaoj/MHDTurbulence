@@ -1,11 +1,11 @@
 /**
- * @file hydro.cpp
+ * @file mhd.cpp
  * @brief 
  * @author Tomoya Takiwaki
  * @date 2025-08-21
 */
-#ifndef HYDRO_HPP_
-#define HYDRO_HPP_
+#ifndef MHD_HPP_
+#define MHD_HPP_
 
 #include <cmath>
 #include <cstdio>

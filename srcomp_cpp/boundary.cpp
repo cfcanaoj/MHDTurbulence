@@ -14,7 +14,7 @@
 #include <omp.h>
 
 #include "resolution.hpp"
-#include "hydro.hpp"
+#include "mhd.hpp"
 #include "boundary.hpp"
 
 #include "mpi_config.hpp"

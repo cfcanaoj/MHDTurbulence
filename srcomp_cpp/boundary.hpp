@@ -7,7 +7,7 @@
 #ifndef BOUNDARY_HPP_
 #define BOUNDARY_HPP_
 
-#include "hydro.hpp"
+#include "mhd.hpp"
 using namespace hydflux_mod;
 
 namespace boundary_mod {
