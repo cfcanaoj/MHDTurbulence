@@ -76,9 +76,22 @@ namespace mpi_dataio_mod {
   void MPI_IO_Pack(int timeid);  
   void MPI_IO_Write(int timeid);  
 
+  // ==================================================
+  // Fortran-compatible I/O helpers (see output.f90)
+  // ==================================================
+  // Called only by rank0: emits bindata/field%05d.xmf that points to
+  // bindata/grid*D.bin and bindata/field%05d.bin.
+  void WriteXDMF(double time, int nout);
+
+  // ASCII snapshot output similar to Fortran ASC_WRITE:
+  // ascdata/snap%03d-%05d.csv (per MPI rank)
+  void ASC_Write(int nout);
+
 }
 
 void Output(bool is_forced);
-void ASC_WRITE(int timeid);
+
+// Backward-compatible wrapper (older code called ASC_WRITE at global scope)
+inline void ASC_WRITE(int nout) { mpi_dataio_mod::ASC_Write(nout); }
 
 #endif 
