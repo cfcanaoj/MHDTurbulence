@@ -35,15 +35,25 @@ namespace mpi_dataio_mod {
   int Asize[4], Ssize[4], Start[4];
   MPI_Offset idisp = 0;
 
+  // NOTE:
+  //   MPI_Type_create_subarray expects:
+  //     Asize  = global array sizes in the file
+  //     Ssize  = this-rank local array sizes
+  //     Start  = this-rank offsets in the global array
+  //   In the grid writers below, Ssize must be the local chunk (npart + edge)
+  //   rather than the global ntotal, otherwise Start+Ssize exceeds Asize
+  //   for ranks with coords>0, which triggers MPI_ERR_ARG.
+
   // ============ Grid 1D ============
   if (!is_inited) {
-    Asize[0] = nvarg; Ssize[0] = nvarg; Start[0] = 0;
+    Asize[0] = nvarg;            Start[0] = 0;
     Asize[1] = ntotal[dir1] + 1;
-    Ssize[1] = ntotal[dir1];
-    if(coords[dir1]==ntiles[dir1]-1) Ssize[1] += 1;
+    Ssize[0] = nvarg;
+    Ssize[1] = npart[dir1];
+    if (coords[dir1] == ntiles[dir1] - 1) Ssize[1] += 1; // include the last edge
     Start[1] = npart[dir1] * coords[dir1];
 
-    MPI_Type_create_subarray(2, Asize, Ssize, Start, MPI_ORDER_C,MPI_DOUBLE, &SAG1D);
+    MPI_Type_create_subarray(2, Asize, Ssize, Start, MPI_ORDER_C, MPI_DOUBLE, &SAG1D);
     MPI_Type_commit(&SAG1D);
 
     std::string fpath = std::string(datadir) + "g1d" + id;
@@ -59,13 +69,14 @@ namespace mpi_dataio_mod {
 
   // ============ Grid 2D ============
   if (!is_inited) {
-    Asize[0] = nvarg; Ssize[0] = nvarg; Start[0] = 0;
+    Asize[0] = nvarg;            Start[0] = 0;
     Asize[1] = ntotal[dir2] + 1;
-    Ssize[1] = ntotal[dir2];
-    if(coords[dir2]==ntiles[dir2]-1) Ssize[1] += 1;
-    Start[1] = npart[1] * coords[1];
+    Ssize[0] = nvarg;
+    Ssize[1] = npart[dir2];
+    if (coords[dir2] == ntiles[dir2] - 1) Ssize[1] += 1;
+    Start[1] = npart[dir2] * coords[dir2];
 
-    MPI_Type_create_subarray(2, Asize, Ssize, Start, MPI_ORDER_C,MPI_DOUBLE, &SAG2D);
+    MPI_Type_create_subarray(2, Asize, Ssize, Start, MPI_ORDER_C, MPI_DOUBLE, &SAG2D);
     MPI_Type_commit(&SAG2D);
 
     std::string fpath = std::string(datadir) + "g2d" + id;
@@ -81,13 +92,15 @@ namespace mpi_dataio_mod {
 
   // ============ Grid 3D ============
   if (!is_inited) {
-    Asize[0] = nvarg; Ssize[0] = nvarg; Start[0] = 0;
+    Asize[0] = nvarg;            Start[0] = 0;
     Asize[1] = ntotal[dir3] + 1;
-    Ssize[1] = ntotal[dir3];
-    if(coords[dir3]==ntiles[dir3]-1) Ssize[1] += 1;
+    Ssize[0] = nvarg;
+    Ssize[1] = npart[dir3];
+    if (coords[dir3] == ntiles[dir3] - 1) Ssize[1] += 1;
     Start[1] = npart[dir3] * coords[dir3];
 
-    MPI_Type_create_subarray(2, Asize, Ssize, Start, MPI_ORDER_FORTRAN,MPI_DOUBLE, &SAG3D);
+    // GridArray is stored in C order: data[(n)*n1+i]
+    MPI_Type_create_subarray(2, Asize, Ssize, Start, MPI_ORDER_C, MPI_DOUBLE, &SAG3D);
     MPI_Type_commit(&SAG3D);
 
     std::string fpath = std::string(datadir) + "g3d" + id;
@@ -108,7 +121,8 @@ namespace mpi_dataio_mod {
     Asize[2] = ntotal[1]; Ssize[2] = npart[1]; Start[2] = npart[1] * coords[1];
     Asize[3] = ntotal[2]; Ssize[3] = npart[2]; Start[3] = npart[2] * coords[2];
 
-    MPI_Type_create_subarray(4, Asize, Ssize, Start, MPI_ORDER_FORTRAN,
+    // FieldArray is stored in C order: data[((n*n3 + k)*n2 + j)*n1 + i]
+    MPI_Type_create_subarray(4, Asize, Ssize, Start, MPI_ORDER_C,
                              MPI_DOUBLE, &SAD3D);
     MPI_Type_commit(&SAD3D);
   }
