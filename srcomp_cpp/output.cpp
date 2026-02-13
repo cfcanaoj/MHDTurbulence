@@ -40,17 +40,6 @@ namespace mpi_dataio_mod {
   
   char datadir[10] = "bindata/"; 
 
-  namespace {
-    inline void makedirs(const char* outdir){
-      (void)mkdir(outdir, 0777);
-    }
-    inline std::string zpad_int(int v, int width){
-      std::ostringstream os;
-      os << std::setw(width) << std::setfill('0') << v;
-      return os.str();
-    }
-  } // anonymous namespace
-
   // -------------------- helpers --------------------
   static inline void makedirs(const char* dir){
     // best-effort
