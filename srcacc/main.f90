@@ -6,7 +6,8 @@ program main
   implicit none
   real(8)::time_begin,time_end
   logical::is_final
-  logical,parameter::nooutput=.true.
+  logical,parameter::nooutput=.false.
+  logical,parameter:: forceoutput=.true., usualoutput=.false.
   data is_final /.false./
   call InitializeMPI
   if(myid_w == 0) print *, "setup grids and fields"
@@ -15,6 +16,7 @@ program main
   call GenerateGrid
   call GenerateProblem
   call ConsvVariable
+  call Output(forceoutput)  
   if(myid_w == 0) print *, "entering main loop"
 ! main loop
   if(myid_w == 0 .and. .not. nooutput )                        print *,"step ","time ","dt"
@@ -24,6 +26,7 @@ program main
      if(mod(nhy,nhydis) .eq. 0  .and. .not. nooutput .and. myid_w == 0) print *,nhy,time,dt
      call BoundaryCondition
      call StateVevtor
+     call GravForce
      call EvaulateCh
      call NumericalFlux1
      call NumericalFlux2
@@ -32,7 +35,7 @@ program main
      call DampPsi
      call PrimVariable
      time=time+dt
-     if(.not. nooutput ) call Output(.false.)
+     if(.not. nooutput ) call Output(usualoutput)
      if(time > timemax) exit mloop
   enddo mloop
 
@@ -42,7 +45,7 @@ program main
   if(myid_w == 0) print *, "time/count/cell", (time_end-time_begin)/(ngrid1*ngrid2*ngrid3)/nhymax
   
   is_final = .true.
-  call Output(.true.)
+  call Output(forceoutput)
 
   call FinalizeMPI
   if(myid_w == 0) print *, "program has been finished"
@@ -101,7 +104,7 @@ subroutine GenerateGrid
 !$acc update device (x1a,x1b)
 !$acc update device (x2a,x2b)
 !$acc update device (x3a,x3b)
-  
+
   return
 end subroutine GenerateGrid
 
@@ -113,91 +116,87 @@ subroutine GenerateProblem
   implicit none
   integer::i,j,k
 
-  real(8),parameter::pi=acos(-1.0d0)
-
-  real(8)::Ahl,Bhl,Chl
-  real(8),parameter::k_ini=2.0d0
+  real(8):: pi
+  real(8):: den, B0, rho1, rho2, dv, wid, sig
+ 
+  integer,dimension(2) :: seed
+  real(8),dimension(1) :: rnum
+  real(8),parameter :: rrv =1.0d-2
   
-  real(8),parameter:: ekin = 2.0d0
-  real(8),parameter:: emag = 2.0d0
-  real(8),parameter:: eint = 1.0d0
-  real(8),parameter:: d0 = 1.0d0
-  real(8),parameter:: v0 = sqrt(ekin*2.d0/d0)
-  real(8),parameter:: b0 = sqrt(emag*2.0)
-  real(8)          :: p0
-  real(8),parameter:: eps = 1.0d-1
-  real(8),parameter:: deltax = 0.1d0,deltay = 0.2d0,deltaz = 0.3d0 ! randam phase
+  pi = dacos(-1.0d0)
+  
+  rho1 = 1.0d0
+  rho2 = 1.0d0
+  dv   = 2.00d0
+  wid  = 0.05d0
+  sig  = 0.2d0
+  B0  = dsqrt(2.0d0/3.0d0)
+ 
+  do k=ks-mgn,ke+mgn
+  do j=js-mgn,je+mgn
+  do i=is-mgn,ie+mgn
+     d(i,j,k) = 1.0d0
+     p(i,j,k) = 1.0d0
+     v1(i,j,k) = 0.5d0 * dv *( dtanh( (x2b(j)+0.5d0)/wid ) - dtanh( (x2b(j) - 0.5d0)/wid ) - 1.0d0 )
+     v2(i,j,k) =  0.001d0*dsin(2.0d0*pi*x1b(i))* &
+    &         ( dexp( - (x2b(j) + 0.5d0)**2/sig**2 ) +  &
+    &           dexp( - (x2b(j) - 0.5d0)**2/sig**2 ) )
+     v3(i,j,k) = 0.0d0
+     b1(i,j,k) = B0*0.0d0
+     b2(i,j,k) = 0.0d0
+     b3(i,j,k) = 0.0d0
+     bp(i,j,k) = 0.0d0
+     Xcomp(1,i,j,k) =  0.5d0*( dtanh( (x2b(j)+0.5d0)/wid ) - tanh( (x2b(j)-0.5d0)/wid) )
+  enddo
+  enddo
+  enddo
 
-  integer::seedsize
-  integer,allocatable:: seed(:)
-  real(8)::x
+  do k=ks-mgn,ke+mgn
+  do j=js-mgn,je+mgn
+  do i=is-mgn,ie+mgn
+     gp(i,j,k) = 0.0d0
+  enddo
+  enddo
+  enddo
 
-  call random_seed(size=seedsize)
-!  print *,"seed size",seedsize
-  allocate(seed(seedsize))  
-  call random_seed(get=seed)
 
-      Ahl = 0.5d0
-      Bhl = 0.5d0
-      Chl = 0.5d0
+  if(myid_w == 0) write(6,*) rrv*100.0d0 &
+       & , "% of Randam Perturbation imposed on velocity"
+  seed(1) = 1
+  seed(2) = 1 + myid_w*in*jn*kn
+  call random_seed(PUT=seed(1:2))
+  
+! pert     
+  do k=ks,ke 
+  do j=js,je
+     call random_number(rnum)
+  do i=is,ie
+     v1(i,j,k)= v1(i,j,k) + dv*rrv*(rnum(1)-0.5d0) 
+  enddo
+  enddo
+  enddo
 
-      d(:,:,:) = d0
+  do k=ks,ke
+  do j=js,je
+  do i=is,ie
 ! adiabatic
-!       p0= eint/(gam-1.0d0)
+     ei(i,j,k) = p(i,j,k)/(gam-1.0d0)
+     cs(i,j,k) = sqrt(gam*p(i,j,k)/d(i,j,k))
 ! isotermal
-       csiso= sqrt(eint/d0)
-       p0 = d0 *csiso**2       
-!$acc update device (csiso)
-       
-      do k=ks,ke
-      do j=js,je
-      do i=is,ie
-         v1(i,j,k) = v0*(  Ahl*sin(2.0d0*pi*(k_ini*x3b(k)/(x3max-x3min)+deltaz)) &
-   &                     + Chl*cos(2.0d0*pi*(k_ini*x2b(j)/(x2max-x2min)+deltay)))
-         v2(i,j,k) = v0*(  Bhl*sin(2.0d0*pi*(k_ini*x1b(i)/(x1max-x1min)+deltax)) &
-   &                     + Ahl*cos(2.0d0*pi*(k_ini*x3b(k)/(x3max-x3min)+deltaz)))
-         v3(i,j,k) = v0*(  Chl*sin(2.0d0*pi*(k_ini*x2b(j)/(x2max-x2min)+deltay)) &
-   &                     + Bhl*cos(2.0d0*pi*(k_ini*x1b(i)/(x1max-x1min)+deltax)))
-
-          p(i,j,k) = p0
-
-         b1(i,j,k) = b0*(  Ahl*sin(2.0d0*pi*(k_ini*x3b(k)/(x3max-x3min))) &
-   &                     + Chl*cos(2.0d0*pi*(k_ini*x2b(j)/(x2max-x2min))))
-         b2(i,j,k) = b0*(  Bhl*sin(2.0d0*pi*(k_ini*x1b(i)/(x1max-x1min))) &
-   &                     + Ahl*cos(2.0d0*pi*(k_ini*x3b(k)/(x3max-x3min))))
-         b3(i,j,k) = b0*(  Chl*sin(2.0d0*pi*(k_ini*x2b(j)/(x2max-x2min))) &
-   &                     + Bhl*cos(2.0d0*pi*(k_ini*x1b(i)/(x1max-x1min))))
-
-         call random_number(x)
-         v1(i,j,k) = v1(i,j,k)*(1.0d0+eps*(x-0.5d0))
-         call random_number(x)
-         v2(i,j,k) = v2(i,j,k)*(1.0d0+eps*(x-0.5d0))
-         call random_number(x)
-         v3(i,j,k) = v3(i,j,k)*(1.0d0+eps*(x-0.5d0))
-      enddo
-      enddo
-      enddo
-
-
-      do k=ks,ke
-      do j=js,je
-      do i=is,ie
-! adiabatic
-!          ei(i,j,k) = p(i,j,k)/(gam-1.0d0)
-!          cs(i,j,k) = sqrt(gam*p(i,j,k)/d(i,j,k))
-! isotermal
-          ei(i,j,k) = p(i,j,k)
-          cs(i,j,k) = csiso
-      enddo
-      enddo
-      enddo
+!          ei(i,j,k) = p(i,j,k)
+!          cs(i,j,k) = csiso
+  enddo
+  enddo
+  enddo
       
-      if(myid_w ==0 )print *,"initial profile is set"
-      call BoundaryCondition
+  if(myid_w ==0 )print *,"initial profile is set"
+  call BoundaryCondition
 
 !$acc update device (d,v1,v2,v3)
 !$acc update device (p,ei,cs)
 !$acc update device (b1,b2,b3,bp)
+!$acc update device (gp)
+!$acc update device (Xcomp)
       
   return
 end subroutine GenerateProblem

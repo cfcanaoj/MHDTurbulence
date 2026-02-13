@@ -78,8 +78,12 @@ subroutine InitializeMPI
      print *, "num of GPUs = ", ngpus
   end if
 
-  gpuid = mod(myid_w, ngpus)
-  if(ngpus == 0) gpuid = -1
+  if(ngpus == 0) then
+     gpuid = -1
+  else
+     gpuid = mod(myid_w, ngpus)
+  endif
+  
   if(gpuid >= 0) then
      call acc_set_device_num(gpuid, acc_device_nvidia)
   end if

@@ -1,16 +1,16 @@
       module basicmod
       implicit none
       integer::nhy
-      integer,parameter::nhymax=3000
+      integer,parameter::nhymax=600000
       integer,parameter::nhydis=nhymax/100
       real(8)::time,dt
       data time / 0.0d0 /
-      real(8),parameter:: timemax=5.0d0
-      real(8),parameter:: dtout=5.0d0/600
+      real(8),parameter:: timemax=15.0d0
+      real(8),parameter:: dtout=timemax/100
 
-      integer,parameter::ngrid1=256
-      integer,parameter::ngrid2=128
-      integer,parameter::ngrid3=128
+      integer,parameter::ngrid1=150
+      integer,parameter::ngrid2=75
+      integer,parameter::ngrid3=75
       integer,parameter::mgn=2
       integer,parameter::in=ngrid1+2*mgn+1 &
      &                  ,jn=ngrid2+2*mgn+1 &
@@ -23,7 +23,7 @@
      &                  ,ke=ngrid3+mgn
 
       real(8),parameter:: x1min=-0.5d0,x1max=0.5d0
-      real(8),parameter:: x2min=-0.5d0,x2max=0.5d0
+      real(8),parameter:: x2min=-1.0d0,x2max=1.0d0
       real(8),parameter:: x3min=-0.5d0,x3max=0.5d0
       real(8),dimension(in)::x1a,x1b
       real(8),dimension(jn)::x2a,x2b
@@ -33,7 +33,13 @@
       real(8),dimension(in,jn,kn)::p,ei,v1,v2,v3,cs
       real(8),dimension(in,jn,kn)::b1,b2,b3,bp
 
-      integer,parameter:: nbc=9
+      real(8),dimension(in,jn,kn)::gp,gp1a,gp2a,gp3a
+      
+      integer,parameter:: ncomp=1 ! composition
+      real(8),dimension(ncomp,in,jn,kn):: DXcomp
+      real(8),dimension(ncomp,in,jn,kn)::  Xcomp
+      
+      integer,parameter:: nbc=9+ncomp
       
 !$acc declare create(ngrid1,ngrid2,ngrid3)
 !$acc declare create(mgn)
@@ -49,6 +55,11 @@
 !$acc declare create(d,et,mv1,mv2,mv3)
 !$acc declare create(p,ei,v1,v2,v3,cs)
 !$acc declare create(b1,b2,b3,bp)
+!$acc declare create(gp,gp1a,gp2a,gp3a)
+
+!$acc declare create(ncomp)
+!$acc declare create(Dxcomp,Xcomp)
+      
 
 !$acc declare create(nbc)
       
@@ -57,37 +68,43 @@
       module eosmod
       implicit none
 ! adiabatic
-!      real(8),parameter::gam=5.0d0/3.0d0 !! adiabatic index
-!!$acc declare create(gam)
+      real(8),parameter::gam=1.4d0!! adiabatic index
+!$acc declare create(gam)
 ! isothermal
-      real(8)::csiso  !! isothemal sound speed
-!$acc declare create(csiso)
+!      real(8)::csiso  !! isothemal sound speed
+!!$acc declare create(csiso)
       end module eosmod
     
       module fluxmod
-      use basicmod, only : in,jn,kn
+      use basicmod, only : in,jn,kn,ncomp
       implicit none
       real(8):: chg
+      integer,parameter::nhyd=11+ncomp
       integer,parameter::nden=1,nve1=2,nve2=3,nve3=4,nene=5,npre=6,ncsp=7 &
-     &                         ,nbm1=8,nbm2=9,nbm3=10,nbps=11
-      integer,parameter::nhyd=11
+           &                   ,nbm1=8,nbm2=9,nbm3=10,nbps=11&
+           &                   ,nst=nhyd-ncomp+1,ned=nhyd ! composition
       real(8),dimension(nhyd,in,jn,kn):: svc
-
-      integer,parameter::mudn= 1,muvu= 2,muvv= 3,muvw= 4,muet= 5 &
-     &                          ,mubu= 6,mubv= 7,mubw= 8,mubp= 9 &
-     &                  ,mfdn=10,mfvu=11,mfvv=12,mfvw=13,mfet=14 &
-     &                          ,mfbu=15,mfbv=16,mfbw=17,mfbp=18 &
-     &                          ,mcsp=19,mvel=20,mpre=21
-      integer,parameter:: mflx=9,madd=3
+      
+      integer,parameter:: mflx=9+ncomp,madd=3
+      integer,parameter::mudn=     1,muvu=     2,muvv=     3,muvw=     4,muet=     5 &
+     &                              ,mubu=     6,mubv=     7,mubw=     8,mubp=     9 &
+     &                  ,mfdn=mflx+1,mfvu=mflx+2,mfvv=mflx+3,mfvw=mflx+4,mfet=mflx+5 &
+     &                              ,mfbu=mflx+6,mfbv=mflx+7,mfbw=mflx+8,mfbp=mflx+9 &
+     &                          ,must=  mflx-ncomp+1,mued=  mflx &! composition
+     &                          ,mfst=2*mflx-ncomp+1,mfed=2*mflx &! composition
+     &                          ,mcsp=2*mflx+1,mvel=2*mflx+2,mpre=2*mflx+3 
 
       integer,parameter:: mden=1,mrv1=2,mrv2=3,mrv3=4,meto=5   &
      &                          ,mrvu=muvu,mrvv=muvv,mrvw=muvw &
      &                          ,mbm1=6,mbm2=7,mbm3=8,mbps=9   &
-     &                          ,mbmu=mubu,mbmv=mubv,mbmw=mubw
+     &                          ,mbmu=mubu,mbmv=mubv,mbmw=mubw &
+     &                          ,mst=mflx-ncomp+1,med=mflx
       real(8),dimension(mflx,in,jn,kn):: nflux1,nflux2,nflux3
+      real(8),dimension(in,jn,kn):: grvsrc1,grvsrc2,grvsrc3
 
 !$acc declare create(chg)
 !$acc declare create(svc,nflux1,nflux2,nflux3)
+!$acc declare create(grvsrc1,grvsrc2,grvsrc3)
       end module fluxmod
       
       subroutine ConsvVariable
@@ -112,6 +129,7 @@
           mv1(i,j,k) =d(i,j,k)*v1(i,j,k)
           mv2(i,j,k) =d(i,j,k)*v2(i,j,k)
           mv3(i,j,k) =d(i,j,k)*v3(i,j,k)
+          DXcomp(1:ncomp,i,j,k) = d(i,j,k)*Xcomp(1:ncomp,i,j,k)
       enddo
       enddo
       enddo
@@ -124,9 +142,9 @@
       use basicmod
       use eosmod  
       implicit none
-      integer::i,j,k
+      integer::i,j,k,n
 !$acc kernels      
-!$acc loop collapse(3) independent
+!$acc loop collapse(3) independent private(n)
       do k=ks,ke
       do j=js,je
       do i=is,ie
@@ -144,11 +162,16 @@
      &                    +b2(i,j,k)**2   &
      &                    +b3(i,j,k)**2)
 ! adiabatic
-!           p(i,j,k) =  ei(i,j,k)*(gam-1.0d0)
-!          cs(i,j,k) =  sqrt(gam*p(i,j,k)/d(i,j,k))
+           p(i,j,k) =  ei(i,j,k)*(gam-1.0d0)
+           cs(i,j,k) =  sqrt(gam*p(i,j,k)/d(i,j,k))
 ! isotermal
-           p(i,j,k) =  d(i,j,k)*csiso**2
-          cs(i,j,k) =  csiso
+!           p(i,j,k) =  d(i,j,k)*csiso**2
+!          cs(i,j,k) =  csiso
+           
+          do n=1,ncomp
+             DXcomp(n,i,j,k) = max(0.0d0,DXcomp(n,i,j,k))
+          enddo
+          Xcomp(1:ncomp,i,j,k) = DXcomp(1:ncomp,i,j,k)/d(i,j,k)
       enddo
       enddo
       enddo
@@ -219,16 +242,18 @@ end subroutine TimestepControl
          svc(nve1,i,j,k) = v1(i,j,k)
          svc(nve2,i,j,k) = v2(i,j,k)
          svc(nve3,i,j,k) = v3(i,j,k)
+         
+         svc(nene,i,j,k) = ei(i,j,k)/d(i,j,k)
+         svc(npre,i,j,k) = ei(i,j,k)*(gam-1.0d0)
+         svc(ncsp,i,j,k) = sqrt(gam*(gam-1.0d0)*ei(i,j,k)/d(i,j,k))
+         p(i,j,k) = svc(npre,i,j,k)  ! for output boundary
+         
          svc(nbm1,i,j,k) = b1(i,j,k)
          svc(nbm2,i,j,k) = b2(i,j,k)
          svc(nbm3,i,j,k) = b3(i,j,k)
          svc(nbps,i,j,k) = bp(i,j,k)
-
-         svc(nene,i,j,k) = csiso**2
-         svc(npre,i,j,k) = d(i,j,k)*csiso**2
-         svc(ncsp,i,j,k) = csiso
-         p(i,j,k) = svc(npre,i,j,k)  ! for output boundary  
-         
+         svc(nst:ned,i,j,k) = Xcomp(1:ncomp,i,j,k)
+            
       enddo
       enddo
       enddo
@@ -348,7 +373,8 @@ end subroutine TimestepControl
          leftco(mubv)=Plefte(nbm2)  ! b_y
          leftco(mubw)=Plefte(nbm3)  ! b_z
          leftco(mubp)=Plefte(nbps)  ! psi
-
+         leftco(must:mued)=Plefte(nst:ned)*Plefte(nden) ! rho X
+         
 ! Flux
          ptl = Plefte(npre) + ( Plefte(nbm1)**2        &
      &                         +Plefte(nbm2)**2        &
@@ -372,7 +398,8 @@ end subroutine TimestepControl
          leftco(mfbw) =  Plefte(nbm3)*Plefte(nve1) &
      &                  -Plefte(nve3)*Plefte(nbm1)
          leftco(mfbp) = 0.0d0  ! psi
-     
+         leftco(mfst:mfed)=Plefte(nden)*Plefte(nst:ned)*Plefte(nve1) ! rho X v
+         
          css =Plefte(ncsp)**2
          cts =  css  & !c_s^2*c_a^2
      &                       +( Plefte(nbm1)**2  &
@@ -416,6 +443,7 @@ end subroutine TimestepControl
          rigtco(mubv)=Prigte(nbm2)  ! b_y
          rigtco(mubw)=Prigte(nbm3)  ! b_z
          rigtco(mubp)=Prigte(nbps)  ! psi
+         rigtco(must:mued)=Prigte(nden)*Prigte(nst:ned) ! rho X
  
 ! Flux
          ptl = Prigte(npre) + ( Prigte(nbm1)**2        &
@@ -440,6 +468,8 @@ end subroutine TimestepControl
          rigtco(mfbw) =  Prigte(nbm3)*Prigte(nve1) &
      &                  -Prigte(nve3)*Prigte(nbm1)
          rigtco(mfbp) = 0.0d0  ! b_z
+         rigtco(mfst:mfed)=Prigte(nden)*Prigte(nst:ned)*Prigte(nve1) ! rho X v
+         
          css = Prigte(ncsp)**2
          cts =  css   &!c_s^2*c_a^2
      &                       +( Prigte(nbm1)**2 &
@@ -465,6 +495,7 @@ end subroutine TimestepControl
          nflux1(mbm1,i,j,k)=nflux(mbmu)
          nflux1(mbm2,i,j,k)=nflux(mbmv)
          nflux1(mbm3,i,j,k)=nflux(mbmw)
+         nflux1(mst:med,i,j,k)=nflux(mst:med)
 
          nflux1(mbm1,i,j,k) =  0.5d0*(leftco(mubp)+rigtco(mubp)) &
      &                    -0.5d0*chg*(rigtco(mubu)-leftco(mubu))        ! finite volume
@@ -534,6 +565,7 @@ end subroutine TimestepControl
          leftco(mubu)=Plefte(nbm2)  ! b_y
          leftco(mubv)=Plefte(nbm3)  ! b_z
          leftco(mubp)=Plefte(nbps)  ! psi
+         leftco(must:mued)=Plefte(nst:ned)*Plefte(nden) ! rho X
 
          ptl = Plefte(npre) + ( Plefte(nbm1)**2        &
      &                         +Plefte(nbm2)**2        &
@@ -557,6 +589,7 @@ end subroutine TimestepControl
          leftco(mfbv) =  Plefte(nbm3)*Plefte(nve2) &
      &                  -Plefte(nve3)*Plefte(nbm2)
          leftco(mfbp) = 0.0d0  ! psi
+         leftco(mfst:mfed)=Plefte(nst:ned)*Plefte(nden)*Plefte(nve2) ! rho X v
      
          css = Plefte(ncsp)**2
          cts =  css  & !c_s^2*c_a^2
@@ -600,7 +633,8 @@ end subroutine TimestepControl
          rigtco(mubu)=Prigte(nbm2)  ! b_y
          rigtco(mubv)=Prigte(nbm3)  ! b_z
          rigtco(mubp)=Prigte(nbps)  ! psi
-
+         rigtco(must:mued)=Prigte(nden)*Prigte(nst:ned) ! rho X v
+         
          ptl = Prigte(npre) + ( Prigte(nbm1)**2 &
      &                         +Prigte(nbm2)**2 &
      &                         +Prigte(nbm3)**2)/2.0d0 
@@ -622,7 +656,8 @@ end subroutine TimestepControl
          rigtco(mfbv) =  Prigte(nbm3)*Prigte(nve2) &
      &                        -Prigte(nve3)*Prigte(nbm2)
          rigtco(mfbp) = 0.0d0  ! psi
-     
+         rigtco(mfst:mfed)=Prigte(nden)*Prigte(nst:ned)*Prigte(nve2) ! rho X v
+         
          css = Prigte(ncsp)**2
          cts =  css  & !c_s^2*c_a^2
      &                       +( Prigte(nbm1)**2 &
@@ -648,6 +683,7 @@ end subroutine TimestepControl
          nflux2(mbm1,i,j,k)=nflux(mbmw)
          nflux2(mbm2,i,j,k)=nflux(mbmu)
          nflux2(mbm3,i,j,k)=nflux(mbmv)
+         nflux2(mst:med,i,j,k)=nflux(mst:med)
 
          nflux2(mbm2,i,j,k) =  0.5d0*(leftco(mubp)+rigtco(mubp)) &
      &                    -0.5d0*chg*(rigtco(mubu)-leftco(mubu))        ! finite volume
@@ -716,7 +752,8 @@ end subroutine TimestepControl
          leftco(mubw)=Plefte(nbm2)  ! b_y
          leftco(mubu)=Plefte(nbm3)  ! b_z
          leftco(mubp)=Plefte(nbps)  ! psi
-
+         leftco(must:mued)=Plefte(nden)*Plefte(nst:ned)
+         
          ptl = Plefte(npre) + ( Plefte(nbm1)**2        &
      &                         +Plefte(nbm2)**2        &
      &                         +Plefte(nbm3)**2)/2.0d0 
@@ -739,6 +776,7 @@ end subroutine TimestepControl
      &                  -Plefte(nve2)*Plefte(nbm3)
          leftco(mfbu) = 0.d0
          leftco(mfbp) = 0.0d0  ! psi
+         leftco(mfst:mfed)=Plefte(nden)*Plefte(nst:ned)*Plefte(nve3)
 
          css = Plefte(ncsp)**2
          cts =  css  & !c_s^2*c_a^2
@@ -782,6 +820,7 @@ end subroutine TimestepControl
          rigtco(mubw)=Prigte(nbm2)  ! b_y
          rigtco(mubu)=Prigte(nbm3)  ! b_z
          rigtco(mubp)=Prigte(nbps)  ! psi
+         rigtco(must:mued)=Prigte(nden)*Prigte(nst:ned)
 
          ptl = Prigte(npre) + ( Prigte(nbm1)**2 &
      &                         +Prigte(nbm2)**2 &
@@ -804,6 +843,7 @@ end subroutine TimestepControl
      &                  -Prigte(nve2)*Prigte(nbm3)
          rigtco(mfbu) = 0.0d0
          rigtco(mfbp) = 0.0d0  ! psi
+         rigtco(mfst:mfed)=Prigte(nden)*Prigte(nst:ned)*Prigte(nve3)
      
          css = Prigte(ncsp)**2
          cts =  css  & !c_s^2*c_a^2
@@ -829,6 +869,7 @@ end subroutine TimestepControl
          nflux3(mbm1,i,j,k)=nflux(mbmv)
          nflux3(mbm2,i,j,k)=nflux(mbmw)
          nflux3(mbm3,i,j,k)=nflux(mbmu)
+         nflux3(mst:med,i,j,k)=nflux(mst:med)
 
          nflux3(mbm3,i,j,k) =  0.5d0*(leftco(mubp)+rigtco(mubp)) &
      &                    -0.5d0*chg*(rigtco(mubu)-leftco(mubu))        ! finite volume
@@ -895,7 +936,8 @@ end subroutine TimestepControl
      &                 , mden,mrvu,mrvv,mrvw,meto &
      &                 , mubu,mubv,mubw,mubp      &
      &                 , mfbu,mfbv,mfbw,mfbp      &
-     &                 , mbmu,mbmv,mbmw
+     &                 , mbmu,mbmv,mbmw &
+     &                 , ncomp, mst, med
 
       implicit none
       real(8),dimension(2*mflx+madd),intent(in)::leftst,rigtst
@@ -911,6 +953,7 @@ end subroutine TimestepControl
       real(8) ::     byl,bzl
       real(8) ::     byr,bzr
       real(8) :: ptst
+      real(8),dimension(ncomp) :: scl,scr
 
 !----- U* ----
 ! qqlst ::  left state
@@ -921,6 +964,7 @@ end subroutine TimestepControl
       real(8) :: rxrst,ryrst,rzrst
       real(8) ::       bylst,bzlst
       real(8) ::       byrst,bzrst
+      real(8),dimension(ncomp) :: sclst,scrst
 
 !----- flux ---
 ! fqql ::  left physical flux
@@ -929,6 +973,7 @@ end subroutine TimestepControl
       real(8) ::           fbyl,fbzl
       real(8) :: fror,frxr,fryr,frzr,feer
       real(8) ::           fbyr,fbzr
+      real(8),dimension(ncomp) :: fscl,fscr
 
 !----- wave speed ---
 ! sl ::  left-going fastest signal velocity
@@ -946,7 +991,7 @@ end subroutine TimestepControl
 ! temporary variables
       real(8) :: sdl,sdr,sdml,sdmr,isdml,isdmr,rosdl,rosdr
       real(8) :: temp
-  
+      real(8),dimension(ncomp) :: scsdl,scsdr
 ! no if
       real(8) :: sign1,maxs1,mins1
       real(8) :: msl,msr
@@ -963,8 +1008,9 @@ end subroutine TimestepControl
         vxl = leftst(muvu)/leftst(mudn)
         vyl = leftst(muvv)/leftst(mudn)
         vzl = leftst(muvw)/leftst(mudn)
+        scl(1:ncomp) = leftst(mst:med)
         byl = leftst(mubv)
-        bzl = leftst(mubv)
+        bzl = leftst(mubw)
         ptl = leftst(mpre)
 
 !---- Right state
@@ -977,8 +1023,9 @@ end subroutine TimestepControl
         vxr = rigtst(muvu)/rigtst(mudn)
         vyr = rigtst(muvv)/rigtst(mudn)
         vzr = rigtst(muvw)/rigtst(mudn)
+        scr(1:ncomp) = rigtst(mst:med)
         byr = rigtst(mubv)
-        bzr = rigtst(mubv)
+        bzr = rigtst(mubw)
         ptr = rigtst(mpre)
 !----- Step 1. ----------------------------------------------------------|
 ! Compute wave left & right wave speed
@@ -1000,6 +1047,7 @@ end subroutine TimestepControl
         frzl = leftst(mfvw)
         fbyl = leftst(mfbv)
         fbzl = leftst(mfbw)    
+        fscl(1:ncomp) = leftst(mflx+mst:mflx+med)
 
 ! Right value
 ! Left value
@@ -1010,6 +1058,7 @@ end subroutine TimestepControl
         frzr = rigtst(mfvw)
         fbyr = rigtst(mfbv)
         fbzr = rigtst(mfbw)
+        fscr(1:ncomp) = rigtst(mflx+mst:mflx+med)
 
 !----- Step 4. ----------------------------------------------------------|
 ! compute middle and alfven wave
@@ -1018,6 +1067,8 @@ end subroutine TimestepControl
         sdr = sr - vxr
         rosdl = rol*sdl
         rosdr = ror*sdr
+        scsdl(1:ncomp) = scl(1:ncomp)*sdl
+        scsdr(1:ncomp) = scr(1:ncomp)*sdr
 
         temp = 1.0d0/(rosdr - rosdl)
 ! Eq. 45
@@ -1062,8 +1113,8 @@ end subroutine TimestepControl
         vzrst = vzr
         rzrst = rorst*vzrst
 
-        byrst = rolst/rol * byr
-        bzrst = rolst/rol * bzr
+        byrst = rorst/ror * byr
+        bzrst = rorst/ror * bzr
            
         eerst = (sdr*eer - ptr*vxr  + ptst*sm  )*isdmr
               
@@ -1092,6 +1143,9 @@ end subroutine TimestepControl
         nflux(mbmw) = (fbzl+msl*(bzlst-bzl))*maxs1 &
      &               +(fbzr+msr*(bzrst-bzr))*mins1
 
+        nflux(mst:med) = &
+     &     (fscl(1:ncomp)+msl*(sclst(1:ncomp)-scl(1:ncomp)))*maxs1 &
+     &    +(fscr(1:ncomp)+msr*(scrst(1:ncomp)-scr(1:ncomp)))*mins1
       return
       end subroutine HLLC
 
@@ -1116,7 +1170,8 @@ end subroutine TimestepControl
      &                 , mden,mrvu,mrvv,mrvw,meto &
      &                 , mubu,mubv,mubw,mubp      &
      &                 , mfbu,mfbv,mfbw,mfbp      &
-     &                 , mbmu,mbmv,mbmw
+     &                 , mbmu,mbmv,mbmw           &
+     &                 , ncomp,mst,med
 
       implicit none
       real(8),dimension(2*mflx+madd),intent(in)::leftst,rigtst
@@ -1132,6 +1187,7 @@ end subroutine TimestepControl
       real(8) :: bxs,byl,bzl
       real(8) ::     byr,bzr
       real(8) :: ptst
+      real(8),dimension(ncomp) :: scl,scr
 
 !----- U* ----
 ! qqlst ::  left state
@@ -1142,6 +1198,7 @@ end subroutine TimestepControl
       real(8) :: rxrst,ryrst,rzrst
       real(8) ::       bylst,bzlst
       real(8) ::       byrst,bzrst
+      real(8),dimension(ncomp) :: sclst,scrst
 
 !----- U** ----
 ! qqlst ::  left state
@@ -1160,6 +1217,7 @@ end subroutine TimestepControl
       real(8) ::           fbyl,fbzl
       real(8) :: fror,frxr,fryr,frzr,feer
       real(8) ::           fbyr,fbzr
+      real(8),dimension(ncomp) :: fscl,fscr
 
 !----- wave speed ---
 ! sl ::  left-going fastest signal velocity
@@ -1198,6 +1256,7 @@ end subroutine TimestepControl
         byl = leftst(mubv)
         bzl = leftst(mubw)
         ptl = leftst(mpre)
+        scl(1:ncomp) = leftst(mst:med)
 
 !---- Right state
         
@@ -1212,6 +1271,7 @@ end subroutine TimestepControl
         byr = rigtst(mubv)
         bzr = rigtst(mubw)
         ptr = rigtst(mpre)
+        scr(1:ncomp) = rigtst(mst:med)
 
 !----- Step 1. ----------------------------------------------------------|
 ! Compute wave left & right wave speed
@@ -1232,6 +1292,7 @@ end subroutine TimestepControl
         frzl = leftst(mfvw)
         fbyl = leftst(mfbv)
         fbzl = leftst(mfbw)
+        fscl(1:ncomp) = leftst(mflx+mst:mflx+med)
 
 ! Right value
         fror = rigtst(mfdn)
@@ -1241,6 +1302,7 @@ end subroutine TimestepControl
         frzr = rigtst(mfvw)
         fbyr = rigtst(mfbv)
         fbzr = rigtst(mfbw)
+        fscr(1:ncomp) = rigtst(mflx+mst:mflx+med)
 
 
 !----- Step 4. ----------------------------------------------------------|
@@ -1280,6 +1342,7 @@ end subroutine TimestepControl
 
            temp = bxs*(sdl-sdml)*itf
            rolst = maxs1*(rosdl*isdml) - mins1*rol
+           sclst(1:ncomp) = rolst/rol*scl(1:ncomp)
            vxlst = maxs1*sm - mins1*vxl
            rxlst = rolst*vxlst
            
@@ -1310,6 +1373,7 @@ end subroutine TimestepControl
            
            temp = bxs*(sdr-sdmr)*itf
            rorst = maxs1*(rosdr*isdmr) - mins1*ror
+           scrst(1:ncomp) = rorst/ror*scr(1:ncomp)
            vxrst = maxs1*sm - mins1*vxr
            rxrst = rorst*vxrst
            
@@ -1402,9 +1466,60 @@ end subroutine TimestepControl
            nflux(mbmw) = (fbzl+(bzlst-bzl)*msl+(bzldst-bzlst)*mslst)*maxs1  &
      &                  +(fbzr+(bzrst-bzr)*msr+(bzrdst-bzrst)*msrst)*mins1
 
+        nflux(mst:med) = &
+     &     (fscl(1:ncomp)+msl*(sclst(1:ncomp)-scl(1:ncomp)))*maxs1 &
+     &    +(fscr(1:ncomp)+msr*(scrst(1:ncomp)-scr(1:ncomp)))*mins1
       return
       end subroutine HLLD
 
+      subroutine GravForce
+      use basicmod
+      use fluxmod
+      implicit none
+      integer :: i,j,k,n
+
+!$acc kernels
+!$acc loop collapse(3) independent
+      do k=ks,ke
+      do j=js,je
+      do i=is,ie+1
+         gp1a(i  ,j,k) = gp(i,j,k) &
+     & - 0.5d0*(gp(i  ,j,k)-gp(i-1,j,k))
+
+         gp1a(i+1,j,k) = gp(i,j,k) &
+     & + 0.5d0*(gp(i+1,j,k)-gp(i  ,j,k))
+
+       grvsrc1(i,j,k) = (gp1a(i+1,j,k)-gp1a(i,j,k))/(x1a(i+1)-x1a(i))*d(i,j,k)
+
+      enddo
+      enddo
+      enddo
+!$acc end kernels
+      
+!$acc kernels
+!$acc loop collapse(3) independent
+      do k=ks,ke
+      do i=is,ie
+      do j=js,je+1
+       grvsrc2(i,j,k) = 0.0d0
+      enddo
+      enddo
+      enddo
+!$acc end kernels
+      
+!$acc kernels
+!$acc loop collapse(3) independent
+      do j=js,je
+      do i=is,ie
+      do k=ks,ke+1
+         grvsrc3(i,j,k) = 0.0d0
+      enddo
+      enddo
+      enddo
+!$acc end kernels
+      return
+      end subroutine  GravForce
+    
       subroutine UpdateConsv
       use basicmod
       use fluxmod
@@ -1429,7 +1544,8 @@ end subroutine TimestepControl
 
          mv1(i,j,k) = mv1(i,j,k) &
      & +dt*( &
-     &  (- nflux1(mrv1,i+1,j,k) &
+     &      +  grvsrc1(i,j,k)                      &
+     & +(- nflux1(mrv1,i+1,j,k) &
      &   + nflux1(mrv1,i  ,j,k))/(x1a(i+1)-x1a(i)) & 
      & +(- nflux2(mrv1,i,j+1,k) &
      &   + nflux2(mrv1,i,j  ,k))/(x2a(j+1)-x2a(j)) & 
@@ -1438,7 +1554,8 @@ end subroutine TimestepControl
      &      )
          mv2(i,j,k) = mv2(i,j,k) &
      & +dt*( &
-     &  (- nflux1(mrv2,i+1,j,k) &
+     &      +  grvsrc2(i,j,k)                      &
+     & +(- nflux1(mrv2,i+1,j,k) &
      &   + nflux1(mrv2,i  ,j,k))/(x1a(i+1)-x1a(i)) & 
      & +(- nflux2(mrv2,i,j+1,k) &
      &   + nflux2(mrv2,i,j  ,k))/(x2a(j+1)-x2a(j)) & 
@@ -1448,7 +1565,8 @@ end subroutine TimestepControl
 
          mv3(i,j,k) = mv3(i,j,k)  &
      & +dt*( &
-     &  (- nflux1(mrv3,i+1,j,k) &
+     &      +  grvsrc3(i,j,k)                      &
+     & +(- nflux1(mrv3,i+1,j,k) &
      &   + nflux1(mrv3,i  ,j,k))/(x1a(i+1)-x1a(i)) & 
      & +(- nflux2(mrv3,i,j+1,k) &
      &   + nflux2(mrv3,i,j  ,k))/(x2a(j+1)-x2a(j)) & 
@@ -1507,6 +1625,15 @@ end subroutine TimestepControl
      &      )
 
 !          print *, i,j,k,bp(i,j,k)
+         DXcomp(1:ncomp,i,j,k) = DXcomp(1:ncomp,i,j,k) &
+     & +dt*( &
+     & +(- nflux1(mst:med,i+1,j,k) &
+     &   + nflux1(mst:med,i  ,j,k))/(x1a(i+1)-x1a(i)) &
+     & +(- nflux2(mst:med,i,j+1,k) &
+     &   + nflux2(mst:med,i,j  ,k))/(x2a(j+1)-x2a(j)) &
+     & +(- nflux3(mst:med,i,j,k+1) &
+     &   + nflux3(mst:med,i,j,k  ))/(x3a(k+1)-x3a(k)) &
+     &      )
       enddo
       enddo
       enddo
