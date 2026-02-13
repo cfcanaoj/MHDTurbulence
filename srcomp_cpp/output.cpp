@@ -36,7 +36,7 @@ namespace mpi_dataio_mod {
   
   static bool is_inited = false;
 
-  bool binaryout = true;
+  bool binaryout = false;
   
   char datadir[10] = "bindata/"; 
 

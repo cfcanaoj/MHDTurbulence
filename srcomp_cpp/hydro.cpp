@@ -159,7 +159,7 @@ void HLLD(const double (&leftst)[2*mconsv+madd],const double (&rigtst)[2*mconsv+
       double  bxs,byl,bzl;
       double      byr,bzr;
       double  ptst;
-
+      double scl[ncomp],scr[ncomp];
 //----- U* ----
 // qqlst ::  left state
 // qqrst :: right state
@@ -169,7 +169,8 @@ void HLLD(const double (&leftst)[2*mconsv+madd],const double (&rigtst)[2*mconsv+
       double  rxrst,ryrst,rzrst;
       double        bylst,bzlst;
       double        byrst,bzrst;
-
+      double sclst[ncomp],scrst[ncomp];
+      
 //----- U** ----
 // qqlst ::  left state
 // qqrst :: right state
@@ -179,7 +180,7 @@ void HLLD(const double (&leftst)[2*mconsv+madd],const double (&rigtst)[2*mconsv+
       double  ryrdst,rzrdst;
       double        byldst,bzldst;
       double        byrdst,bzrdst;
-
+      
 //----- flux ---
 // fqql ::  left physical flux
 // fqqr :: right physical flux
@@ -187,6 +188,7 @@ void HLLD(const double (&leftst)[2*mconsv+madd],const double (&rigtst)[2*mconsv+
       double            fbyl,fbzl;
       double  fror,frxr,fryr,frzr,feer;
       double            fbyr,fbzr;
+      double fscl[ncomp],fscr[ncomp];
 
 //----- wave speed ---
 // sl ::  left-going fastest signal velocity
@@ -225,7 +227,9 @@ void HLLD(const double (&leftst)[2*mconsv+madd],const double (&rigtst)[2*mconsv+
         byl = leftst[mubv];
         bzl = leftst[mubw];
         ptl = leftst[mpre];
-
+	for(int n=0;n<ncomp;n++){
+	  scl[n] = leftst[mst+n];
+	}
 //---- Right state
         
         ror = rigtst[mudn];
@@ -239,7 +243,9 @@ void HLLD(const double (&leftst)[2*mconsv+madd],const double (&rigtst)[2*mconsv+
         byr = rigtst[mubv];
         bzr = rigtst[mubw];
         ptr = rigtst[mpre];
-
+	for(int n=0;n<ncomp;n++){
+	  scr[n] = rigtst[mst+n];
+	}
 //----- Step 1. ----------------------------------------------------------|
 // Compute wave left & right wave speed
 //
@@ -259,6 +265,9 @@ void HLLD(const double (&leftst)[2*mconsv+madd],const double (&rigtst)[2*mconsv+
         frzl = leftst[mfvw];
         fbyl = leftst[mfbv];
         fbzl = leftst[mfbw];
+	for(int n=0;n<ncomp;n++){
+	  fscl[n] = leftst[mfst+n];
+	}
 
 // Right value
         fror = rigtst[mfdn];
@@ -269,6 +278,9 @@ void HLLD(const double (&leftst)[2*mconsv+madd],const double (&rigtst)[2*mconsv+
         fbyr = rigtst[mfbv];
         fbzr = rigtst[mfbw];
 
+	for(int n=0;n<ncomp;n++){
+	  fscr[n] = rigtst[mfst+n];
+	}
 
 //----- Step 4. ----------------------------------------------------------|
 // compute middle and alfven wave
@@ -307,6 +319,9 @@ void HLLD(const double (&leftst)[2*mconsv+madd],const double (&rigtst)[2*mconsv+
 
            temp = bxs*(sdl-sdml)*itf;
            rolst = maxs1*(rosdl*isdml) - mins1*rol;
+	   for(int n=0;n<ncomp;n++){
+	     sclst[n] = rolst/rol*scl[n];
+	   }
            vxlst = maxs1*sm - mins1*vxl;
            rxlst = rolst*vxlst;
            
@@ -337,6 +352,9 @@ void HLLD(const double (&leftst)[2*mconsv+madd],const double (&rigtst)[2*mconsv+
            
            temp = bxs*(sdr-sdmr)*itf;
            rorst = maxs1*(rosdr*isdmr) - mins1*ror;
+	   for(int n=0;n<ncomp;n++){
+	     scrst[n] = rorst/ror*scr[n];
+	   }
            vxrst = maxs1*sm - mins1*vxr;
            rxrst = rorst*vxrst;
            
@@ -428,12 +446,17 @@ void HLLD(const double (&leftst)[2*mconsv+madd],const double (&rigtst)[2*mconsv+
                         +(fbyr+(byrst-byr)*msr+(byrdst-byrst)*msrst)*mins1;
            nflux[mbmw] = (fbzl+(bzlst-bzl)*msl+(bzldst-bzlst)*mslst)*maxs1
                         +(fbzr+(bzrst-bzr)*msr+(bzrdst-bzrst)*msrst)*mins1;
+	   for (int n=0;n<ncomp;n++){
+	     nflux[mst+n] = (fscl[n]+(sclst[n]-scl[n])*msl)*maxs1
+	                   +(fscr[n]+(scrst[n]-scr[n])*msr)*mins1;
+	   }
+
 }
 #pragma omp end declare target
 
 void GetNumericalFlux1(const GridArray<double>&G,const FieldArray<double>& P,FieldArray<double>& Fx){
 
-#pragma omp target teams distribute parallel for collapse(2)
+#pragma omp target teams distribute parallel for collapse(3)
     for (int k=ks; k<=ke; k++)
       for (int j=js; j<=je; j++){
 	for (int i=is; i<=ie+1; i++) {
@@ -481,7 +504,9 @@ void GetNumericalFlux1(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Clefte[mubv] = Plefte[nbm2]; // b_y
 	Clefte[mubw] = Plefte[nbm3]; // b_z
 	Clefte[mubp] = Plefte[nbps]; // psi
-	
+	for(int n=0; n<ncomp;n++){
+	  Clefte[must+n] = Plefte[nden]*Plefte[nst+n]; // composition
+	}
         double  ptl = Plefte[npre] + ( Plefte[nbm1]*Plefte[nbm1]
                                       +Plefte[nbm2]*Plefte[nbm2]
 				      +Plefte[nbm3]*Plefte[nbm3])/2.0e0;
@@ -505,6 +530,9 @@ void GetNumericalFlux1(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	               -Plefte[nve3]*Plefte[nbm1];
 	Clefte[mfbp] = 0.0e0;  // psi
      
+	for(int n=0; n<ncomp;n++){
+	  Clefte[mfst+n] = Plefte[nden]*Plefte[nst+n]*Plefte[nve1]; // composition
+	}
 	double css = Plefte[ncsp]*Plefte[ncsp];
         double cts =  css // c_s^2*c_a^2;
 	     + ( Plefte[nbm1]*Plefte[nbm1]  
@@ -548,6 +576,10 @@ void GetNumericalFlux1(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Crigte[mubv] = Prigte[nbm2]; // b_y
 	Crigte[mubw] = Prigte[nbm3]; // b_z
 	Crigte[mubp] = Prigte[nbps]; // psi
+	
+	for(int n=0; n<ncomp;n++){
+	  Crigte[must+n] = Prigte[nden]*Prigte[nst+n]; // composition
+	}
 	// total pressure
                  ptl = Prigte[npre] + ( Prigte[nbm1]*Prigte[nbm1]
                                        +Prigte[nbm2]*Prigte[nbm2]
@@ -572,6 +604,9 @@ void GetNumericalFlux1(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	               -Prigte[nve3]*Prigte[nbm1];
 	Crigte[mfbp] = 0.0e0;  // psi
      
+	for(int n=0; n<ncomp;n++){
+	  Crigte[mfst+n] = Prigte[nden]*Prigte[nst+n]*Prigte[nve1]; // composition
+	}
 	       css = Prigte[ncsp]*Prigte[ncsp];
                cts =  css // c_s^2*c_a^2;
 	     + ( Prigte[nbm1]*Prigte[nbm1]  
@@ -601,7 +636,9 @@ void GetNumericalFlux1(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	                 -0.5e0*chg*(Crigte[mubu]-Clefte[mubu]);
 	 Fx(mbps,k,j,i) =(0.5e0*    (Clefte[mubu]+Crigte[mubu])
 			  -0.5e0/chg*(Crigte[mubp]-Clefte[mubp]))*chg*chg;
-	 
+	 for(int n=0; n<ncomp;n++){
+	   Fx(mst+n,k,j,i) = numflux[mst+n]; // composition
+	 }
 	}// i-loop
   }// j,k-loop
 }
@@ -609,7 +646,7 @@ void GetNumericalFlux2(const GridArray<double>&G,const FieldArray<double>& P,Fie
   /* | Pleftc1   | Pleftc2 | Prigtc1   | Prigtc2   |              */
   /*                     You are here                             */
     
-#pragma omp target teams distribute parallel for collapse(2)
+#pragma omp target teams distribute parallel for collapse(3)
     for (int k=ks; k<=ke; k++)
       for (int i=is; i<=ie; i++) {
 	for (int j=js; j<=je+1; j++){
@@ -655,6 +692,9 @@ void GetNumericalFlux2(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Clefte[mubu] = Plefte[nbm2]; // b_y
 	Clefte[mubv] = Plefte[nbm3]; // b_z
 	Clefte[mubp] = Plefte[nbps]; // psi
+	for(int n=0; n<ncomp;n++){
+	  Clefte[must+n] = Plefte[nden]*Plefte[nst+n]; // composition
+	}
 	
         double  ptl = Plefte[npre] + ( Plefte[nbm1]*Plefte[nbm1]
                                       +Plefte[nbm2]*Plefte[nbm2]
@@ -678,7 +718,10 @@ void GetNumericalFlux2(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Clefte[mfbv] =  Plefte[nbm3]*Plefte[nve2]
 	              - Plefte[nve3]*Plefte[nbm2];
 	Clefte[mfbp] = 0.0e0;  // psi
-     
+	
+	for(int n=0; n<ncomp;n++){
+	  Clefte[mfst+n] = Plefte[nden]*Plefte[nst+n]*Plefte[nve2]; // composition
+	}
 	double css = Plefte[ncsp]*Plefte[ncsp];
         double cts =  css // c_s^2*c_a^2;
 	     + ( Plefte[nbm1]*Plefte[nbm1]  
@@ -722,6 +765,10 @@ void GetNumericalFlux2(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Crigte[mubu] = Prigte[nbm2]; // b_y
 	Crigte[mubv] = Prigte[nbm3]; // b_z
 	Crigte[mubp] = Prigte[nbps]; // psi
+	
+	for(int n=0; n<ncomp;n++){
+	  Crigte[must+n] = Prigte[nden]*Prigte[nst+n]; // composition
+	}
 	// total pressure
                  ptl = Prigte[npre] + ( Prigte[nbm1]*Prigte[nbm1]
                                        +Prigte[nbm2]*Prigte[nbm2]
@@ -747,6 +794,9 @@ void GetNumericalFlux2(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	               -Prigte[nve3]*Prigte[nbm2];
 	Crigte[mfbp] = 0.0e0;  // psi
      
+	for(int n=0; n<ncomp;n++){
+	  Crigte[mfst+n] = Prigte[nden]*Prigte[nst+n]*Prigte[nve2]; // composition
+	}
 	       css = Prigte[ncsp]*Prigte[ncsp];
                cts =  css // c_s^2*c_a^2;
 	     + ( Prigte[nbm1]*Prigte[nbm1]  
@@ -775,14 +825,16 @@ void GetNumericalFlux2(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	                 -0.5e0*chg*(Crigte[mubu]-Clefte[mubu]);
 	 Fy(mbps,k,j,i) =(0.5e0*    (Clefte[mubu]+Crigte[mubu])
 	        	 -0.5e0/chg*(Crigte[mubp]-Clefte[mubp]))*chg*chg;
-	 
+	 for(int n=0; n<ncomp;n++){
+	   Fy(mst+n,k,j,i) = numflux[mst+n]; // composition
+	 }
 	}// j-loop
   }// k,i-loop
 }
 
 void GetNumericalFlux3(const GridArray<double>&G,const FieldArray<double>& P,FieldArray<double>& Fz){
   
-#pragma omp target teams distribute parallel for collapse(2)
+#pragma omp target teams distribute parallel for collapse(3)
   for (int j=js; j<=je; ++j)
     for (int i=is; i<=ie; ++i){
       for (int k=ks; k<=ke+1; ++k){
@@ -829,7 +881,9 @@ void GetNumericalFlux3(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Clefte[mubw] = Plefte[nbm2]; // b_y
 	Clefte[mubu] = Plefte[nbm3]; // b_z
 	Clefte[mubp] = Plefte[nbps]; // psi
-	
+	for(int n=0; n<ncomp;n++){
+	  Clefte[must+n] = Plefte[nden]*Plefte[nst+n]; // composition
+	}
         double  ptl = Plefte[npre] + ( Plefte[nbm1]*Plefte[nbm1]
                                       +Plefte[nbm2]*Plefte[nbm2]
 				      +Plefte[nbm3]*Plefte[nbm3])/2.0e0;
@@ -852,7 +906,10 @@ void GetNumericalFlux3(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	              - Plefte[nve2]*Plefte[nbm3];
 	Clefte[mfbu] = 0.0e0;
 	Clefte[mfbp] = 0.0e0;  // psi
-     
+	
+	for(int n=0; n<ncomp;n++){
+	  Clefte[mfst+n] = Plefte[nden]*Plefte[nst+n]*Plefte[nve3]; // composition
+	}
 	double css = Plefte[ncsp]*Plefte[ncsp];
         double cts =  css // c_s^2*c_a^2;
 	     + ( Plefte[nbm1]*Plefte[nbm1]  
@@ -896,6 +953,11 @@ void GetNumericalFlux3(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Crigte[mubw] = Prigte[nbm2]; // b_y
 	Crigte[mubu] = Prigte[nbm3]; // b_z
 	Crigte[mubp] = Prigte[nbps]; // psi
+
+	for(int n=0; n<ncomp;n++){
+	  Crigte[must+n] = Prigte[nden]*Prigte[nst+n]; // composition
+	}
+	
 	// total pressure
                  ptl = Prigte[npre] + ( Prigte[nbm1]*Prigte[nbm1]
                                        +Prigte[nbm2]*Prigte[nbm2]
@@ -921,6 +983,9 @@ void GetNumericalFlux3(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	Crigte[mfbu] = 0.0e0;
 	Crigte[mfbp] = 0.0e0;  // psi
      
+	for(int n=0; n<ncomp;n++){
+	  Crigte[mfst+n] = Prigte[nden]*Prigte[nst+n]*Prigte[nve3]; // composition
+	}
 	       css = Prigte[ncsp]*Prigte[ncsp];
                cts =  css // c_s^2*c_a^2;
 	     + ( Prigte[nbm1]*Prigte[nbm1]  
@@ -949,7 +1014,9 @@ void GetNumericalFlux3(const GridArray<double>&G,const FieldArray<double>& P,Fie
 	                 -0.5e0*chg*(Crigte[mubu]-Clefte[mubu]);
 	 Fz(mbps,k,j,i) =(0.5e0*    (Clefte[mubu]+Crigte[mubu])
 	        	 -0.5e0/chg*(Crigte[mubp]-Clefte[mubp]))*chg*chg;
-	 
+	 for(int n=0; n<ncomp;n++){
+	   Fz(mst+n,k,j,i) = numflux[mst+n]; // composition
+	 }
 	}// k-loop
   }// i,j-loop
 
@@ -999,6 +1066,9 @@ void UpdatePrimitvP(const FieldArray<double>& U,FieldArray<double>& P){
 	 P(nbm2,k,j,i) =  U(mbm2,k,j,i);
 	 P(nbm3,k,j,i) =  U(mbm3,k,j,i);
 	 P(nbps,k,j,i) =  U(mbps,k,j,i);
+	 for(int n=0;n<ncomp;n++){
+	   P(nst+n,k,j,i) = U(mst+n,k,j,i)/U(mden,k,j,i);
+	 }
 	 
       }
 }

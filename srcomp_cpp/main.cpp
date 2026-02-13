@@ -71,80 +71,6 @@ static void GenerateProblem(hydflux_mod::GridArray<double>& G,hydflux_mod::Field
   using namespace resolution_mod;
   using namespace hydflux_mod;
 
-  double pi;
-  double Ahl=0.5e0,Bhl=0.5e0,Chl=0.5e0;
-  double k_ini=2.0e0;
-  double ekin = 2.0e0;
-  double emag = 2.0e0;
-  double eint = 1.0e0;
-  double d0 = 1.0e0;
-  double v0;
-  double b0;
-  double p0;
-  double eps = 1.0e-1;
-  double deltax = 0.1e0,deltay = 0.2e0,deltaz = 0.3e0; // randam phase
-
-  pi = acos(-1.0e0);
-  v0 = sqrt(ekin*2.0e0/d0);
-  b0 = sqrt(emag*2.0);
-  //v0 = 0.0e0;
-  //b0 = 0.0e0;
-  csiso = sqrt(eint/d0);
-  p0 = d0*csiso*csiso;  
-  chg = 0.0e0; // this value is not used
-#pragma omp target update to ( csiso,chg)
-
-  //printf("cs=%e",csiso);
-  for (int k=ks; k<=ke; ++k)
-    for (int j=js; j<=je; ++j)
-      for (int i=is; i<=ie; ++i) {
-	double x = G.x1b(i);
-	double y = G.x2b(j);
-	double z = G.x3b(k);
-	  
-	P(nden,k,j,i) = d0;
-	P(nve1,k,j,i) = v0*(  Ahl*sin(2.0*pi*(k_ini*z/(x3max-x3min)+deltaz))
-			     +Chl*cos(2.0*pi*(k_ini*y/(x2max-x2min)+deltay)) );
-	P(nve2,k,j,i) = v0*(  Bhl*sin(2.0*pi*(k_ini*x/(x1max-x1min)+deltax))
-			     +Ahl*cos(2.0*pi*(k_ini*z/(x3max-x3min)+deltaz)) );
-	P(nve3,k,j,i) = v0*(  Chl*sin(2.0*pi*(k_ini*y/(x2max-x2min)+deltay))
-			     +Bhl*cos(2.0*pi*(k_ini*x/(x1max-x1min)+deltax)) );
-	P(nene,k,j,i)  = eint/d0; //specific internel energy	
-	P(npre,k,j,i)  =p0;
-	P(ncsp,k,j,i) = csiso;
-	
-	P(nbm1,k,j,i) = b0*(  Ahl*sin(2.0*pi*(k_ini*z/(x3max-x3min)+deltaz))
-			     +Chl*cos(2.0*pi*(k_ini*y/(x2max-x2min)+deltay)) );
-	P(nbm2,k,j,i) = b0*(  Bhl*sin(2.0*pi*(k_ini*x/(x1max-x1min)+deltax))
-			     +Ahl*cos(2.0*pi*(k_ini*z/(x3max-x3min)+deltaz)) );
-	P(nbm3,k,j,i) = b0*(  Chl*sin(2.0*pi*(k_ini*y/(x2max-x2min)+deltay))
-			     +Bhl*cos(2.0*pi*(k_ini*x/(x1max-x1min)+deltax)) );
-    };
-  
-  for (int k=ks; k<=ke; ++k)
-    for (int j=js; j<=je; ++j)
-      for (int i=is; i<=ie; ++i) {
-    U(mden,k,j,i) = P(nden,k,j,i);
-    U(mrv1,k,j,i) = P(nden,k,j,i)*P(nve1,k,j,i);
-    U(mrv2,k,j,i) = P(nden,k,j,i)*P(nve2,k,j,i);
-    U(mrv3,k,j,i) = P(nden,k,j,i)*P(nve3,k,j,i);
-    double ekin = 0.5*P(nden,k,j,i)*( P(nve1,k,j,i)*P(nve1,k,j,i)
-	        		     +P(nve2,k,j,i)*P(nve2,k,j,i)
-				     +P(nve3,k,j,i)*P(nve3,k,j,i));
-    double emag = 0.5              *( P(nbm1,k,j,i)*P(nbm1,k,j,i)
-	        		     +P(nbm2,k,j,i)*P(nbm2,k,j,i)
-				     +P(nbm3,k,j,i)*P(nbm3,k,j,i));
-     U(meto,k,j,i) = P(nene,k,j,i)*P(nden,k,j,i) + ekin + emag;
-  };
-#pragma omp target update to ( U.data[0: U.size])
-#pragma omp target update to ( P.data[0: P.size])
-
-}
-
-static void GenerateProblem2(hydflux_mod::GridArray<double>& G,hydflux_mod::FieldArray<double>& P,hydflux_mod::FieldArray<double>& U) {
-  using namespace resolution_mod;
-  using namespace hydflux_mod;
-
   double eint = 1.0e0;
   double denc = 1.0e0;
   csiso = sqrt(eint/denc);
@@ -225,7 +151,7 @@ int main() {
 	// Like Fortran (output.f90): logical,parameter :: binaryout=.true.
 	// true  -> MPI binary output
 	// false -> ASCII output (unf%05d.dat)
-	const bool binaryout = true;
+	const bool binaryout = false;
 
   periodic[dir1] = 1;
   periodic[dir2] = 1;
@@ -246,8 +172,7 @@ int main() {
   if (myid_w == 0) printf("grid size for x y z = %i %i %i\n",ngrid1*ntiles[dir1],ngrid2*ntiles[dir2],ngrid3*ntiles[dir3]);
   
   GenerateGrid(G);
-  //GenerateProblem(G,P,U);
-  GenerateProblem2(G,P,U);
+  GenerateProblem(G,P,U);
   // Force output at the initial state (Fortran: call Output(forceoutput))
   Output(forceoutput);
 
