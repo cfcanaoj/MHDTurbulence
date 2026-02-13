@@ -1,7 +1,7 @@
 # MHDTurbulence:
 
 This repository contains a 3D MHD solver (MPI + OpenACC/OpenMP/CPU versions) and example setups.
-The current default problem in `main.f90` is **Kelvin–Helmholtz instability**.
+The current default problem is **Kelvin–Helmholtz instability**.
 
 ---
 
