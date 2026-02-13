@@ -36,20 +36,52 @@ namespace mpi_dataio_mod {
   
   static bool is_inited = false;
 
-  bool binaryout = false;
+  bool binaryout = true;
   
   char datadir[10] = "bindata/"; 
 
-  static inline std::string to_str_int(int v){
-    std::ostringstream os;
-    os << v;
-    return os.str();
+  namespace {
+    inline void makedirs(const char* outdir){
+      (void)mkdir(outdir, 0777);
+    }
+    inline std::string zpad_int(int v, int width){
+      std::ostringstream os;
+      os << std::setw(width) << std::setfill('0') << v;
+      return os.str();
+    }
+  } // anonymous namespace
+
+  // -------------------- helpers --------------------
+  static inline void makedirs(const char* dir){
+    // best-effort
+    (void)mkdir(dir, 0777);
   }
 
   static inline std::string zpad_int(int v, int width){
     std::ostringstream os;
     os << std::setw(width) << std::setfill('0') << v;
     return os.str();
+  }
+
+  static inline std::vector<std::string> default_varnames(int nvars_){
+    // Must match MPI_IO_Pack packing order.
+    std::vector<std::string> names;
+    names.reserve((size_t)nvars_);
+    names.push_back("d");
+    names.push_back("v1");
+    names.push_back("v2");
+    names.push_back("v3");
+    names.push_back("b1");
+    names.push_back("b2");
+    names.push_back("b3");
+    names.push_back("bp");
+    names.push_back("p");
+    for(int n=(int)names.size(); n<nvars_; ++n){
+      const int idx = n - 8; // => X1, X2, ...
+      names.push_back("X" + std::to_string(idx));
+    }
+    if((int)names.size() > nvars_) names.resize((size_t)nvars_);
+    return names;
   }
 
   void MPI_IO_Write(int timeid) {
@@ -193,7 +225,10 @@ namespace mpi_dataio_mod {
       npart[dir2]  = ngrid2;
       npart[dir3]  = ngrid3;
     
-      nvars = 9+ncomp;
+      // Fortran: nvars = 10 + ncomp (includes gp).
+      // C++ version does not have gp in the primitive set, so we output:
+      //   9 base vars (d,v1,v2,v3,b1,b2,b3,bp,p) + ncomp compositions (X1..)
+      nvars = 9 + ncomp;
       nvarg = 2;
       int ngrid1mod = ngrid1;
       int ngrid2mod = ngrid2;
@@ -239,181 +274,140 @@ namespace mpi_dataio_mod {
       Fieldout(6,k,j,i) = P(nbm3,k+ks,j+js,i+is);
       Fieldout(7,k,j,i) = P(nbps,k+ks,j+js,i+is);
       Fieldout(8,k,j,i) = P(npre,k+ks,j+js,i+is);
-      for(int n=0;n<ncomp;n++){
-	Fieldout(9+n,k,j,i) = P(nst+n,k+ks,j+js,i+is);
+      // compositions (passive scalars)
+      for(int n=0; n<ncomp; ++n){
+        Fieldout(9+n,k,j,i) = P(nst+n,k+ks,j+js,i+is);
       }
   };
 
   }// MPI_IO_PACK
 
-    inline void write_axis(std::ofstream& ofs,
-                           const std::string& fname,
-                           int n,
-                           std::int64_t seek_bytes,
-                           int bytes_per_real) {
-      ofs << "        <DataItem Dimensions=\"" << n
-          << "\" NumberType=\"Float\" Precision=\"" << bytes_per_real
-          << "\" Format=\"Binary\" Endian=\"Little\" Seek=\"" << seek_bytes
-          << "\"  >" << fname << "</DataItem>\n";
-    }
-
-    inline void write_attr(std::ofstream& ofs,
-                           const std::string& name,
-                           const std::string& fname,
-                           int nx, int ny, int nz,
-                           std::int64_t seek_bytes,
-                           int bytes_per_real) {
-      ofs << "      <Attribute Name=\"" << name
-          << "\" AttributeType=\"Scalar\" Center=\"Cell\">\n";
-      // NOTE: our MPI-IO writes a global array of shape [nvars][nx][ny][nz] in C-order.
-      // For XDMF readers that assume the last dimension is fastest, we keep Dimensions="nx ny nz".
-      ofs << "        <DataItem Dimensions=\"" << nx << " " << ny << " " << nz
-          << "\" NumberType=\"Float\" Precision=\"" << bytes_per_real
-          << "\" Format=\"Binary\" Endian=\"Little\" Seek=\"" << seek_bytes
-          << "\" >" << fname << "</DataItem>\n";
-      ofs << "      </Attribute>\n";
-    }
-
-    inline std::vector<std::string> default_varnames(int nvars_) {
-      // Matches the order used in MPI_IO_Pack
-      std::vector<std::string> names;
-      names.reserve(static_cast<size_t>(nvars_));
-      names.push_back("d");
-      names.push_back("v1");
-      names.push_back("v2");
-      names.push_back("v3");
-      names.push_back("b1");
-      names.push_back("b2");
-      names.push_back("b3");
-      names.push_back("bp");
-      // Any remaining variables are treated as passive scalars (X1, X2, ...)
-      for (int n = static_cast<int>(names.size()); n < nvars_; ++n) {
-        const int idx = n - 8; // so first extra becomes X1
-        names.push_back("X" + std::to_string(idx));
-      }
-      if ((int)names.size() > nvars_) names.resize(nvars_);
-      return names;
-    }
-
-  void WriteXDMF(double time, int nout) {
+  // ==================================================
+  // WriteXDMF (Fortran: subroutine WriteXDMF)
+  // ==================================================
+  void WriteXDMF(double time, int nout){
     using namespace resolution_mod;
 
-    const int itot = ntotal[0];
-    const int jtot = ntotal[1];
-    const int ktot = ntotal[2];
+    makedirs(datadir);
 
-    const int bytes_per_real = (int)sizeof(double);
-    const std::int64_t ncell = (std::int64_t)itot * (std::int64_t)jtot * (std::int64_t)ktot;
-    const std::int64_t bytes_per_field = ncell * (std::int64_t)bytes_per_real;
+    const int nx = ntotal[0];
+    const int ny = ntotal[1];
+    const int nz = ntotal[2];
 
-    const std::string xmfname = std::string(datadir) + "field" + zpad_int(nout,5) + ".xmf";
+    const std::string dirname = std::string(datadir);
+    const std::string xmfname = dirname + "field" + zpad_int(nout,5) + ".xmf";
     const std::string fgridx  = "grid1D.bin";
     const std::string fgridy  = "grid2D.bin";
     const std::string fgridz  = "grid3D.bin";
     const std::string fdata   = "field" + zpad_int(nout,5) + ".bin";
 
-    std::ofstream ofs(xmfname);
-    if (!ofs) {
-      std::fprintf(stderr, "WriteXDMF: open failed: %s\n", xmfname.c_str());
+    const std::int64_t bytes_per_real  = (std::int64_t)sizeof(double);
+    const std::int64_t ncell           = (std::int64_t)nx * (std::int64_t)ny * (std::int64_t)nz;
+    const std::int64_t bytes_per_field = ncell * bytes_per_real;
+
+    std::ofstream u(xmfname, std::ios::out | std::ios::trunc);
+    if(!u){
+      std::fprintf(stderr, "WriteXDMF: failed to open %s\n", xmfname.c_str());
       return;
     }
 
-    ofs << "<?xml version=\"1.0\" ?>\n";
-    ofs << "<!DOCTYPE Xdmf SYSTEM \"Xdmf.dtd\" []>\n";
-    ofs << "<Xdmf Version=\"2.0\">\n";
-    ofs << "  <Domain>\n";
-    ofs << "    <Grid Name=\"Grid\" GridType=\"Uniform\">\n";
-    ofs << "      <Time Value=\"" << std::setprecision(16) << time << "\"/>\n";
+    u << "<?xml version=\"1.0\" ?>\n";
+    u << "<!DOCTYPE Xdmf SYSTEM \"Xdmf.dtd\" []>\n";
+    u << "<Xdmf Version=\"2.0\">\n";
+    u << "  <Domain>\n";
+    u << "    <Grid Name=\"Grid\" GridType=\"Uniform\">\n";
+    u << "      <Time Value=\"" << std::setprecision(16) << std::scientific << time << "\"/>\n";
 
-    // NOTE:
-    // Our global array ordering for fields is [nvars][nx][ny][nz] (C-order).
-    // We therefore set Topology/Attribute Dimensions in (nx,ny,nz) order.
-    ofs << "      <Topology TopologyType=\"3DRectMesh\" Dimensions=\""
-        << (itot + 1) << " " << (jtot + 1) << " " << (ktot + 1)
-        << "\"/>\n";
+    // Topology for rect mesh
+    u << "      <Topology TopologyType=\"3DRectMesh\" Dimensions=\""
+      << (nx+1) << " " << (ny+1) << " " << (nz+1) << "\"/>\n";
 
-    ofs << "      <Geometry GeometryType=\"VXVYVZ\">\n";
-    // grid files store [x_b][x_a] (2 arrays). We want x_a (cell edges) => Seek = (itot+1)*8
-    write_axis(ofs, fgridx, itot + 1, (std::int64_t)(itot + 1) * bytes_per_real, bytes_per_real);
-    write_axis(ofs, fgridy, jtot + 1, (std::int64_t)(jtot + 1) * bytes_per_real, bytes_per_real);
-    write_axis(ofs, fgridz, ktot + 1, (std::int64_t)(ktot + 1) * bytes_per_real, bytes_per_real);
-    ofs << "      </Geometry>\n";
+    // Geometry from grid*.bin
+    // Each grid file stores [nvarg=2][N+1] in C-order, so the 2nd component starts at (N+1)*8.
+    auto axis_item = [&](const std::string& fname, int n){
+      const std::int64_t seek = (std::int64_t)(n) * bytes_per_real;
+      u << "        <DataItem Dimensions=\"" << n << "\" NumberType=\"Float\" Precision=\"8\" "
+           "Format=\"Binary\" Endian=\"Little\" Seek=\"" << seek << "\">"
+        << fname << "</DataItem>\n";
+    };
 
-    std::int64_t off_base = 0;
+    u << "      <Geometry GeometryType=\"VXVYVZ\">\n";
+    axis_item(fgridx, nx+1);
+    axis_item(fgridy, ny+1);
+    axis_item(fgridz, nz+1);
+    u << "      </Geometry>\n";
+
+    auto attr = [&](const std::string& name, std::int64_t seek){
+      u << "      <Attribute Name=\"" << name << "\" AttributeType=\"Scalar\" Center=\"Cell\">\n";
+      u << "        <DataItem Dimensions=\"" << nx << " " << ny << " " << nz
+        << "\" NumberType=\"Float\" Precision=\"8\" Format=\"Binary\" Endian=\"Little\" Seek=\""
+        << seek << "\">" << fdata << "</DataItem>\n";
+      u << "      </Attribute>\n";
+    };
+
     const auto names = default_varnames(nvars);
-    for (int n = 0; n < nvars; ++n) {
-      write_attr(ofs, names[(size_t)n], fdata, itot, jtot, ktot, off_base, bytes_per_real);
-      off_base += bytes_per_field;
+    std::int64_t off = 0;
+    for(int n=0; n<nvars; ++n){
+      attr(names[(size_t)n], off);
+      off += bytes_per_field;
     }
 
-    ofs << "    </Grid>\n";
-    ofs << "  </Domain>\n";
-    ofs << "</Xdmf>\n";
+    u << "    </Grid>\n";
+    u << "  </Domain>\n";
+    u << "</Xdmf>\n";
   }
 
-}// namespace mpi_dataio_mod
+  // ==================================================
+  // ASC_WRITE (Fortran: subroutine ASC_WRITE)
+  // ==================================================
+  void ASC_WRITE(int nout){
+    using namespace mpi_config_mod;
+    using namespace resolution_mod;
+    using namespace hydflux_mod;
 
-// --------------------------------------------------
-// small utilities (Fortran makedirs/to_str equivalents)
-// --------------------------------------------------
-static inline void makedirs(const std::string& dir){
-  // portable enough for typical HPC linux environments
-  (void) ::mkdir(dir.c_str(), 0755);
-}
+    static bool is_inited_asc = false;
+    if(!is_inited_asc){
+      makedirs("ascdata");
+      is_inited_asc = true;
+    }
 
-// ==================================================
-// ASC_Write (Fortran: subroutine ASC_WRITE)
-// ==================================================
-void ASC_Write(int nout){
-  using namespace mpi_config_mod;
-  using namespace resolution_mod;
-  using namespace hydflux_mod;
+    const std::string fname = std::string("ascdata/") + "snap" + zpad_int(myid_w,3) + "-" + zpad_int(nout,5) + ".csv";
+    std::ofstream f(fname, std::ios::out | std::ios::trunc);
+    if(!f){
+      std::fprintf(stderr, "ASC_WRITE: failed to open %s\n", fname.c_str());
+      return;
+    }
 
-  static bool is_inited_asc = false;
-  if(!is_inited_asc){
-    makedirs("ascdata");
-    is_inited_asc = true;
-  }
+    const int k = ks;
+    f << "# " << std::setprecision(6) << std::scientific << time_sim << " " << dt << "\n";
+    f << "# " << (ie-is+1) << "\n";
+    f << "# " << (je-js+1) << "\n";
+    f << "# " << k << " " << std::setprecision(6) << std::scientific << G.x3b(k) << "\n";
 
-  char fname[256];
-  std::snprintf(fname, sizeof(fname), "ascdata/snap%03d-%05d.csv", myid_w,nout);
+    // Fortran header: "# x y d vx vy p phi" + Xcomp...
+    // C++ does not have gp(phi) in the primitive set; we output (x,y,d,vx,vy,p) + Xcomp.
+    f << "# x y d vx vy p";
+    for(int n=0; n<ncomp; ++n) f << " X" << (n+1);
+    f << "\n";
 
-  std::ofstream f(fname, std::ios::out | std::ios::trunc);
-  if(!f){
-    std::fprintf(stderr, "ASC_Write: failed to open %s\n", fname);
-    return;
-  }
-  
-  const int k = ks;
-  f << "# " << std::setprecision(6) << std::scientific << time_sim << " " << dt << "\n";
-  f << "# " << (ie-is+1) << "\n";
-  f << "# " << (je-js+1) << "\n";
-  f << "# " << k << " " << std::setprecision(6) << std::scientific << G.x3b(k) << "\n";
-
-  // Fortran header: "# x y d vx vy p phi" + Xcomp...
-  // C++版は phi/gp をまだ持たないので、現状ある変数だけを出力。
-  f << "# x y d vx vy p";
-  // If extra scalars exist later, keep Fortran-like naming.
-  for(int n=9; n<10; ++n) f << " X" << (n-8);
-  f << "\n";
-
-  for(int j=js; j<=je; ++j){
-    for(int i=is; i<=ie; ++i){
-      f << std::setprecision(6) << std::scientific
-	<< G.x1b(i) << ' ' << G.x2b(j) << ' '
+    for(int j=js; j<=je; ++j){
+      for(int i=is; i<=ie; ++i){
+        f << std::setprecision(6) << std::scientific
+          << G.x1b(i) << ' ' << G.x2b(j) << ' '
           << P(nden,k,j,i) << ' ' << P(nve1,k,j,i) << ' ' << P(nve2,k,j,i) << ' ' << P(npre,k,j,i);
-
-      // Append extra scalar(s) if they exist in Fieldout (packed) and we keep same order.
-      // Note: in current code nvars==9 so this loop is a no-op.
-      for(int n=0; n<ncomp; n++){
-	// No direct primitive slot for Xcomp in this snapshot format yet.
-	// Users can extend by adding the primitive index and printing it here.
-	f << ' ' << P(nst+n,k,j,i);
+        for(int n=0; n<ncomp; ++n){
+          f << ' ' << P(nst+n,k,j,i);
+        }
+        f << "\n";
       }
       f << "\n";
     }
-    f << "\n";
   }
+}// namespace mpiiomod
+
+// Backward-compatible wrapper (some parts of the codebase call global ASC_WRITE)
+void ASC_WRITE(int timeid){
+  mpi_dataio_mod::ASC_WRITE(timeid);
 }
 
 void Output(bool is_forced){
@@ -438,11 +432,10 @@ void Output(bool is_forced){
     mpiio::MPI_IO_Write(index);
     if(myid_w==0) mpiio::WriteXDMF(time_sim,index);
   }else{
-    ASC_Write(index);
+    mpiio::ASC_WRITE(index);
   };
   if(myid_w==0) printf("output index=%i, time=%e \n",index,time_sim);
   
   index += 1;
   time_out = time_sim;
 }
-

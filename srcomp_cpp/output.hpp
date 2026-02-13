@@ -76,19 +76,15 @@ namespace mpi_dataio_mod {
   void MPI_IO_Pack(int timeid);  
   void MPI_IO_Write(int timeid);  
 
-  // ==================================================
-  // Fortran-compatible I/O helpers (see output.f90)
-  // ==================================================
-  // Called only by rank0: emits bindata/field%05d.xmf that points to
-  // bindata/grid*D.bin and bindata/field%05d.bin.
+  // Fortran-like helpers (see output.f90)
+  // - WriteXDMF: create bindata/field%05d.xmf that points to grid*.bin and field%05d.bin
+  // - ASC_WRITE: lightweight per-rank CSV snapshot (ascdata/snap%03d-%05d.csv)
   void WriteXDMF(double time, int nout);
+  void ASC_WRITE(int nout);
 
 }
 
 void Output(bool is_forced);
-
-// ASCII snapshot output:
-// ascdata/snap%03d-%05d.csv (per MPI rank)
-void ASC_write(int nout);
+void ASC_WRITE(int timeid);
 
 #endif 
