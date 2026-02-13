@@ -73,15 +73,12 @@ namespace mpi_dataio_mod {
 
   extern FieldArray<double> Fieldout;
 
-  void MPIOutputBindary(int timeid);  
+  void MPI_IO_Pack(int timeid);  
+  void MPI_IO_Write(int timeid);  
 
-  // ASCII output for quick check (like Fortran's ASC_WRITE). This writes only
-  // a small header file `bindata/unf%05d.dat` with time/dt and local sizes.
-  void ASC_WRITE(int timeid, double time, double dt,
-                 int ngrid1_local, int ngrid2_local, int ngrid3_local);
 }
-void Output1D(bool is_final);
-void Output(bool is_final);
 
+void Output(bool is_forced);
+void ASC_WRITE(int timeid);
 
 #endif 

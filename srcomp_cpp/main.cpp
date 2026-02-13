@@ -235,7 +235,7 @@ int main() {
   ntiles[dir3]   = 1;
   InitializeMPI();
 	// Configure I/O mode
-	mpi_dataio_mod::binaryout = binaryout;
+  mpi_dataio_mod::binaryout = binaryout;
   
   if(myid_w == 0) printf("setup grids and fields\n");
   
