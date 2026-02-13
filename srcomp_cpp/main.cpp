@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <random>
 
 #include "resolution.hpp"
 #include "mhd.hpp"
@@ -68,71 +69,111 @@ static void GenerateGrid(hydflux_mod::GridArray<double>& G) {
   
 }
 static void GenerateProblem(hydflux_mod::GridArray<double>& G,hydflux_mod::FieldArray<double>& P,hydflux_mod::FieldArray<double>& U) {
+  // Kelvin-Helmholtz initial condition (ported from Fortran main.f90::GenerateProblem)
   using namespace resolution_mod;
+  using namespace mpi_config_mod;
   using namespace hydflux_mod;
 
-  double eint = 1.0e0;
-  double denc = 1.0e0;
-  csiso = sqrt(eint/denc);
-  chg = 0.0e0;
-#pragma omp target update to ( csiso,chg)
+  const double pi  = std::acos(-1.0);
 
-  double pres = denc*csiso*csiso;
+  // Parameters (same as Fortran)
+  const double rho1 = 1.0;
+  const double rho2 = 1.0;
+  const double dv   = 2.0;
+  const double wid  = 0.05;
+  const double sig  = 0.2;
+  const double B0   = std::sqrt(2.0/3.0);
+  (void)rho1; (void)rho2; (void)B0; // currently symmetric / B0 unused in reference file
 
-  double xc = 0.5*(x1max + x1min);
-  double yc = 0.5*(x2max + x2min);
-  double zc = 0.5*(x3max + x3min);
-  double sigma2x = pow((0.1e0*(x1max-x1min)),2);
-  double sigma2y = pow((0.1e0*(x2max-x2min)),2);
-  double sigma2z = pow((0.1e0*(x3max-x3min)),2);
-  
-  //printf("cs=%e",csiso);
-  for (int k=ks; k<=ke; ++k)
-    for (int j=js; j<=je; ++j)
-      for (int i=is; i<=ie; ++i) {
-	double x = G.x1b(i);
-	double y = G.x2b(j);
-	double z = G.x3b(k);
-	  
-	P(nden,k,j,i) = denc;
-	P(nve1,k,j,i) = 0.3e0;
-	P(nve2,k,j,i) = 0.3e0;
-	P(nve3,k,j,i) = 0.3e0;
-	P(nene,k,j,i)  = 1.0e6*exp(-( pow(x-xc,2)/sigma2x
-				     +pow(y-yc,2)/sigma2y
-	                             +pow(z-zc,2)/sigma2z )); //specific internel energy	
-	P(npre,k,j,i)  =pres;
-	P(ncsp,k,j,i) = csiso;
-	
-	P(nbm1,k,j,i) = 0.0e0;
-	P(nbm2,k,j,i) = 0.0e0;
-	P(nbm3,k,j,i) = 0.0e0;
-	P(nbps,k,j,i) = 0.0e0;
-    };
-  
-  for (int k=ks; k<=ke; ++k)
-    for (int j=js; j<=je; ++j)
-      for (int i=is; i<=ie; ++i) {
-    U(mden,k,j,i) = P(nden,k,j,i);
-    U(mrv1,k,j,i) = P(nden,k,j,i)*P(nve1,k,j,i);
-    U(mrv2,k,j,i) = P(nden,k,j,i)*P(nve2,k,j,i);
-    U(mrv3,k,j,i) = P(nden,k,j,i)*P(nve3,k,j,i);
-    double ekin = 0.5*P(nden,k,j,i)*( P(nve1,k,j,i)*P(nve1,k,j,i)
-	        		     +P(nve2,k,j,i)*P(nve2,k,j,i)
-				     +P(nve3,k,j,i)*P(nve3,k,j,i));
-    double emag = 0.5              *( P(nbm1,k,j,i)*P(nbm1,k,j,i)
-	        		     +P(nbm2,k,j,i)*P(nbm2,k,j,i)
-				     +P(nbm3,k,j,i)*P(nbm3,k,j,i));
-     U(meto,k,j,i) = P(nene,k,j,i)*P(nden,k,j,i) + ekin + emag;
-     
-     U(mbm1,k,j,i) = P(nbm1,k,j,i);
-     U(mbm2,k,j,i) = P(nbm2,k,j,i);
-     U(mbm3,k,j,i) = P(nbm3,k,j,i);
-     U(mbps,k,j,i) = P(nbps,k,j,i);
-  };
-#pragma omp target update to ( U.data[0: U.size])
-#pragma omp target update to ( P.data[0: P.size])
+  // Random perturbation strength (Fortran rrv)
+  const double rrv = 1.0e-2;
 
+  // Isothermal: choose csiso so that p = rho*csiso^2 matches Fortran p=1 when rho=1
+  csiso = 1.0;
+  chg   = 0.0;
+#pragma omp target update to (csiso, chg)
+
+  // Base profile (fill including ghost cells to avoid uninitialized values)
+  for (int k = ks-ngh; k <= ke+ngh; ++k)
+    for (int j = js-ngh; j <= je+ngh; ++j)
+      for (int i = is-ngh; i <= ie+ngh; ++i) {
+        const double x = G.x1b(i);
+        const double y = G.x2b(j);
+
+        const double tanh_p = std::tanh((y + 0.5)/wid);
+        const double tanh_m = std::tanh((y - 0.5)/wid);
+
+        P(nden,k,j,i) = 1.0;
+        P(npre,k,j,i) = 1.0;
+
+        P(nve1,k,j,i) = 0.5 * dv * (tanh_p - tanh_m - 1.0);
+        P(nve2,k,j,i) = 1.0e-3 * std::sin(2.0*pi*x) *
+                        ( std::exp(- (y + 0.5)*(y + 0.5)/(sig*sig))
+                        + std::exp(- (y - 0.5)*(y - 0.5)/(sig*sig)) );
+        P(nve3,k,j,i) = 0.0;
+
+        P(nbm1,k,j,i) = 0.0;
+        P(nbm2,k,j,i) = 0.0;
+        P(nbm3,k,j,i) = 0.0;
+        P(nbps,k,j,i) = 0.0;
+
+        P(ncsp,k,j,i) = csiso;
+        // specific internal energy is not used in the isothermal closure, but keep it consistent
+        P(nene,k,j,i) = P(npre,k,j,i) / P(nden,k,j,i);
+
+        // Composition (Fortran: Xcomp(1)=0.5*(tanh((y+0.5)/wid)-tanh((y-0.5)/wid)))
+        for (int n=0; n<ncomp; ++n) {
+          (void)n; // for future multi-comp extension
+          P(nst, k,j,i) = 0.5 * (tanh_p - tanh_m);
+        }
+      }
+
+  // Random perturbation on v1 (Fortran: one random number per (j,k), applied to all i)
+  // Fortran uses random_seed with seed(1)=1, seed(2)=1 + myid_w*in*jn*kn.
+  // Here we emulate with a deterministic per-rank seed.
+  std::mt19937_64 rng(static_cast<unsigned long long>(1 + myid_w * 1000003ULL));
+  std::uniform_real_distribution<double> uni(0.0, 1.0);
+
+  for (int k = ks; k <= ke; ++k)
+    for (int j = js; j <= je; ++j) {
+      const double r = uni(rng);
+      const double dv_rand = dv * rrv * (r - 0.5);
+      for (int i = is; i <= ie; ++i) {
+        P(nve1,k,j,i) += dv_rand;
+      }
+    }
+
+  // Build conserved variables U from primitives P
+  for (int k = ks-ngh; k <= ke+ngh; ++k)
+    for (int j = js-ngh; j <= je+ngh; ++j)
+      for (int i = is-ngh; i <= ie+ngh; ++i) {
+        const double rho = P(nden,k,j,i);
+        U(mden,k,j,i) = rho;
+        U(mrv1,k,j,i) = rho * P(nve1,k,j,i);
+        U(mrv2,k,j,i) = rho * P(nve2,k,j,i);
+        U(mrv3,k,j,i) = rho * P(nve3,k,j,i);
+
+        const double ekin = 0.5 * rho * ( P(nve1,k,j,i)*P(nve1,k,j,i)
+                                       + P(nve2,k,j,i)*P(nve2,k,j,i)
+                                       + P(nve3,k,j,i)*P(nve3,k,j,i) );
+        const double emag = 0.5 * ( P(nbm1,k,j,i)*P(nbm1,k,j,i)
+                                  + P(nbm2,k,j,i)*P(nbm2,k,j,i)
+                                  + P(nbm3,k,j,i)*P(nbm3,k,j,i) );
+
+        U(meto,k,j,i) = rho * P(nene,k,j,i) + ekin + emag;
+
+        U(mbm1,k,j,i) = P(nbm1,k,j,i);
+        U(mbm2,k,j,i) = P(nbm2,k,j,i);
+        U(mbm3,k,j,i) = P(nbm3,k,j,i);
+        U(mbps,k,j,i) = P(nbps,k,j,i);
+
+        for (int n=0; n<ncomp; ++n) {
+          U(mst+n,k,j,i) = rho * P(nst+n,k,j,i);
+        }
+      }
+
+#pragma omp target update to (U.data[0: U.size])
+#pragma omp target update to (P.data[0: P.size])
 }
 
 
