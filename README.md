@@ -1,22 +1,35 @@
-# 3D magneto-hydrodynamic deacaying turbulence
+# MHDTurbulence:
+
+This repository contains a 3D MHD solver (MPI + OpenACC/OpenMP/CPU versions) and example setups.
+The current default problem in `main.f90` is **Kelvin–Helmholtz instability**.
+
+---
 
 ## How to copy the source code
+
 After you login the server, `g00.cfca.nao.ac.jp`, follow the instruction.
 
-    cd /gwork0/<username>
-    git clone git@github.com:cfcanaoj/MHDTurbulence MHDTurbulence
-    cd MHDTurbulence
-    
+```bash
+cd /gwork0/<username>
+git clone git@github.com:cfcanaoj/MHDTurbulence MHDTurbulence
+cd MHDTurbulence
+```
+
+---
 
 ## How to run
 
-### compile 
-To run the code, you need to compile 'Simulation.f90' in GPU server.
-    
-    cd srcacc
-    make
-    
-Then `Simulation.x`is made in `../exe` directory. This is OpenACC version. If you want to use different version, go to the relevent directory shown below.
+### Compile
+
+To run the code, compile `Simulation.f90` on a GPU server.
+
+```bash
+cd srcacc
+make
+```
+
+Then `Simulation.x` is created in `../exe` directory (OpenACC version).  
+If you want to use a different version, go to the relevant directory shown below.
 
 |directory|GPU/CPU|Parallelization|
 |:---|:---:|:---|
@@ -24,101 +37,127 @@ Then `Simulation.x`is made in `../exe` directory. This is OpenACC version. If yo
 |`srcomp`|GPU|MPI OpenMP|
 |`srccpu`|CPU|MPI|
 
-### run
-Let's run the code.
-    
-    cd ../exe
-    cp ../misc/sj_g00.sh
-    sbatch sj_g00.sh
-    
-The simulation data is saved in `bindata/`.
+### Run
 
-The batch file depends on your parallelization scheme and environment.
+```bash
+cd ../exe
+cp ../misc/sj_g00.sh .
+sbatch sj_g00.sh
+```
 
-|directory|GPU/CPU|Parallelization|
+The simulation data are saved in `bindata/`.
+
+Batch scripts depend on your parallelization scheme and environment.
+
+|script|GPU/CPU|Parallelization|
 |:---|:---:|:---|
 |`sj_g00.sh`|GPU|MPI OpenACC|
 |`sj_g00.sh`|GPU|MPI OpenMP|
 |`sj_xd.sh`|CPU|MPI|
 
+---
 
-### analysis
-To analyze the data, let us make `Analysis.x` in GPU server..
-    
-    cd ../analysis
-    ln -s ../exe/bindata .
-    make
-    
-Now you have many time-snapshots of data. To count it, use a script.
-    
-    ./CountBindata.sh
-   
-See the file, `cat control.dat`. You can know the number of files.
-Then preparation is done. Run the analyis.
-    
-    sbatch sj_g00_ana.sh
-    
-The output is saved in `output/`.
-### 2D plots and animation.
-If you need 2D snapshots. cp `bindata` and output` in GPU server to 'HYD2D' in analyis server.
-    
-    cp -r ???/bindata .
-    cp -r ???/output .
-    make 2Dsnaps
-   
-Using `output/vor*.dat`, image files are made and save as `figures/vor*.png`.
-To make movie from the files. Type as follows.
+## Problem setup: Kelvin–Helmholtz instability
 
-    make movie
-   
-The movie files in saved in `movie/anivor`.
+The initial condition is defined in `GenerateProblem` in `main.f90`.
 
-### spectrum
-If you need 2D snapshots. cp `bindata` and output` in GPU server to `HYD2D` in analyis server.
-To obtain the spectrum
-   
-    cp -r ???/bindata .
-    cp -r ???/output .
-    make spectrum
-      
-## initial condition
-stream function is given.
+### Hydrodynamic variables
 
-$$ \psi \propto \sin(2\pi k x)\sin(2\pi k y).$$
+Uniform density and pressure:
 
-Initial velocity and magnetic fields are set from $\psi$.
+- \(\rho = 1\)
+- \(p = 1\)
 
-$$ v_x = v_0 \partial_y \psi, v_y = - v_0 \partial_x \psi, $$
+A shear flow in the **x-direction** (two shear layers centered at \(y=\pm 0.5\)):
 
-$$ B_x = B_0 \partial_y \psi, B_y = - B_0 \partial_x \psi, $$
+- \(\Delta v = 2.0\)
+- shear-layer width \(w = 0.05\)
 
-## analysis
+\[
+v_x(y)=\frac{\Delta v}{2}\left[\tanh\left(\frac{y+0.5}{w}\right)-\tanh\left(\frac{y-0.5}{w}\right)-1\right]
+\]
 
-Animation of vorticity and current density are made.
+A small perturbation in the **y-direction** to seed KH roll-up (sinusoidal in x, localized around the layers):
 
-$$ \omega =  \partial_x v_y - \partial_y v_x $$
+- amplitude \(10^{-3}\)
+- localization width \(\sigma = 0.2\)
 
-$$ j =  \partial_x B_y - \partial_y B_x $$
+\[
+v_y(x,y)=10^{-3}\sin(2\pi x)\left[e^{-(y+0.5)^2/\sigma^2}+e^{-(y-0.5)^2/\sigma^2}\right]
+\]
+\[
+v_z = 0
+\]
 
-The magnetic potential,$a$, is also calculated.
+Additionally, a small **random perturbation** is added to \(v_x\) (1% of \(\Delta v\)):
 
-$$ \vec{B} =  \nabla a $$
+- \(\mathrm{rrv}=10^{-2}\)
+- \(v_x \leftarrow v_x + \Delta v\,\mathrm{rrv}\,(r-0.5)\) where \(r\in[0,1)\)
 
-The definition of cross helicity is as follows.
+### Magnetic field
 
-$$ h^c = v\cdot B $$
+In the current KH setup, the magnetic field is initialized to zero:
 
-The spectrum of variable, $X$ ,is calculated as follows. In the analysis, $X=E$, $\omega^2$, $a$ and $h^c$.
+\[
+\mathbf{B} = (0,0,0)
+\]
 
-First 2D Fourier transformation is given.
+(There is a placeholder parameter `B0 = sqrt(2/3)` in the code, but it is multiplied by 0 in `main.f90`.)
 
-$$\hat{X}_{{\rm 2D},c}(k_x,k_y) = \iint dx dy X \cos(2\pi (k_x x+k_y y))$$
+### Tracer / composition field
 
-$$\hat{X}_{{\rm 2D},s}(k_x,k_y) = \iint dx dy X\sin(2\pi (k_x x+k_y y))$$
+`Xcomp(1,...)` is initialized as a smooth step-like tracer associated with the two layers, useful for visualizing mixing.
 
-Then 1D Fourier transformation is given.
+### Boundary conditions
 
-$$\hat{X}_{\rm 1D} dk = \sqrt{ \hat{X}_{{\rm 2D},c}^2+\hat{X}_{{\rm 2D},s}^2} dk_x dk_y $$
+Boundary conditions are applied via `BoundaryCondition` (see `boundarymod`).  
+(The domain extent and grid size are configured in `basicmod` and printed at runtime.)
+
+---
+
+## Analysis
+
+### Build the analysis tool
+
+```bash
+cd ../analysis
+ln -s ../exe/bindata .
+make
+```
+
+Count time snapshots:
+
+```bash
+./CountBindata.sh
+cat control.dat
+```
+
+Run analysis:
+
+```bash
+sbatch sj_g00_ana.sh
+```
+
+Outputs are saved in `output/`.
+
+### 2D plots and animation
+
+Copy `bindata/` and `output/` to the analysis server and:
+
+```bash
+make 2Dsnaps
+make movie
+```
+
+Images are saved in `figures/`, movies in `movie/anivor`.
+
+### Spectrum
+
+```bash
+make spectrum
+```
+
+---
 
 # Results
 Typical results are shown [here](https://www.notion.so/Turbulence-Studies-numerical-experiments-e4836ad642684f8f992d54a1f7e22635).
