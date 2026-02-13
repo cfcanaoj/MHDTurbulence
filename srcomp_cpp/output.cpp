@@ -403,10 +403,10 @@ void ASC_Write(int nout){
 
       // Append extra scalar(s) if they exist in Fieldout (packed) and we keep same order.
       // Note: in current code nvars==9 so this loop is a no-op.
-      for(int n=9; n<10; ++n){
+      for(int n=0; n<ncomp; n++){
 	// No direct primitive slot for Xcomp in this snapshot format yet.
 	// Users can extend by adding the primitive index and printing it here.
-	f << ' ' << 0.0;
+	f << ' ' << P(nst+n,k,j,i);
       }
       f << "\n";
     }
