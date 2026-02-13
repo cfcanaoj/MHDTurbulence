@@ -347,6 +347,9 @@ subroutine Output(is_final)
   gridZ(1,1:kee-ks+1) = x3b(ks:kee) !! the final grid point is not necessary but outputed.
   gridZ(2,1:kee-ks+1) = x3a(ks:kee) !! the final grid is necessary.
 
+!$acc update host (d,v1,v2,v3,p)
+!$acc update host (b1,b2,b3,bp)
+  
   !> The cell center value 
   data3D(1,1:npart(1),1:npart(2),1:npart(3)) =  d(is:ie,js:je,ks:ke)
   data3D(2,1:npart(1),1:npart(2),1:npart(3)) = v1(is:ie,js:je,ks:ke)
