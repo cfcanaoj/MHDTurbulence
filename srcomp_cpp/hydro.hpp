@@ -94,20 +94,26 @@ namespace hydflux_mod {
     }
   };
 
-  inline constexpr int mconsv{9},madd{3}; //!
-  inline constexpr int mudn{ 0},muvu{ 1},muvv{ 2},muvw{ 3},muet{ 4},
+  inline constexpr int ncomp{1}; //! composition
+  inline constexpr int nprim{11+ncomp}; //!
+  inline constexpr int nden{0},nve1{1},nve2{2},nve3{3},nene{4},npre{5},ncsp{6},
+                               nbm1{7},nbm2{8},nbm3{9},nbps{10},
+                               nst{nprim-ncomp},ned{nprim-1};
+  
+  inline constexpr int mconsv{9+ncomp},madd{3}; // total number!
+  inline constexpr int mudn{ 0},muvu{ 1},muvv{ 2},muvw{ 3},muet{ 4},// 0 <= index <= total-1 
                                 mubu{ 5},mubv{ 6},mubw{ 7},mubp{ 8},
-                       mfdn{ 9},mfvu{10},mfvv{11},mfvw{12},mfet{13},
-                       mfbu{14},mfbv{15},mfbw{16},mfbp{17},
-                       mcsp{18},mvel{19},mpre{20};
-  inline constexpr int mden{ 0},mrv1{ 1},mrv2{ 2},mrv3{ 3},meto{ 4},
+                       mfdn{mconsv},mfvu{mconsv+1},mfvv{mconsv+2},mfvw{mconsv+3},mfet{mconsv+4},
+                                    mfbu{mconsv+5},mfbv{mconsv+6},mfbw{mconsv+7},mfbp{mconsv+8},
+                                    must{  mconsv-ncomp},mued{  mconsv-1},
+                                    mfst{2*mconsv-ncomp},mfed{2*mconsv-1},
+                       mcsp{2*mconsv},mvel{2*mconsv+1},mpre{2*mconsv+2};
+  
+  inline constexpr int mden{ 0},mrv1{ 1},mrv2{ 2},mrv3{ 3},meto{ 4}, // 0 <= index <= total-1
                                 mbm1{ 5},mbm2{ 6},mbm3{ 7},mbps{ 8},
                                 mrvu{ 1},mrvv{ 2},mrvw{ 3},
-                                mbmu{ 5},mbmv{ 6},mbmw{ 7};
-  inline constexpr int nprim{11}; //!
-  inline constexpr int nden{0},nve1{1},nve2{2},nve3{3},nene{4},npre{5},ncsp{6},
-                               nbm1{7},nbm2{8},nbm3{9},nbps{10};
-
+                                mbmu{ 5},mbmv{ 6},mbmw{ 7},
+                                mst{mconsv-ncomp},med{mconsv-1};
   extern GridArray<double> G;
   extern FieldArray<double> P; //! P(nprim ,ktot,jtot,itot)
   extern FieldArray<double> U; //! U(mconsv,ktot,jtot,itot)
