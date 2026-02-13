@@ -104,14 +104,56 @@ $$
 
 ### Boundary conditions
 
-Boundary conditions are applied via `BoundaryCondition` (see `boundarymod`).  
-(The domain extent and grid size are configured in `basicmod` and printed at runtime.)
+Boundary conditions are applied in `boundary.f90`. In the default, reflection boundary is taken for y-direction and periodic boundart is taken for other directions.
+```Fortran
+  integer,parameter:: periodicb=1,reflection=2,outflow=3
+  integer,parameter:: boundary_xin=periodicb , boundary_xout=periodicb
+  integer,parameter:: boundary_yin=reflection, boundary_yout=reflection
+  integer,parameter:: boundary_zin=periodicb , boundary_zout=periodicb
+```
+
 
 ---
+## Data Output Specification
 
-## Analysis
+### 0. Performance Measurement Mode (No Intermediate Output)
 
-### Build the analysis tool
+For performance benchmarking, the code provides an option in `main.f90` to suppress intermediate outputs. In this case the initial and final snapshots are only damped.
+```Fortran,
+    logical,parameter::nooutput=.true.
+```
+
+The code supports three different output modes depending on the purpose of analysis
+
+### 1. Quick check: Text output (ASCII)
+
+If you want to quickly inspect the simulation results the code outputs text-format data. To employ this mode, edit `output.f90` as follows. 
+```Fortran,
+  logical,parameter:: binaryout= .false.
+```
+The data is damped as `ascdata/snap?????.csv` and format is "x y d vx vy p phi X". `gnuplot` is useful to quick check.
+```bash
+gnuplot
+set view map
+splot "ascdata/snap?????.csv" u 1:2:8 w pm3d
+```
+
+### 2. Full data visualization: XMF + binary (for VisIt / ParaView)
+If you want to visualize the full 3D data, the code outputs binary data + XMF metadata. Check `output.f90` as follows. 
+```Fortran,
+  logical,parameter:: binaryout= .true.
+```
+The data is damped as `bindata/field?????.xmf`, `bindata/field?????.bin`, `bindata/grid1D.bin`, `bindata/grid2D.bin`, and `bindata/grid3D.bin`. Use `VisIt/ParaView` to check the data.
+
+### 3. Detailed analysis: Analysis program
+For more quantitative studies (spectra, statistics, etc.), use the analysis tools provided in the `analysis/` directory.
+Check `output.f90` as follows. 
+```Fortran,
+  logical,parameter:: binaryout= .true.
+```
+The data is damped as `bindata/unf?????.dat`, `bindata/field?????.bin`, `bindata/grid1D.bin`, `bindata/grid2D.bin`, and `bindata/grid3D.bin`. 
+
+#### Build the analysis tool
 
 ```bash
 cd ../analysis
@@ -134,7 +176,7 @@ sbatch sj_g00_ana.sh
 
 Outputs are saved in `output/`.
 
-### 2D plots and animation
+#### 2D plots and animation
 
 Copy `bindata/` and `output/` to the analysis server and:
 
@@ -145,13 +187,10 @@ make movie
 
 Images are saved in `figures/`, movies in `movie/anivor`.
 
-### Spectrum
+#### Spectrum
 
 ```bash
 make spectrum
 ```
 
 ---
-
-# Results
-Typical results are shown [here](https://www.notion.so/Turbulence-Studies-numerical-experiments-e4836ad642684f8f992d54a1f7e22635).
