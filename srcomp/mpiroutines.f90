@@ -15,10 +15,12 @@ module mpimod
   integer :: nreq, nsub
   integer ::   gpuid, ngpus
 !$omp declare target (myid_w)
+  
   real(8),dimension(2):: bufinpmin, bufoutmin
 !$omp declare target (bufinpmin,bufoutmin)
   real(8),dimension(2):: bufinpmax, bufoutmax
 !$omp declare target (bufinpmax,bufoutmax)
+
 contains
 subroutine InitializeMPI
   use omp_lib
@@ -68,18 +70,21 @@ subroutine InitializeMPI
   !
   call MPI_CART_COORDS( comm3d, myid, 3, coords, ierr )
 
+!> debug  
+  call MPI_Comm_set_errhandler(comm3d, MPI_ERRORS_RETURN, ierr)
+  
   ngpus = omp_get_num_devices()
   if(myid_w == 0) then
      print *, "num of GPUs = ", ngpus
   end if
 
-  gpuid = mod(myid_w, ngpus)
-  if(ngpus == 0) gpuid = -1
-  if(gpuid >= 0) then
+  if(ngpus <= 0) then
+     gpuid = -1
+  else
+     gpuid = mod(myid_w, ngpus)
      call omp_set_default_device(gpuid)
-  end if
-  
-!$omp target update to (myid_w)
+  endif
+!$omp target update to(myid_w)
   return
 end subroutine InitializeMPI
 
@@ -90,22 +95,49 @@ end subroutine FinalizeMPI
 
 subroutine MPIminfind
   implicit none
-
-!$omp target data map (to:bufinpmin,bufoutmin) use_device_ptr(bufinpmin,bufoutmin)
-       call MPI_ALLREDUCE( bufinpmin(1), bufoutmin(1), 1 &
+  integer :: err_len
+  character(len=MPI_MAX_ERROR_STRING) :: err_string
+#ifdef USE_CUDA_AWARE_MPI
+!$omp target data use_device_ptr(bufinpmin,bufoutmin)
+call MPI_ALLREDUCE( bufinpmin(1), bufoutmin(1), 1 &
      &                   , MPI_2DOUBLE_PRECISION   &
-     &                   , MPI_MINLOC, comm3d, ierr)      
+     &                   , MPI_MINLOC, comm3d, ierr)
 !$omp end target data
-
+#else
+!$omp target update from(bufinpmin)
+call MPI_ALLREDUCE( bufinpmin(1), bufoutmin(1), 1 &
+     &                   , MPI_2DOUBLE_PRECISION   &
+     &                   , MPI_MINLOC, comm3d, ierr)
+!$omp target update to(bufoutmin)
+#endif
+       if (ierr /= MPI_SUCCESS) then
+          call MPI_Error_string(ierr, err_string, err_len, ierr)
+          print *,"error in MPIminfind", trim(err_string)
+       endif
 end subroutine MPIminfind
 
 subroutine MPImaxfind
   implicit none
-!$omp target data map (to:bufinpmax,bufoutmax) use_device_ptr(bufinpmax,bufoutmax)
-       call MPI_ALLREDUCE( bufinpmax(1), bufoutmax(1), 1 &
+  integer :: err_len
+  character(len=MPI_MAX_ERROR_STRING) :: err_string
+#ifdef USE_CUDA_AWARE_MPI
+!$omp target data use_device_ptr(bufinpmax,bufoutmax)
+call MPI_ALLREDUCE( bufinpmax(1), bufoutmax(1), 1 &
      &                   , MPI_2DOUBLE_PRECISION   &
      &                   , MPI_MAXLOC, comm3d, ierr)
 !$omp end target data
+#else
+!$omp target update from(bufinpmax)
+call MPI_ALLREDUCE( bufinpmax(1), bufoutmax(1), 1 &
+     &                   , MPI_2DOUBLE_PRECISION   &
+     &                   , MPI_MAXLOC, comm3d, ierr)
+!$omp target update to(bufoutmax)
+#endif
+       if (ierr /= MPI_SUCCESS) then
+          call MPI_Error_string(ierr, err_string, err_len, ierr)
+          print *,"error in MPIminfind", trim(err_string)
+       endif
 end subroutine MPImaxfind
 
 end module mpimod
+
