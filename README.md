@@ -104,8 +104,14 @@ $$
 
 ### Boundary conditions
 
-Boundary conditions are applied via `BoundaryCondition` (see `boundarymod`).  
-(The domain extent and grid size are configured in `basicmod` and printed at runtime.)
+Boundary conditions are applied in `boundary.f90`. In the default, reflection boundary is taken for y-direction and periodic boundart is taken for other directions.
+```Fortran
+  integer,parameter:: periodicb=1,reflection=2,outflow=3
+  integer,parameter:: boundary_xin=periodicb , boundary_xout=periodicb
+  integer,parameter:: boundary_yin=reflection, boundary_yout=reflection
+  integer,parameter:: boundary_zin=periodicb , boundary_zout=periodicb
+```
+
 
 ---
 ## Data Output Specification
