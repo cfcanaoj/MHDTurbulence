@@ -37,6 +37,9 @@ If you want to use a different version, go to the relevant directory shown below
 |`srcomp`|GPU|MPI OpenMP|
 |`srccpu`|CPU|MPI|
 
+The OpenMP version (`srcomp`) is currently not fully functional and may not run correctly.
+Please use the OpenACC (GPU) or CPU version instead.
+
 ### Run
 
 ```bash
