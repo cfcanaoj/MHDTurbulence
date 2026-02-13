@@ -122,7 +122,7 @@ namespace hydflux_mod {
   extern double chg;
   
   void AllocateHydroVariables(GridArray<double>& G,FieldArray<double>& U,FieldArray<double>& Fx,FieldArray<double>& Fy,FieldArray<double>& Fz,FieldArray<double>& P);
-  void DeallocateHydroVariables(GridArray<double> G,FieldArray<double>& U, FieldArray<double>& Fx,FieldArray<double>& Fy,FieldArray<double>& Fz,FieldArray<double>& P);
+  void DeallocateHydroVariables(GridArray<double>& G,FieldArray<double>& U, FieldArray<double>& Fx,FieldArray<double>& Fy,FieldArray<double>& Fz,FieldArray<double>& P);
   void GetNumericalFlux1(const GridArray<double>& G,const FieldArray<double>& P,FieldArray<double>& Fx);
   void GetNumericalFlux2(const GridArray<double>& G,const FieldArray<double>& P,FieldArray<double>& Fy);
   void GetNumericalFlux3(const GridArray<double>& G,const FieldArray<double>& P,FieldArray<double>& Fz);

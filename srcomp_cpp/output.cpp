@@ -193,7 +193,7 @@ namespace mpi_dataio_mod {
       npart[dir2]  = ngrid2;
       npart[dir3]  = ngrid3;
     
-      nvars = 9;
+      nvars = 9+ncomp;
       nvarg = 2;
       int ngrid1mod = ngrid1;
       int ngrid2mod = ngrid2;
@@ -238,7 +238,10 @@ namespace mpi_dataio_mod {
       Fieldout(5,k,j,i) = P(nbm2,k+ks,j+js,i+is);
       Fieldout(6,k,j,i) = P(nbm3,k+ks,j+js,i+is);
       Fieldout(7,k,j,i) = P(nbps,k+ks,j+js,i+is);
-      Fieldout(8,k,j,i) = P(npre,k+ks,j+js,i+is); 
+      Fieldout(8,k,j,i) = P(npre,k+ks,j+js,i+is);
+      for(int n=0;n<ncomp;n++){
+	Fieldout(9+n,k,j,i) = P(nst+n,k+ks,j+js,i+is);
+      }
   };
 
   }// MPI_IO_PACK
@@ -283,7 +286,6 @@ namespace mpi_dataio_mod {
       names.push_back("b2");
       names.push_back("b3");
       names.push_back("bp");
-      names.push_back("p");
       // Any remaining variables are treated as passive scalars (X1, X2, ...)
       for (int n = static_cast<int>(names.size()); n < nvars_; ++n) {
         const int idx = n - 8; // so first extra becomes X1
