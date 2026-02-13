@@ -496,7 +496,7 @@ int main() {
   periodic[dir3] = 1;
   ntiles[dir1]   = 1;
   ntiles[dir2]   = 2;
-  ntiles[dir3]   = 1;
+  ntiles[dir3]   = 2;
   InitializeMPI();
   
   if(myid_w == 0) printf("setup grids and fields\n");

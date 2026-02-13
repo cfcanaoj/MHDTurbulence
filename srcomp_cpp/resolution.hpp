@@ -6,17 +6,17 @@
 */
 
 namespace resolution_mod {
-  inline constexpr int stepmax{3000}; // max step 
+  inline constexpr int stepmax{600000}; // max step 
   inline constexpr int stepsnap = stepmax/100;
   inline double time_sim = 0.0e0;
   inline double time_out = 0.0e0;
   inline double dt;
-  inline constexpr double time_max = 3.0e0;
+  inline constexpr double time_max = 15.0e0;
   inline constexpr double dtout = time_max/100;
   
-  inline constexpr int ngrid1{128}; //! resolution for x
-  inline constexpr int ngrid2{64}; //! resolution for y
-  inline constexpr int ngrid3{128}; //! resolution for z
+  inline constexpr int ngrid1{150}; //! resolution for x
+  inline constexpr int ngrid2{75}; //! resolution for y
+  inline constexpr int ngrid3{75}; //! resolution for z
   inline constexpr int ngh{2};  //! number of ghost mesh
   inline constexpr int itot = ngrid1 + 2 * ngh+1; //! Like ZEUS-2D
   inline constexpr int jtot = ngrid2 + 2 * ngh+1; // 
@@ -28,6 +28,6 @@ namespace resolution_mod {
   inline constexpr int je = js + ngrid2-1;
   inline constexpr int ke = ks + ngrid3-1;
   inline constexpr double x1min(-0.5),x1max(+0.5);
-  inline constexpr double x2min(-0.5),x2max(+0.5);
+  inline constexpr double x2min(-1.0),x2max(+1.0);
   inline constexpr double x3min(-0.5),x3max(+0.5);
 };
