@@ -112,12 +112,12 @@ Boundary conditions are applied via `BoundaryCondition` (see `boundarymod`).
 
 ### 0. Performance Measurement Mode (No Intermediate Output)
 
-For performance benchmarking, the code provides an option in `main.f90` to suppress intermediate outputs. In this case the initial and final data is only damped.
+For performance benchmarking, the code provides an option in `main.f90` to suppress intermediate outputs. In this case the initial and final snapshots are only damped.
 ```Fortran,
     logical,parameter::nooutput=.true.
 ```
 
-On the The code supports three different output modes depending on the purpose of analysis
+The code supports three different output modes depending on the purpose of analysis
 
 ### 1. Quick check: Text output (ASCII)
 
@@ -125,7 +125,12 @@ If you want to quickly inspect the simulation results the code outputs text-form
 ```Fortran,
   logical,parameter:: binaryout= .false.
 ```
-The data is damped as `ascdata/snap?????.csv` and format is "x y d vx vy p phi X". 
+The data is damped as `ascdata/snap?????.csv` and format is "x y d vx vy p phi X". `gnuplot` is useful to quick check.
+```bash
+gnuplot
+set view map
+splot "ascdata/snap?????.csv" u 1:2:8 w pm3d
+```
 
 ### 2. Full data visualization: XMF + binary (for VisIt / ParaView)
 If you want to visualize the full 3D data, the code outputs binary data + XMF metadata. Check `output.f90` as follows. 
