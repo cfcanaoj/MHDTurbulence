@@ -248,7 +248,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! DATA WRITE
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    write(usrfile,"(A,i5.5,A)") filefield,timeid,binaryextension
+    write(usrfile,"(A,i5.5,A)") trim(filefield),timeid,trim(binaryextension)
     fpathbin = trim(datadir)//usrfile
     
       call MPI_FILE_OPEN(MPI_COMM_WORLD, &
@@ -382,13 +382,13 @@ contains
     ktot = ntotal(3)
     
     ! ---- file names (match your ReadData) ----
-    write(xmfname,'(a,i5.5,a)') "field", nout, ".xmf"
+    write(xmfname,'(a,i5.5,a)') trim(filefield), nout, ".xmf"
     xmfname = trim(dirname)//trim(xmfname)
 
     fgridx = filegrid1D
     fgridy = filegrid2D
     fgridz = filegrid3D
-    write(fdata,'(a,i5.5,a)') filefield, nout,binaryextension
+    write(fdata,'(a,i5.5,a)') trim(filefield), nout,trim(binaryextension)
 
     ! ---- sizes & offsets ----
     ! stream/unformatted wrote raw reals; assume real64 (8 bytes) because iso_fortran_env real64
@@ -504,6 +504,7 @@ subroutine Output(is_final)
   use mpimod
   use basicmod
   use mpiiomod
+  use config, only: asciiout
   implicit none
 
   logical, intent(in):: is_final
@@ -515,9 +516,6 @@ subroutine Output(is_final)
   
   logical, save:: is_inited
   data is_inited /.false./
-  
-  logical,parameter:: binaryout= .true.
-
 
   if(time .lt. tout+dtout .and. .not. is_final) return
 
@@ -527,11 +525,11 @@ subroutine Output(is_final)
 !$acc update host (gp)
 !$acc update host (Xcomp)
 
-  if(binaryout) then
-     call MPI_IO_Pack(nout)
-     call MPI_IO_Write(nout)
-     if(myid_w==0) call WriteXDMF(time,nout)
-  else
+  call MPI_IO_Pack(nout)
+  call MPI_IO_Write(nout)
+  if(myid_w==0) call WriteXDMF(time,nout)
+  
+  if(asciiout) then
      call ASC_WRITE(nout)
   endif
   
@@ -596,9 +594,6 @@ contains
   end function to_str
 
 end subroutine ASC_WRITE
-
-
-
 
 subroutine makedirs(outdir)
   implicit none

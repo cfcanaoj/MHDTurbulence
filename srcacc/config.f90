@@ -22,5 +22,7 @@
       integer,parameter:: boundary_xin=periodicb , boundary_xout=periodicb
       integer,parameter:: boundary_yin=reflection, boundary_yout=reflection
       integer,parameter:: boundary_zin=periodicb , boundary_zout=periodicb
+      
+      logical,parameter:: asciiout= .true.
 
       end module config
