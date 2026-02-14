@@ -131,7 +131,7 @@ namespace mpi_dataio_mod {
       MPI_Type_create_subarray(2, Asize, Ssize, Start, MPI_ORDER_C,MPI_DOUBLE, &SAG2D);
       MPI_Type_commit(&SAG2D);
 
-      std::string fpath = std::string(datadir) + "grid2d.bin";
+      std::string fpath = std::string(datadir) + "grid2D.bin";
       MPI_File fh;
       MPI_File_open(MPI_COMM_WORLD, fpath.c_str(),
 		    MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
