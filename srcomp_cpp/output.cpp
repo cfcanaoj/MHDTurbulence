@@ -416,9 +416,9 @@ void Output(bool is_forced){
   
 #pragma omp target update from (P.data[0:P.size])
 
-  mpiio::MPI_IO_Pack(index);
-  mpiio::MPI_IO_Write(index);
-  if(myid_w==0) mpiio::WriteXDMF(time_sim,index);
+  //mpiio::MPI_IO_Pack(index);
+  //mpiio::MPI_IO_Write(index);
+  //if(myid_w==0) mpiio::WriteXDMF(time_sim,index);
   
   if(config::asciiout){
     mpiio::ASC_WRITE(index);

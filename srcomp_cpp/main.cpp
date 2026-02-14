@@ -243,6 +243,6 @@ int main() {
   Output(forceoutput);
   //if (!nooutput) Output1D(forceoutput);
   
-  printf("program has been finished\n");
+  if (myid_w == 0) printf("program has been finished\n");
   return 0;
 }

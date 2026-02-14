@@ -11,7 +11,7 @@ namespace config {
   inline constexpr double time_max = 15.0e0;
   inline constexpr double dtout = time_max/100;
 
-  inline constexpr int stepmax{600000}; // max step 
+  inline constexpr int stepmax{60000}; // max step 
   inline constexpr int stepsnap = stepmax/100;
 
   inline constexpr int ngridtotal1{150}; // total resolution for x
