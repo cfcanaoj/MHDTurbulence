@@ -5,6 +5,7 @@
 
 #include <omp.h>
 
+#include "resolution.hpp"
 #include "mpi_config.hpp"
 
 // =============================
@@ -22,8 +23,8 @@ namespace mpi_config_mod {
   MPI_Comm comm3d = MPI_COMM_NULL;
   int myid = 0, nprocs = 0;
   
-  int periodic[3] = {0, 0, 0};   // broadcasted as MPI_INT
-  int ntiles[3]   = {0, 0, 0};
+  int periodic[3] = {config::periodic[dir1], config::periodic[dir2], config::periodic[dir3]};   // broadcasted as MPI_INT
+  int ntiles[3]   = {  config::ntiles[dir1],   config::ntiles[dir2],   config::ntiles[dir3]};
   int coords[3]   = {0, 0, 0};
   int reorder     = 0;
   int n1m=-1, n1p=-1, n2m=-1, n2p=-1, n3m=-1, n3p=-1;

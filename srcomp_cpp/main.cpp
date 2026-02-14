@@ -197,12 +197,6 @@ int main() {
 	// false -> ASCII output (unf%05d.dat)
 	const bool binaryout = false;
 
-  periodic[dir1] = 1;
-  periodic[dir2] = 1;
-  periodic[dir3] = 1;
-  ntiles[dir1]   = 1;
-  ntiles[dir2]   = 2;
-  ntiles[dir3]   = 1;
   InitializeMPI();
 	// Configure I/O mode
   mpi_dataio_mod::binaryout = binaryout;
