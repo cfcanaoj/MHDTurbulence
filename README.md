@@ -7,10 +7,8 @@ The current default problem is **Kelvin–Helmholtz instability**.
 
 ## How to copy the source code
 
-After you login the server, `g00.cfca.nao.ac.jp`, follow the instruction.
-
+After you login the server, copy the programs.
 ```bash
-cd /gwork0/<username>
 git clone git@github.com:cfcanaoj/MHDTurbulence MHDTurbulence
 cd MHDTurbulence
 ```
@@ -21,42 +19,38 @@ cd MHDTurbulence
 
 ### Compile
 
-To run the code, compile `Simulation.f90` on a GPU server.
-
+To run the code, compile `Simulation.f90` on a GPU server. OpenACC version, `srcacc` is our defalut setup.
 ```bash
 cd srcacc
 make
 ```
 
-Then `Simulation.x` is created in `../exe` directory (OpenACC version).  
+Then `Simulation.x` is created in `../exe` directory.  
 If you want to use a different version, go to the relevant directory shown below.
 
-|directory|GPU/CPU|Parallelization|
+|directory|GPU/CPU|Language |Parallelization|
 |:---|:---:|:---|
-|`srcacc`|GPU|MPI OpenACC|
-|`srcomp`|GPU|MPI OpenMP|
-|`srccpu`|CPU|MPI|
+|`srcacc`    |GPU|Fortran|MPI OpenACC|
+|`srcomp`    |GPU|Fortan |MPI OpenMP|
+|`srcomp_cpp`|GPU|C++    |MPI OpenMP|
+|`srccpu`    |CPU|Fortran|MPI OpenMP|
 
 The OpenMP version (`srcomp`) is currently not fully functional and may not run correctly.
 Please use the OpenACC (GPU) or CPU version instead.
 
 ### Run
-
+Copy the batch script and run the code. The script for Slurm is prepared.
 ```bash
 cd ../exe
 cp ../misc/sj_g00.sh .
 sbatch sj_g00.sh
 ```
-
-The simulation data are saved in `bindata/`.
-
 Batch scripts depend on your parallelization scheme and environment.
 
-|script|GPU/CPU|Parallelization|
+|script|GPU/CPU|directory|
 |:---|:---:|:---|
-|`sj_g00.sh`|GPU|MPI OpenACC|
-|`sj_g00.sh`|GPU|MPI OpenMP|
-|`sj_xd.sh`|CPU|MPI|
+|`sj_g00.sh`|GPU|`srcacc`, `srcomp`, `srcomp_cpp`|
+|`sj_xd.sh`|CPU|`srccpu`,|
 
 ---
 
