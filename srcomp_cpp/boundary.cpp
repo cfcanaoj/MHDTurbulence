@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <algorithm>
+#include <vector>
 #include <mpi.h>
 #include <omp.h>
 
@@ -157,8 +158,25 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
   using namespace mpi_config_mod;
   using namespace resolution_mod;
 
-  const int dev = omp_get_default_device();
-  (void)dev; // MPI uses host-staged buffers; keep for potential future device-only paths.
+	  const int dev  = omp_get_default_device();
+	  const int host = omp_get_initial_device();
+
+	  // If p is a mapped host pointer, return the device mapping.
+	  // If p is already a device pointer (or not mapped), fall back to p.
+	  auto devptr_ro = [&](const void* p)->const void*{
+	    const void* dp = omp_get_mapped_ptr(const_cast<void*>(p), dev);
+	    return dp ? dp : p;
+	  };
+	  auto devptr_rw = [&](void* p)->void*{
+	    void* dp = omp_get_mapped_ptr(p, dev);
+	    return dp ? dp : p;
+	  };
+
+	  // Dedicated host staging buffers (allocated once, reused). This guarantees MPI never
+	  // touches device pointers even if the BoundaryArray storage changes in the future.
+	  static std::vector<double> hsend_Xs, hsend_Xe, hrecv_Xs, hrecv_Xe;
+	  static std::vector<double> hsend_Ys, hsend_Ye, hrecv_Ys, hrecv_Ye;
+	  static std::vector<double> hsend_Zs, hsend_Ze, hrecv_Zs, hrecv_Ze;
   int rc;
   int nreq = 0;
 
@@ -235,13 +253,18 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
     //     device -> host (send buffers), MPI on host, host -> device (recv buffers).
     // This avoids cuMemGetAddressRange / CUDA-aware detection paths entirely.
 
-    // Ensure send buffers are present on host.
-#pragma omp target update from(Bs.Xe_data[0:Bs.size1], Bs.Xs_data[0:Bs.size1])
+	    // Stage device send buffers -> host staging buffers.
+	    hsend_Xe.resize(Bs.size1);
+	    hsend_Xs.resize(Bs.size1);
+	    hrecv_Xs.resize(Br.size1);
+	    hrecv_Xe.resize(Br.size1);
+	    omp_target_memcpy(hsend_Xe.data(), devptr_ro(Bs.Xe_data), sizeof(double)*Bs.size1, 0, 0, host, dev);
+	    omp_target_memcpy(hsend_Xs.data(), devptr_ro(Bs.Xs_data), sizeof(double)*Bs.size1, 0, 0, host, dev);
 
-    double* h_Bs_Xe = Bs.Xe_data;
-    double* h_Bs_Xs = Bs.Xs_data;
-    double* h_Br_Xs = Br.Xs_data;
-    double* h_Br_Xe = Br.Xe_data;
+	    double* h_Bs_Xe = hsend_Xe.data();
+	    double* h_Bs_Xs = hsend_Xs.data();
+	    double* h_Br_Xs = hrecv_Xs.data();
+	    double* h_Br_Xe = hrecv_Xe.data();
 
     if (n1m != MPI_PROC_NULL) {
       rc = MPI_Irecv(h_Br_Xs, Br.size1, MPI_DOUBLE, n1m, 1100, comm3d, &req[nreq++]);
@@ -359,13 +382,18 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
               Br.Ye(n,k,j,i) = Bs.Ys(n,k,ngh-1,i);
     }
   } else {
-    // Host staging for MPI (see X direction block for rationale)
-#pragma omp target update from(Bs.Ye_data[0:Bs.size2], Bs.Ys_data[0:Bs.size2])
+	    // Host staging for MPI (see X direction block for rationale)
+	    hsend_Ye.resize(Bs.size2);
+	    hsend_Ys.resize(Bs.size2);
+	    hrecv_Ys.resize(Br.size2);
+	    hrecv_Ye.resize(Br.size2);
+	    omp_target_memcpy(hsend_Ye.data(), devptr_ro(Bs.Ye_data), sizeof(double)*Bs.size2, 0, 0, host, dev);
+	    omp_target_memcpy(hsend_Ys.data(), devptr_ro(Bs.Ys_data), sizeof(double)*Bs.size2, 0, 0, host, dev);
 
-    double* h_Bs_Ye = Bs.Ye_data;
-    double* h_Bs_Ys = Bs.Ys_data;
-    double* h_Br_Ys = Br.Ys_data;
-    double* h_Br_Ye = Br.Ye_data;
+	    double* h_Bs_Ye = hsend_Ye.data();
+	    double* h_Bs_Ys = hsend_Ys.data();
+	    double* h_Br_Ys = hrecv_Ys.data();
+	    double* h_Br_Ye = hrecv_Ye.data();
 
     if (n2m != MPI_PROC_NULL) {
       rc = MPI_Irecv(h_Br_Ys, Br.size2, MPI_DOUBLE, n2m, 2100, comm3d, &req[nreq++]);
@@ -481,13 +509,18 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
               Br.Ze(n,k,j,i) = Bs.Zs(n,ngh-1,j,i);
     }
   } else {
-    // Host staging for MPI (see X direction block for rationale)
-#pragma omp target update from(Bs.Ze_data[0:Bs.size3], Bs.Zs_data[0:Bs.size3])
+	    // Host staging for MPI (see X direction block for rationale)
+	    hsend_Ze.resize(Bs.size3);
+	    hsend_Zs.resize(Bs.size3);
+	    hrecv_Zs.resize(Br.size3);
+	    hrecv_Ze.resize(Br.size3);
+	    omp_target_memcpy(hsend_Ze.data(), devptr_ro(Bs.Ze_data), sizeof(double)*Bs.size3, 0, 0, host, dev);
+	    omp_target_memcpy(hsend_Zs.data(), devptr_ro(Bs.Zs_data), sizeof(double)*Bs.size3, 0, 0, host, dev);
 
-    double* h_Bs_Ze = Bs.Ze_data;
-    double* h_Bs_Zs = Bs.Zs_data;
-    double* h_Br_Zs = Br.Zs_data;
-    double* h_Br_Ze = Br.Ze_data;
+	    double* h_Bs_Ze = hsend_Ze.data();
+	    double* h_Bs_Zs = hsend_Zs.data();
+	    double* h_Br_Zs = hrecv_Zs.data();
+	    double* h_Br_Ze = hrecv_Ze.data();
 
     if (n3m != MPI_PROC_NULL) {
       rc = MPI_Irecv(h_Br_Zs, Br.size3, MPI_DOUBLE, n3m, 3100, comm3d, &req[nreq++]);
@@ -542,13 +575,22 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
     }
   }
 
-  if (nreq != 0) {
-    MPI_Waitall(nreq, req, MPI_STATUSES_IGNORE);
-    // Push received ghost-zone buffers back to device.
-#pragma omp target update to(Br.Xs_data[0:Br.size1], Br.Xe_data[0:Br.size1])
-#pragma omp target update to(Br.Ys_data[0:Br.size2], Br.Ye_data[0:Br.size2])
-#pragma omp target update to(Br.Zs_data[0:Br.size3], Br.Ze_data[0:Br.size3])
-  }
+	  if (nreq != 0) {
+	    MPI_Waitall(nreq, req, MPI_STATUSES_IGNORE);
+	    // Copy host-received buffers -> device buffers (only for directions that used MPI)
+	    if (ntiles[dir1] != 1) {
+	      omp_target_memcpy(devptr_rw(Br.Xs_data), hrecv_Xs.data(), sizeof(double)*Br.size1, 0, 0, dev, host);
+	      omp_target_memcpy(devptr_rw(Br.Xe_data), hrecv_Xe.data(), sizeof(double)*Br.size1, 0, 0, dev, host);
+	    }
+	    if (ntiles[dir2] != 1) {
+	      omp_target_memcpy(devptr_rw(Br.Ys_data), hrecv_Ys.data(), sizeof(double)*Br.size2, 0, 0, dev, host);
+	      omp_target_memcpy(devptr_rw(Br.Ye_data), hrecv_Ye.data(), sizeof(double)*Br.size2, 0, 0, dev, host);
+	    }
+	    if (ntiles[dir3] != 1) {
+	      omp_target_memcpy(devptr_rw(Br.Zs_data), hrecv_Zs.data(), sizeof(double)*Br.size3, 0, 0, dev, host);
+	      omp_target_memcpy(devptr_rw(Br.Ze_data), hrecv_Ze.data(), sizeof(double)*Br.size3, 0, 0, dev, host);
+	    }
+	  }
   nreq = 0;
 };
 
