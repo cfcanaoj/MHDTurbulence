@@ -28,12 +28,12 @@ make
 Then `Simulation.x` is created in `../exe` directory.  
 If you want to use a different version, go to the relevant directory shown below.
 
-|directory|GPU/CPU|Language |Parallelization|
-|:---|:---:|:---|
-|`srcacc`    |GPU|Fortran|MPI OpenACC|
-|`srcomp`    |GPU|Fortan |MPI OpenMP|
-|`srcomp_cpp`|GPU|C++    |MPI OpenMP|
-|`srccpu`    |CPU|Fortran|MPI OpenMP|
+|directory|Language |GPU/CPU|Parallelization|
+|:---|:---:|:---|:---|
+|`srcacc`    |Fortran|GPU|MPI OpenACC|
+|`srcomp`    |Fortan |GPU|MPI OpenMP|
+|`srcomp_cpp`|C++    |GPU|MPI OpenMP|
+|`srccpu`    |Fortran|CPU|MPI OpenMP|
 
 The OpenMP version (`srcomp`) is currently not fully functional and may not run correctly.
 Please use the OpenACC (GPU) or CPU version instead.
@@ -50,7 +50,7 @@ Batch scripts depend on your parallelization scheme and environment.
 |script|GPU/CPU|directory|
 |:---|:---:|:---|
 |`sj_g00.sh`|GPU|`srcacc`, `srcomp`, `srcomp_cpp`|
-|`sj_xd.sh`|CPU|`srccpu`,|
+|`sj_xd.sh`|CPU|`srccpu`|
 
 ---
 ## Data Output Specification
@@ -59,7 +59,7 @@ Batch scripts depend on your parallelization scheme and environment.
 
 For performance benchmarking, the code provides an option in `config.f90` to suppress intermediate outputs. In this case the initial and final snapshots are only damped.
 ```Fortran,
-logical,parameter:: benchmarkmode = .false. !! If true, only initial and final outputs are damped.
+logical,parameter:: benchmarkmode = .true. !! If true, only initial and final outputs are damped.
 ```
 
 The code supports three different output modes depending on the purpose of analysis
