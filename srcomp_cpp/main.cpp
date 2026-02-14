@@ -121,7 +121,7 @@ static void GenerateProblem(hydflux_mod::GridArray<double>& G,hydflux_mod::Field
 
         // specific internal energy is not used in the isothermal closure, but keep it consistent
         P(nene,k,j,i) = P(npre,k,j,i) /(gam-1.0);
-	P(ncsp,k,j,i) = sqrt(P(npre,k,j,i)/P(nden,k,j,i));
+	P(ncsp,k,j,i) = sqrt(gam*P(npre,k,j,i)/P(nden,k,j,i));
 	  
 	  //P(ncsp,k,j,i) = csiso;
         // Composition (Fortran: Xcomp(1)=0.5*(tanh((y+0.5)/wid)-tanh((y-0.5)/wid)))
