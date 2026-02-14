@@ -13,11 +13,11 @@
 #include <mpi.h>
 #include <omp.h>
 
-#include "config.hpp"
-#include "mpi_config.hpp"
+#include "resolution.hpp"
 #include "mhd.hpp"
 #include "boundary.hpp"
 
+#include "mpi_config.hpp"
 
 using namespace hydflux_mod;
 
@@ -158,9 +158,9 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
   // |Br.Xs|             |Br.Xe|
 #pragma omp target teams distribute parallel for collapse(4)
     for (int n=0; n<nprim; n++)
-    for (int k=0; k<ktot;k++)
-    for (int j=0; j<jtot;j++)
-    for (int i=0; i<ngh ;i++) {
+      for (int k=0; k<ktot; k++)
+	for (int j=0; j<jtot; j++)
+	  for (int i=0; i<ngh; i++) {
 	    Br.Xs(n,k,j,i) = Bs.Xs(n,k,j,i);
 	    Br.Xe(n,k,j,i) = Bs.Xe(n,k,j,i);
 	  }
@@ -184,9 +184,9 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
   // |Br.Ys|             |Br.Ye|
 #pragma omp target teams distribute parallel for collapse(4)
     for (int n=0; n<nprim; n++)
-      for (int k=0; k<ktot;k++)
-      for (int j=0; j<ngh ;j++)
-      for (int i=0; i<itot;i++) {
+      for (int k=0; k<ktot; k++)
+	for (int j=0; j<ngh;j++)
+	  for (int i=0; i<itot; i++) {
 	    Br.Ys(n,k,j,i) = Bs.Ys(n,k,j,i);
 	    Br.Ye(n,k,j,i) = Bs.Ye(n,k,j,i);
 	  }
@@ -213,9 +213,9 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
   // |Br.Zs|             |Br.Ze|
 #pragma omp target teams distribute parallel for collapse(4)
     for (int n=0; n<nprim; n++)
-      for (int k=0; k<ngh ;k++)
-      for (int j=0; j<jtot;j++)
-      for (int i=0; i<itot;i++) {
+      for (int k=0; k<ngh; k++)
+	for (int j=0; j<jtot; j++)
+	  for (int i=0; i<itot; i++) {
 	    Br.Zs(n,k,j,i) = Bs.Zs(n,k,j,i);
 	    Br.Ze(n,k,j,i) = Bs.Ze(n,k,j,i);
 	  }
@@ -249,9 +249,9 @@ void SetBoundaryCondition(FieldArray<double>& P,BoundaryArray<double>& Bs,Bounda
   // |Br.Xs|             |Br.Xe|
 #pragma omp target teams distribute parallel for collapse(4)
   for (int n=0; n<nprim; n++)
-    for (int k=0; k<ktot;k++)
-    for (int j=0; j<jtot;j++)
-    for (int i=0; i<ngh ;i++) {
+    for (int k=0; k<ktot; k++)
+      for (int j=0; j<jtot; j++)
+	for (int i=0; i<ngh; i++) {
 	  Bs.Xs(n,k,j,i) = P(n,k,j,ie-ngh+1+i);
 	  Bs.Xe(n,k,j,i) = P(n,k,j,is      +i);
 	  //Bs.Xs_data[((n*ktot+k)*jtot+j)*ngh+i]=P.data[((n*ktot+k)*jtot+j)*itot+ie-ngh+1+i];
@@ -263,9 +263,9 @@ void SetBoundaryCondition(FieldArray<double>& P,BoundaryArray<double>& Bs,Bounda
   // |Br.Ys|             |Br.Ye|
 #pragma omp target teams distribute parallel for collapse(4)
   for (int n=0; n<nprim; n++)
-    for (int k=0; k<ktot;k++)
-    for (int j=0; j<ngh ;j++)
-    for (int i=0; i<itot;i++) {
+    for (int k=0; k<ktot; k++)
+      for (int j=0; j<ngh;j++)
+	for (int i=0; i<itot; i++) {
 	  Bs.Ys(n,k,j,i) = P(n,k,je-ngh+1+j,i);
 	  Bs.Ye(n,k,j,i) = P(n,k,js      +j,i);
 	  //Bs.Ys_data[((n*ktot+k)*ngh+j)*itot+i]=P.data[((n*ktot+k)*jtot+je-ngh+1+j)*itot+i];
@@ -277,9 +277,9 @@ void SetBoundaryCondition(FieldArray<double>& P,BoundaryArray<double>& Bs,Bounda
   // |Br.Zs|             |Br.Ze|
 #pragma omp target teams distribute parallel for collapse(4)
   for (int n=0; n<nprim; n++)
-    for (int k=0; k<ngh ;k++)
-    for (int j=0; j<jtot;j++)
-    for (int i=0; i<itot;i++) {
+    for (int k=0; k<ngh; k++)
+      for (int j=0; j<jtot; j++)
+	for (int i=0; i<itot; i++) {
 	  Bs.Zs(n,k,j,i) = P(n,ke-ngh+1+k,j,i);
 	  Bs.Ze(n,k,j,i) = P(n,ks      +k,j,i);
 	  //Bs.Zs_data[((n*ngh+k)*jtot+j)*itot+i]=P.data[((n*ktot+ke-ngh+1+k)*jtot+j)*itot+i];
@@ -293,9 +293,9 @@ void SetBoundaryCondition(FieldArray<double>& P,BoundaryArray<double>& Bs,Bounda
   // |Br.Xs|             |Br.Xe|
 #pragma omp target teams distribute parallel for collapse(4)
   for (int n=0; n<nprim; n++)
-    for (int k=0; k<ktot;k++)
-    for (int j=0; j<jtot;j++)
-    for (int i=0; i<ngh ;i++) {
+    for (int k=0; k<ktot; k++)
+      for (int j=0; j<jtot; j++)
+	for (int i=0; i<ngh; i++) {
 	  P(n,k,j,is-ngh+i) = Br.Xs(n,k,j,i);
 	  P(n,k,j,ie+1  +i) = Br.Xe(n,k,j,i);
 	  //P.data[((n*ktot+k)*jtot+j)*itot+is-ngh+i] = Xs.data[((n*ktot+k)*jtot+j)*ngh+i];
@@ -306,9 +306,9 @@ void SetBoundaryCondition(FieldArray<double>& P,BoundaryArray<double>& Bs,Bounda
   // |Br.Ys|             |Br.Ye|
 #pragma omp target teams distribute parallel for collapse(4)
   for (int n=0; n<nprim; n++)
-  for (int k=0; k<ktot;k++)
-  for (int j=0; j<ngh ;j++)
-  for (int i=0; i<itot;i++) {
+    for (int k=0; k<ktot; k++)
+      for (int j=0; j<ngh;j++)
+	for (int i=0; i<itot; i++) {
 	  P(n,k,js-ngh+j,i) = Br.Ys(n,k,j,i);
 	  P(n,k,je+1  +j,i) = Br.Ye(n,k,j,i);
 	  //P.data[((n*ktot+k)*jtot+js-ngh+j)*itot+i] = Ys.data[((n*ktot+k)*ngh+j)*itot+i];
@@ -319,9 +319,9 @@ void SetBoundaryCondition(FieldArray<double>& P,BoundaryArray<double>& Bs,Bounda
   // |Br.Zs|             |Br.Ze|
 #pragma omp target teams distribute parallel for collapse(4)
   for (int n=0; n<nprim; n++)
-    for (int k=0; k<ngh ;k++)
-    for (int j=0; j<jtot;j++)
-    for (int i=0; i<itot;i++) {
+    for (int k=0; k<ngh; k++)
+      for (int j=0; j<jtot; j++)
+	for (int i=0; i<itot; i++) {
 	  P(n,ks-ngh+k,j,i) = Br.Zs(n,k,j,i);
 	  P(n,ke+1  +k,j,i) = Br.Ze(n,k,j,i);
 	  //P.data[((n*ktot+ks-ngh+k)*jtot+j)*itot+i] = Zs.data[((n*ngh+k)*jtot+j)*itot+i];
