@@ -43,8 +43,6 @@ namespace mpi_dataio_mod {
   
   static bool is_inited = false;
 
-  bool binaryout = true;
-  
   char datadir[10] = "bindata/"; 
 
   // -------------------- helpers --------------------
@@ -418,18 +416,14 @@ void Output(bool is_forced){
   
 #pragma omp target update from (P.data[0:P.size])
 
-  //   if(binaryout) then
-  //     MPI binary output
-  //   else
-  //     ASCII output
-  //   endif
-  if(mpiio::binaryout){
-    mpiio::MPI_IO_Pack(index);
-    mpiio::MPI_IO_Write(index);
-    if(myid_w==0) mpiio::WriteXDMF(time_sim,index);
-  }else{
+  mpiio::MPI_IO_Pack(index);
+  mpiio::MPI_IO_Write(index);
+  if(myid_w==0) mpiio::WriteXDMF(time_sim,index);
+  
+  if(config::asciiout){
     mpiio::ASC_WRITE(index);
   };
+  
   if(myid_w==0) printf("output index=%i, time=%e \n",index,time_sim);
   
   index += 1;

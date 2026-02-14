@@ -186,19 +186,10 @@ int main() {
   using namespace hydflux_mod;
   using namespace boundary_mod;
   using namespace mpi_config_mod;
-  // Follow Fortran main.f90 / output.f90 style flags
-  const bool nooutput = false;
   const bool forceoutput = true;   // force output at start/end
   const bool usualoutput = false;  // regular output (subject to dtout)
 
-	// Like Fortran (output.f90): logical,parameter :: binaryout=.true.
-	// true  -> MPI binary output
-	// false -> ASCII output (unf%05d.dat)
-	const bool binaryout = false;
-
   InitializeMPI();
-	// Configure I/O mode
-  mpi_dataio_mod::binaryout = binaryout;
   
   if(myid_w == 0) printf("setup grids and fields\n");
   
@@ -219,7 +210,7 @@ int main() {
 
   for (step=0;step<stepmax;step++){
     ControlTimestep(G); 
-    if (myid_w==0 && step%300 ==0 && !nooutput) printf("step=%i time=%e dt=%e\n",step,time_sim,dt);
+    if (myid_w==0 && step%300 ==0 && ! config::benchmarkmode) printf("step=%i time=%e dt=%e\n",step,time_sim,dt);
     //printf("step=%i time=%e dt=%e\n",step,time_sim,dt);
     SetBoundaryCondition(P,Bs,Br);
     EvaluateCh();
@@ -232,7 +223,7 @@ int main() {
 
     time_sim += dt;
     //printf("dt=%e\n",dt);
-    if (!nooutput) Output(usualoutput);
+    if (! config::benchmarkmode) Output(usualoutput);
     //if (!nooutput) Output1D(usualoutput);
 
     if(time_sim > time_max) break;
