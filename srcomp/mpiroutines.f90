@@ -33,12 +33,6 @@ subroutine InitializeMPI
   call MPI_COMM_SIZE( MPI_COMM_WORLD, nprocs_w, ierr )
   call MPI_COMM_RANK( MPI_COMM_WORLD, myid_w  , ierr )
   
-  ntiles(1)=1
-  ntiles(2)=2
-  ntiles(3)=2
-  periodic(1)=.true.
-  periodic(2)=.true.
-  periodic(3)=.true.
   if(myid_w == 0) then
      print *, "MPI process=",nprocs_w
      print *, "decomposition=",ntiles(1),ntiles(2),ntiles(3)
