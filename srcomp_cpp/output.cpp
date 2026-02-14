@@ -165,16 +165,21 @@ namespace mpi_dataio_mod {
     }
 
     // ============ Data 3D タイプ準備 ============
+    // NOTE:
+    //   Fieldout is allocated as Fieldout(nvar, k, j, i) = [nvars][z][y][x].
+    //   Therefore the MPI-IO file view must be defined in the same order
+    //   (NOT [nvars][x][y][z]).
     if (!is_inited) {
       Asize[0] = nvars; Ssize[0] = nvars; Start[0] = 0;
-      Asize[1] = ntotal[0]; Ssize[1] = npart[0]; Start[1] = npart[0] * coords[0];
+      // global dims: z, y, x
+      Asize[1] = ntotal[2]; Ssize[1] = npart[2]; Start[1] = npart[2] * coords[2];
       Asize[2] = ntotal[1]; Ssize[2] = npart[1]; Start[2] = npart[1] * coords[1];
-      Asize[3] = ntotal[2]; Ssize[3] = npart[2]; Start[3] = npart[2] * coords[2];
+      Asize[3] = ntotal[0]; Ssize[3] = npart[0]; Start[3] = npart[0] * coords[0];
 
       MPI_Type_create_subarray(4, Asize, Ssize, Start, MPI_ORDER_C,
-			       MPI_DOUBLE, &SAD3D);
+                               MPI_DOUBLE, &SAD3D);
       MPI_Type_commit(&SAD3D);
-  }
+    }
 
     // ============ Data 書き出し ============
   {
@@ -313,8 +318,10 @@ namespace mpi_dataio_mod {
     u << "      <Time Value=\"" << std::setprecision(16) << std::scientific << time << "\"/>\n";
 
     // Topology for rect mesh
+    // NOTE: For each variable, the binary is written in [z][y][x] order
+    // (matching Fieldout(k,j,i)). Keep the XDMF dimensions consistent.
     u << "      <Topology TopologyType=\"3DRectMesh\" Dimensions=\""
-      << (nx+1) << " " << (ny+1) << " " << (nz+1) << "\"/>\n";
+      << (nz+1) << " " << (ny+1) << " " << (nx+1) << "\"/>\n";
 
     // Geometry from grid*.bin
     // Each grid file stores [nvarg=2][N+1] in C-order, so the 2nd component starts at (N+1)*8.
@@ -333,7 +340,8 @@ namespace mpi_dataio_mod {
 
     auto attr = [&](const std::string& name, std::int64_t seek){
       u << "      <Attribute Name=\"" << name << "\" AttributeType=\"Scalar\" Center=\"Cell\">\n";
-      u << "        <DataItem Dimensions=\"" << nx << " " << ny << " " << nz
+      // DataItem dimensions must follow the on-file ordering: [z][y][x]
+      u << "        <DataItem Dimensions=\"" << nz << " " << ny << " " << nx
         << "\" NumberType=\"Float\" Precision=\"8\" Format=\"Binary\" Endian=\"Little\" Seek=\""
         << seek << "\">" << fdata << "</DataItem>\n";
       u << "      </Attribute>\n";
