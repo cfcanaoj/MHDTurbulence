@@ -158,6 +158,7 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
   using namespace resolution_mod;
 
   const int dev = omp_get_default_device();
+  (void)dev; // MPI uses host-staged buffers; keep for potential future device-only paths.
   int rc;
   int nreq = 0;
 
@@ -227,14 +228,24 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
     }
   } else {
     // MPI exchange where neighbors exist; apply reflection/outflow when neighbor is MPI_PROC_NULL
-    void* d_Bs_Xe = omp_get_mapped_ptr(Bs.Xe_data, dev);
-    void* d_Bs_Xs = omp_get_mapped_ptr(Bs.Xs_data, dev);
-    void* d_Br_Xs = omp_get_mapped_ptr(Br.Xs_data, dev);
-    void* d_Br_Xe = omp_get_mapped_ptr(Br.Xe_data, dev);
+    // IMPORTANT:
+    //   Do NOT pass device pointers to MPI unless you are 100% sure the MPI stack is
+    //   CUDA-aware and correctly configured for your OpenMP offload runtime.
+    //   We therefore stage through host buffers:
+    //     device -> host (send buffers), MPI on host, host -> device (recv buffers).
+    // This avoids cuMemGetAddressRange / CUDA-aware detection paths entirely.
+
+    // Ensure send buffers are present on host.
+#pragma omp target update from(Bs.Xe_data[0:Bs.size1], Bs.Xs_data[0:Bs.size1])
+
+    double* h_Bs_Xe = Bs.Xe_data;
+    double* h_Bs_Xs = Bs.Xs_data;
+    double* h_Br_Xs = Br.Xs_data;
+    double* h_Br_Xe = Br.Xe_data;
 
     if (n1m != MPI_PROC_NULL) {
-      rc = MPI_Irecv(d_Br_Xs, Br.size1, MPI_DOUBLE, n1m, 1100, comm3d, &req[nreq++]);
-      rc = MPI_Isend(d_Bs_Xe, Bs.size1, MPI_DOUBLE, n1m, 1200, comm3d, &req[nreq++]);
+      rc = MPI_Irecv(h_Br_Xs, Br.size1, MPI_DOUBLE, n1m, 1100, comm3d, &req[nreq++]);
+      rc = MPI_Isend(h_Bs_Xe, Bs.size1, MPI_DOUBLE, n1m, 1200, comm3d, &req[nreq++]);
     } else {
       // x-in physical boundary
       if (boundary_xin == reflection) {
@@ -260,8 +271,8 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
     }
 
     if (n1p != MPI_PROC_NULL) {
-      rc = MPI_Irecv(d_Br_Xe, Br.size1, MPI_DOUBLE, n1p, 1200, comm3d, &req[nreq++]);
-      rc = MPI_Isend(d_Bs_Xs, Bs.size1, MPI_DOUBLE, n1p, 1100, comm3d, &req[nreq++]);
+      rc = MPI_Irecv(h_Br_Xe, Br.size1, MPI_DOUBLE, n1p, 1200, comm3d, &req[nreq++]);
+      rc = MPI_Isend(h_Bs_Xs, Bs.size1, MPI_DOUBLE, n1p, 1100, comm3d, &req[nreq++]);
     } else {
       // x-out physical boundary
       if (boundary_xout == reflection) {
@@ -348,14 +359,17 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
               Br.Ye(n,k,j,i) = Bs.Ys(n,k,ngh-1,i);
     }
   } else {
-    void* d_Bs_Ye = omp_get_mapped_ptr(Bs.Ye_data, dev);
-    void* d_Bs_Ys = omp_get_mapped_ptr(Bs.Ys_data, dev);
-    void* d_Br_Ys = omp_get_mapped_ptr(Br.Ys_data, dev);
-    void* d_Br_Ye = omp_get_mapped_ptr(Br.Ye_data, dev);
+    // Host staging for MPI (see X direction block for rationale)
+#pragma omp target update from(Bs.Ye_data[0:Bs.size2], Bs.Ys_data[0:Bs.size2])
+
+    double* h_Bs_Ye = Bs.Ye_data;
+    double* h_Bs_Ys = Bs.Ys_data;
+    double* h_Br_Ys = Br.Ys_data;
+    double* h_Br_Ye = Br.Ye_data;
 
     if (n2m != MPI_PROC_NULL) {
-      rc = MPI_Irecv(d_Br_Ys, Br.size2, MPI_DOUBLE, n2m, 2100, comm3d, &req[nreq++]);
-      rc = MPI_Isend(d_Bs_Ye, Bs.size2, MPI_DOUBLE, n2m, 2200, comm3d, &req[nreq++]);
+      rc = MPI_Irecv(h_Br_Ys, Br.size2, MPI_DOUBLE, n2m, 2100, comm3d, &req[nreq++]);
+      rc = MPI_Isend(h_Bs_Ye, Bs.size2, MPI_DOUBLE, n2m, 2200, comm3d, &req[nreq++]);
     } else {
       if (boundary_yin == reflection) {
 #pragma omp target teams distribute parallel for collapse(4)
@@ -380,8 +394,8 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
     }
 
     if (n2p != MPI_PROC_NULL) {
-      rc = MPI_Irecv(d_Br_Ye, Br.size2, MPI_DOUBLE, n2p, 2200, comm3d, &req[nreq++]);
-      rc = MPI_Isend(d_Bs_Ys, Bs.size2, MPI_DOUBLE, n2p, 2100, comm3d, &req[nreq++]);
+      rc = MPI_Irecv(h_Br_Ye, Br.size2, MPI_DOUBLE, n2p, 2200, comm3d, &req[nreq++]);
+      rc = MPI_Isend(h_Bs_Ys, Bs.size2, MPI_DOUBLE, n2p, 2100, comm3d, &req[nreq++]);
     } else {
       if (boundary_yout == reflection) {
 #pragma omp target teams distribute parallel for collapse(4)
@@ -467,14 +481,17 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
               Br.Ze(n,k,j,i) = Bs.Zs(n,ngh-1,j,i);
     }
   } else {
-    void* d_Bs_Ze = omp_get_mapped_ptr(Bs.Ze_data, dev);
-    void* d_Bs_Zs = omp_get_mapped_ptr(Bs.Zs_data, dev);
-    void* d_Br_Zs = omp_get_mapped_ptr(Br.Zs_data, dev);
-    void* d_Br_Ze = omp_get_mapped_ptr(Br.Ze_data, dev);
+    // Host staging for MPI (see X direction block for rationale)
+#pragma omp target update from(Bs.Ze_data[0:Bs.size3], Bs.Zs_data[0:Bs.size3])
+
+    double* h_Bs_Ze = Bs.Ze_data;
+    double* h_Bs_Zs = Bs.Zs_data;
+    double* h_Br_Zs = Br.Zs_data;
+    double* h_Br_Ze = Br.Ze_data;
 
     if (n3m != MPI_PROC_NULL) {
-      rc = MPI_Irecv(d_Br_Zs, Br.size3, MPI_DOUBLE, n3m, 3100, comm3d, &req[nreq++]);
-      rc = MPI_Isend(d_Bs_Ze, Bs.size3, MPI_DOUBLE, n3m, 3200, comm3d, &req[nreq++]);
+      rc = MPI_Irecv(h_Br_Zs, Br.size3, MPI_DOUBLE, n3m, 3100, comm3d, &req[nreq++]);
+      rc = MPI_Isend(h_Bs_Ze, Bs.size3, MPI_DOUBLE, n3m, 3200, comm3d, &req[nreq++]);
     } else {
       if (boundary_zin == reflection) {
 #pragma omp target teams distribute parallel for collapse(4)
@@ -499,8 +516,8 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
     }
 
     if (n3p != MPI_PROC_NULL) {
-      rc = MPI_Irecv(d_Br_Ze, Br.size3, MPI_DOUBLE, n3p, 3200, comm3d, &req[nreq++]);
-      rc = MPI_Isend(d_Bs_Zs, Bs.size3, MPI_DOUBLE, n3p, 3100, comm3d, &req[nreq++]);
+      rc = MPI_Irecv(h_Br_Ze, Br.size3, MPI_DOUBLE, n3p, 3200, comm3d, &req[nreq++]);
+      rc = MPI_Isend(h_Bs_Zs, Bs.size3, MPI_DOUBLE, n3p, 3100, comm3d, &req[nreq++]);
     } else {
       if (boundary_zout == reflection) {
 #pragma omp target teams distribute parallel for collapse(4)
@@ -525,7 +542,13 @@ void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br)
     }
   }
 
-  if (nreq != 0) MPI_Waitall(nreq, req, MPI_STATUSES_IGNORE);
+  if (nreq != 0) {
+    MPI_Waitall(nreq, req, MPI_STATUSES_IGNORE);
+    // Push received ghost-zone buffers back to device.
+#pragma omp target update to(Br.Xs_data[0:Br.size1], Br.Xe_data[0:Br.size1])
+#pragma omp target update to(Br.Ys_data[0:Br.size2], Br.Ye_data[0:Br.size2])
+#pragma omp target update to(Br.Zs_data[0:Br.size3], Br.Ze_data[0:Br.size3])
+  }
   nreq = 0;
 };
 
