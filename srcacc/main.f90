@@ -23,7 +23,7 @@ program main
   time_begin = omp_get_wtime()
   mloop: do nhy=1,nhymax
      call TimestepControl
-     if(mod(nhy,nhydis) .eq. 0  .and. .not. nooutput .and. myid_w == 0) print *,nhy,time,dt
+     if(mod(nhy,nhydis) .eq. 0  .and. .not. benchmarkmode .and. myid_w == 0) print *,nhy,time,dt
      call BoundaryCondition
      call StateVevtor
      call GravForce
@@ -122,6 +122,7 @@ subroutine GenerateProblem
   integer,dimension(2) :: seed
   real(8),dimension(1) :: rnum
   real(8),parameter :: rrv =1.0d-2
+  real(8):: dv_harm
   
   pi = dacos(-1.0d0)
   
@@ -171,8 +172,19 @@ subroutine GenerateProblem
   do j=js,je
      call random_number(rnum)
   do i=is,ie
-     v1(i,j,k)= v1(i,j,k) + dv*rrv*(rnum(1)-0.5d0) 
+     !     v1(i,j,k)= v1(i,j,k) + dv*rrv*(rnum(1)-0.5d0) 
   enddo
+  enddo
+  enddo
+
+  ! pert     
+  do k=ks,ke 
+  do j=js,je
+     dv_harm = dv * rrv * cos(6*2*pi*(x2b(j)-x2min)/(x2max-x2min)) &
+                     &  * cos(6*2*pi*(x3b(k)-x3min)/(x3max-x3min))
+     do i=is,ie
+        v1(i,j,k)= v1(i,j,k) + dv_harm
+     enddo
   enddo
   enddo
 

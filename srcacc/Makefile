@@ -1,5 +1,5 @@
 
-exed := ../exe
+exed := ../exeacc
 
 exe=Simulation.x
 
