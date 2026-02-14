@@ -6,18 +6,19 @@
 */
 
 namespace config {
-  inline constexpr int stepmax{3000}; // max step 
-  inline constexpr int stepsnap = stepmax/100;
-  inline constexpr double time_max = 3.0e0;
+  inline constexpr double time_max = 15.0e0;
   inline constexpr double dtout = time_max/100;
 
-  inline constexpr int ngridtotal1{150}; //! total resolution for x
-  inline constexpr int ngridtotal2{150}; //! total resolution for y
-  inline constexpr int ngridtotal3{150}; //! total resolution for z
+  inline constexpr int stepmax{3000}; // max step 
+  inline constexpr int stepsnap = stepmax/100;
+
+  inline constexpr int ngridtotal1{150}; // total resolution for x
+  inline constexpr int ngridtotal2{150}; // total resolution for y
+  inline constexpr int ngridtotal3{150}; // total resolution for z
   
-  inline constexpr double x1min(-0.5),x1max(+0.5);
-  inline constexpr double x2min(-1.0),x2max(+1.0);
-  inline constexpr double x3min(-0.5),x3max(+0.5);
+  inline constexpr double x1min(-0.5),x1max(+0.5); // computing region for x
+  inline constexpr double x2min(-1.0),x2max(+1.0); // computing region for y
+  inline constexpr double x3min(-0.5),x3max(+0.5); // computing region for z
 
   inline constexpr int ntiles[3]   = {2,2,1};
   inline constexpr int periodic[3] = {1,1,1}; //1:periodic
@@ -25,7 +26,7 @@ namespace config {
 };
 
 namespace resolution_mod {
-  inline constexpr int stepmax = config::stepmax; // max step 
+  inline constexpr int stepmax  = config::stepmax; // max step 
   inline constexpr int stepsnap = config::stepsnap;
   inline double time_sim = 0.0e0;
   inline double time_out = 0.0e0;
@@ -47,6 +48,6 @@ namespace resolution_mod {
   inline constexpr int je = js + ngrid2-1;
   inline constexpr int ke = ks + ngrid3-1;
   inline constexpr double x1min=config::x1min,x1max=config::x1max;
-  inline constexpr double x2min=config::x1min,x2max=config::x2max;
-  inline constexpr double x3min=config::x1min,x3max=config::x3max;
+  inline constexpr double x2min=config::x2min,x2max=config::x2max;
+  inline constexpr double x3min=config::x3min,x3max=config::x3max;
 };
