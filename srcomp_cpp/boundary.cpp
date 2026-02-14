@@ -541,21 +541,27 @@ if (nreq != 0) MPI_Waitall(nreq, req, MPI_STATUSES_IGNORE);
 // Only update faces that were actually received (avoid overwriting physical BC computed on device).
 if (ntiles[dir1] != 1) {
   if (n1m != MPI_PROC_NULL) {
-#pragma omp target update to(Br.Xs_data[0:Br.size1]) }
+	#pragma omp target update to(Br.Xs_data[0:Br.size1])
+	  }
   if (n1p != MPI_PROC_NULL) {
-#pragma omp target update to(Br.Xe_data[0:Br.size1]) }
+	#pragma omp target update to(Br.Xe_data[0:Br.size1])
+	  }
 }
 if (ntiles[dir2] != 1) {
   if (n2m != MPI_PROC_NULL) {
-#pragma omp target update to(Br.Ys_data[0:Br.size2]) }
+	#pragma omp target update to(Br.Ys_data[0:Br.size2])
+	  }
   if (n2p != MPI_PROC_NULL) {
-#pragma omp target update to(Br.Ye_data[0:Br.size2]) }
+	#pragma omp target update to(Br.Ye_data[0:Br.size2])
+	  }
 }
 if (ntiles[dir3] != 1) {
   if (n3m != MPI_PROC_NULL) {
-#pragma omp target update to(Br.Zs_data[0:Br.size3]) }
+	#pragma omp target update to(Br.Zs_data[0:Br.size3])
+	  }
   if (n3p != MPI_PROC_NULL) {
-#pragma omp target update to(Br.Ze_data[0:Br.size3]) }
+	#pragma omp target update to(Br.Ze_data[0:Br.size3])
+	  }
 }
 
 nreq = 0;
