@@ -1,30 +1,27 @@
-      module basicmod
-      implicit none
+module basicmod
+  use config, only: nhymax, nhydis, timemax, dtout & 
+       & , ngridtotal1, ngridtotal2, ngridtotal3, ntiles & 
+       & , x1min, x1max, x2min, x2max, x3min, x3max &
+       & , ncomp
+  implicit none
       integer::nhy
-      integer,parameter::nhymax=600000
-      integer,parameter::nhydis=nhymax/100
       real(8)::time,dt
       data time / 0.0d0 /
-      real(8),parameter:: timemax=15.0d0
-      real(8),parameter:: dtout=timemax/100
 
-      integer,parameter::ngrid1=150
-      integer,parameter::ngrid2=75
-      integer,parameter::ngrid3=75
-      integer,parameter::mgn=2
-      integer,parameter::in=ngrid1+2*mgn+1 &
-     &                  ,jn=ngrid2+2*mgn+1 &
-     &                  ,kn=ngrid3+2*mgn+1
-      integer,parameter::is=mgn+1 &
-     &                  ,js=mgn+1 &
-     &                  ,ks=mgn+1
-      integer,parameter::ie=ngrid1+mgn &
-     &                  ,je=ngrid2+mgn &
-     &                  ,ke=ngrid3+mgn
+      integer,parameter:: ngrid1 = ngridtotal1/ntiles(1)
+      integer,parameter:: ngrid2 = ngridtotal2/ntiles(2)
+      integer,parameter:: ngrid3 = ngridtotal3/ntiles(3)
+      integer,parameter:: mgn=2
+      integer,parameter:: in=ngrid1+2*mgn+1 &
+     &                  , jn=ngrid2+2*mgn+1 &
+     &                  , kn=ngrid3+2*mgn+1
+      integer,parameter:: is=mgn+1 &
+     &                  , js=mgn+1 &
+     &                  , ks=mgn+1
+      integer,parameter:: ie=ngrid1+mgn &
+     &                  , je=ngrid2+mgn &
+     &                  , ke=ngrid3+mgn
 
-      real(8),parameter:: x1min=-0.5d0,x1max=0.5d0
-      real(8),parameter:: x2min=-1.0d0,x2max=1.0d0
-      real(8),parameter:: x3min=-0.5d0,x3max=0.5d0
       real(8),dimension(in)::x1a,x1b
       real(8),dimension(jn)::x2a,x2b
       real(8),dimension(kn)::x3a,x3b
@@ -35,12 +32,9 @@
 
       real(8),dimension(in,jn,kn)::gp,gp1a,gp2a,gp3a
       
-      integer,parameter:: ncomp=1 ! composition
       real(8),dimension(ncomp,in,jn,kn):: DXcomp
       real(8),dimension(ncomp,in,jn,kn)::  Xcomp
-      
-      integer,parameter:: nbc=9+ncomp
-      
+            
 !$acc declare create(ngrid1,ngrid2,ngrid3)
 !$acc declare create(mgn)
 !$acc declare create(in,jn,kn)
@@ -59,9 +53,6 @@
 
 !$acc declare create(ncomp)
 !$acc declare create(Dxcomp,Xcomp)
-      
-
-!$acc declare create(nbc)
       
       end module basicmod
       
