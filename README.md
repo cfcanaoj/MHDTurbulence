@@ -57,40 +57,31 @@ Batch scripts depend on your parallelization scheme and environment.
 
 ### 0. Performance Measurement Mode (No Intermediate Output)
 
-For performance benchmarking, the code provides an option in `main.f90` to suppress intermediate outputs. In this case the initial and final snapshots are only damped.
+For performance benchmarking, the code provides an option in `config.f90` to suppress intermediate outputs. In this case the initial and final snapshots are only damped.
 ```Fortran,
-    logical,parameter::nooutput=.true.
+logical,parameter:: benchmarkmode = .false. !! If true, only initial and final outputs are damped.
 ```
 
 The code supports three different output modes depending on the purpose of analysis
 
 ### 1. Quick check: Text output (ASCII)
 
-If you want to quickly inspect the simulation results the code outputs text-format data. To employ this mode, edit `output.f90` as follows. 
+If you want to quickly inspect the simulation results the code outputs text-format data. To employ this mode, edit `config.f90` as follows. 
 ```Fortran,
-  logical,parameter:: binaryout= .false.
+logical,parameter:: asciiout = .true. !! Ascii-files are additionaly damped.
 ```
-The data is damped as `ascdata/snap?????.csv` and format is "x y d vx vy p phi X". `gnuplot` is useful to quick check.
+The data is damped as `ascdata/snap###-?????.csv`. Here ### is the mpi-process and ????? is the number of the snapshots. The format is "x y d vx vy p phi X". `gnuplot` is useful to quick check.
 ```bash
 gnuplot
 set view map
-splot "ascdata/snap?????.csv" u 1:2:8 w pm3d
+splot "ascdata/snap###-?????.csv" u 1:2:8 w pm3d
 ```
 
 ### 2. Full data visualization: XMF + binary (for VisIt / ParaView)
-If you want to visualize the full 3D data, the code outputs binary data + XMF metadata. Check `output.f90` as follows. 
-```Fortran,
-  logical,parameter:: binaryout= .true.
-```
-The data is damped as `bindata/field?????.xmf`, `bindata/field?????.bin`, `bindata/grid1D.bin`, `bindata/grid2D.bin`, and `bindata/grid3D.bin`. Use `VisIt/ParaView` to check the data.
+If you want to visualize the full 3D data, the code outputs binary data + XMF metadata. The data is damped as `bindata/field?????.xmf`, `bindata/field?????.bin`, `bindata/grid1D.bin`, `bindata/grid2D.bin`, and `bindata/grid3D.bin`. Use `VisIt/ParaView` to check the data.
 
 ### 3. Detailed analysis: Analysis program
-For more quantitative studies (spectra, statistics, etc.), use the analysis tools provided in the `analysis/` directory.
-Check `output.f90` as follows. 
-```Fortran,
-  logical,parameter:: binaryout= .true.
-```
-The data is damped as `bindata/unf?????.dat`, `bindata/field?????.bin`, `bindata/grid1D.bin`, `bindata/grid2D.bin`, and `bindata/grid3D.bin`. 
+For more quantitative studies (spectra, statistics, etc.), use the analysis tools provided in the `analysis/` directory. The data is damped as `bindata/unf?????.dat`, `bindata/field?????.bin`, `bindata/grid1D.bin`, `bindata/grid2D.bin`, and `bindata/grid3D.bin`. 
 
 #### Build the analysis tool
 
