@@ -2,7 +2,7 @@
  * @file resolution.hpp
  * @brief 
  * @author Tomoya Takiwaki
- * @date 2025-08-21
+ * @date 2026-02-14
 */
 
 namespace config {
