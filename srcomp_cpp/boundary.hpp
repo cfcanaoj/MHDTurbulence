@@ -7,10 +7,21 @@
 #ifndef BOUNDARY_HPP_
 #define BOUNDARY_HPP_
 
-#include "mhd.hpp"
+#include "hydro.hpp"
 using namespace hydflux_mod;
 
 namespace boundary_mod {
+
+  // Boundary condition types (compatible with Fortran boundary.f90)
+  inline constexpr int periodicb   = 1;
+  inline constexpr int reflection  = 2;
+  inline constexpr int outflow     = 3;
+
+  // Per-face boundary selection (1:periodic, 2:reflection, 3:outflow)
+  extern int boundary_xin, boundary_xout;
+  extern int boundary_yin, boundary_yout;
+  extern int boundary_zin, boundary_zout;
+
 
   template <typename T>
   class BoundaryArray {
