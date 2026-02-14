@@ -1,3 +1,9 @@
+/**
+ * @file output.hpp
+ * @brief 
+ * @author Tomoya Takiwaki
+ * @date 2026-02-14
+*/
 #ifndef OUTPUT_HPP_
 #define OUTPUT_HPP_
 

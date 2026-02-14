@@ -1,3 +1,9 @@
+/**
+ * @file output.hpp
+ * @brief 
+ * @author Tomoya Takiwaki
+ * @date 2026-02-14
+*/
 
 #include<string>
 #include<cstdio>
@@ -379,8 +385,8 @@ namespace mpi_dataio_mod {
     for(int n=0; n<ncomp; ++n) f << " X" << (n+1);
     f << "\n";
 
-    for(int j=js; j<=je; ++j){
-      for(int i=is; i<=ie; ++i){
+    for(int j=js; j<=je; j++){
+      for(int i=is; i<=ie; i++){
         f << std::setprecision(6) << std::scientific
           << G.x1b(i) << ' ' << G.x2b(j) << ' '
           << P(nden,k,j,i) << ' ' << P(nve1,k,j,i) << ' ' << P(nve2,k,j,i) << ' ' << P(npre,k,j,i);
