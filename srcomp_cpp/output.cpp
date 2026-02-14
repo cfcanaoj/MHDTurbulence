@@ -237,16 +237,16 @@ namespace mpi_dataio_mod {
       gridZout.allocate(nvarg,ngrid3mod);
       Fieldout.allocate(nvars,ngrid3,ngrid2,ngrid1);
 
-      for(int i=0;i<=ngrid1mod;i++){
+      for(int i=0;i<ngrid1mod;i++){
 	gridXout(0,i) = G.x1b(is+i);
 	gridXout(1,i) = G.x1a(is+i);
       }
     
-      for(int j=0;j<=ngrid2mod;j++){
+      for(int j=0;j<ngrid2mod;j++){
 	gridYout(0,j) = G.x2b(js+j);
 	gridYout(1,j) = G.x2a(js+j);
       }
-      for(int k=0;k<=ngrid3mod;k++){
+      for(int k=0;k<ngrid3mod;k++){
 	gridZout(0,k) = G.x3b(ks+k);
 	gridZout(1,k) = G.x3a(ks+k);
       }
@@ -256,9 +256,9 @@ namespace mpi_dataio_mod {
 
   // ---- output data (MPI binary) ----
 
-    for (int k=0;k<=ngrid3;k++)
-    for (int j=0;j<=ngrid2;j++)
-    for (int i=0;i<=ngrid1;i++){
+    for (int k=0;k<ngrid3;k++)
+    for (int j=0;j<ngrid2;j++)
+    for (int i=0;i<ngrid1;i++){
       Fieldout(0,k,j,i) = P(nden,k+ks,j+js,i+is);
       Fieldout(1,k,j,i) = P(nve1,k+ks,j+js,i+is);
       Fieldout(2,k,j,i) = P(nve2,k+ks,j+js,i+is);
