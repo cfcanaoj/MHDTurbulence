@@ -40,8 +40,7 @@ contains
 
 !$acc data create(varsendXstt,varsendXend,varsendYstt,varsendYend,varsendZstt,varsendZend,varrecvXstt,varrecvXend,varrecvYstt,varrecvYend,varrecvZstt,varrecvZend)
   
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)
+!$omp parallel do collapse(3)
   do k=1,kn-1
   do j=1,jn-1
   do i=1,mgn
@@ -70,7 +69,7 @@ contains
   enddo
   enddo
 
-!$omp loop order(concurrent) collapse(3)
+!$omp parallel do collapse(3)
   do k=1,kn-1
   do i=1,in-1
   do j=1,mgn
@@ -99,7 +98,7 @@ contains
   enddo
   enddo
 
-!$omp loop order(concurrent) collapse(3)
+!$omp parallel do collapse(3)
   do j=1,jn-1
   do i=1,in-1
   do k=1,mgn
@@ -127,14 +126,12 @@ contains
   enddo
   enddo
   enddo
-!$omp end target
 
   call XbcSendRecv(varsendXstt,varsendXend,varrecvXstt,varrecvXend)
   call YbcSendRecv(varsendYstt,varsendYend,varrecvYstt,varrecvYend)
   call ZbcSendRecv(varsendZstt,varsendZend,varrecvZstt,varrecvZend)
   
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)
+!$omp parallel do collapse(3)
   do k=1,kn-1
   do j=1,jn-1
   do i=1,mgn
@@ -163,7 +160,7 @@ contains
   enddo
   enddo
 
-!$omp loop order(concurrent) collapse(3)
+!$omp parallel do collapse(3)
   do k=1,kn-1
   do i=1,in-1
   do j=1,mgn
@@ -193,7 +190,7 @@ contains
   enddo
 
 
-!$omp loop order(concurrent) collapse(3)
+!$omp parallel do collapse(3)
   do j=1,jn-1
   do i=1,in-1
   do k=1,mgn
@@ -221,7 +218,6 @@ contains
   enddo
   enddo
   enddo
-!$omp end target
 !$acc end data
   
   return
@@ -235,8 +231,7 @@ subroutine XbcSendRecv(varsendXstt,varsendXend,varrecvXstt,varrecvXend)
   integer::i,j,k,n
   
   single: if(ntiles(1) == 1) then
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)  private(n)
+!$omp parallel do collapse(3)  private(n)
   do k=1,kn-1
   do j=1,jn-1
   do i=1,mgn
@@ -275,26 +270,13 @@ subroutine XbcSendRecv(varsendXstt,varsendXend,varrecvXstt,varrecvXend)
   enddo
   enddo
   enddo
-!$omp end target
   
   else ! single
 
   n1mdir: if (n1m /= MPI_PROC_NULL) then
-!$omp target data use_device_ptr(varsendXstt,varrecvXstt)
-     nreq = nreq + 1         
-     call MPI_IRECV(varrecvXstt,mgn*jn*kn*nbc &
-    & , MPI_DOUBLE &
-    & , n1m,1100, comm3d, req(nreq), ierr)
-     
-     nreq = nreq + 1
-     call MPI_ISEND(varsendXstt,mgn*jn*kn*nbc &
-    & , MPI_DOUBLE &
-    & , n1m, 1200, comm3d, req(nreq), ierr)
-!$omp end target data
   else !n1dir
 
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)  private(n)
+!$omp parallel do collapse(3)  private(n)
   do k=1,kn-1
   do j=1,jn-1
   do i=1,mgn
@@ -312,27 +294,14 @@ subroutine XbcSendRecv(varsendXstt,varsendXend,varrecvXstt,varrecvXend)
   enddo
   enddo
   enddo
-!$omp end target
      
   endif n1mdir
   
   n1pdir: if (n1p /= MPI_PROC_NULL) then
-!$omp target data use_device_ptr(varsendXend,varrecvXend)
-     nreq = nreq + 1
-     call MPI_IRECV(varrecvXend,mgn*jn*kn*nbc &
-    & , MPI_DOUBLE &
-    & , n1p,1200, comm3d, req(nreq), ierr)
-     
-     nreq = nreq + 1
-     call MPI_ISEND(varsendXend,mgn*jn*kn*nbc &
-    & , MPI_DOUBLE &
-    & , n1p, 1100, comm3d, req(nreq), ierr)
-!$omp end target data
      
   else ! n1pdir
      
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)  private(n)
+!$omp parallel do collapse(3)  private(n)
   do k=1,kn-1
   do j=1,jn-1
   do i=1,mgn
@@ -350,7 +319,6 @@ subroutine XbcSendRecv(varsendXstt,varsendXend,varrecvXstt,varrecvXend)
   enddo
   enddo
   enddo
-!$omp end target
   endif n1pdir
   if(nreq .ne. 0) call MPI_WAITALL ( nreq, req, stat, ierr )
   nreq = 0
@@ -368,8 +336,7 @@ subroutine YbcSendRecv(varsendYstt,varsendYend,varrecvYstt,varrecvYend)
   integer::i,j,k,n
 
   single: if(ntiles(2) == 1) then
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)  private(n)
+!$omp parallel do collapse(3)  private(n)
   do k=1,kn-1
   do j=1,mgn
   do i=1,in-1
@@ -409,24 +376,11 @@ subroutine YbcSendRecv(varsendYstt,varsendYend,varrecvYstt,varrecvYend)
   enddo
   enddo
   enddo
-!$omp end target
   else ! single
 
      n2mdir: if (n2m /= MPI_PROC_NULL) then
-!$omp target data use_device_ptr(varsendYstt,varrecvYstt)
-        nreq = nreq + 1         
-        call MPI_IRECV(varrecvYstt,mgn*in*kn*nbc &
-    & , MPI_DOUBLE &
-    & , n2m, 2100, comm3d, req(nreq), ierr)
-
-        nreq = nreq + 1
-        call MPI_ISEND(varsendYstt,mgn*in*kn*nbc &
-    & , MPI_DOUBLE &
-    & , n2m, 2200, comm3d, req(nreq), ierr)
-!$omp end target data
      else
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)  private(n)
+!$omp parallel do collapse(3)  private(n)
         do k=1,kn-1
         do j=1,mgn
         do i=1,in-1
@@ -445,24 +399,11 @@ subroutine YbcSendRecv(varsendYstt,varsendYend,varrecvYstt,varrecvYend)
         enddo
         enddo
         enddo
-!$omp end target
      endif n2mdir
      
      n2pdir: if (n2p /= MPI_PROC_NULL) then
-!$omp target data use_device_ptr(varsendYend,varrecvYend)
-        nreq = nreq + 1
-        call MPI_IRECV(varrecvYend,mgn*in*kn*nbc &
-    & , MPI_DOUBLE &
-    & , n2p,2200, comm3d, req(nreq), ierr)
-
-        nreq = nreq + 1
-        call MPI_ISEND(varsendYend,mgn*in*kn*nbc &
-    & , MPI_DOUBLE &
-    & , n2p, 2100, comm3d, req(nreq), ierr)
-!$omp end target data
      else ! n2pdir
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)  private(n)
+!$omp parallel do collapse(3)  private(n)
         do k=1,kn-1
         do i=1,in-1
         do j=1,mgn
@@ -481,7 +422,6 @@ subroutine YbcSendRecv(varsendYstt,varsendYend,varrecvYstt,varrecvYend)
         enddo
         enddo
         enddo
-!$omp end target
         
         endif n2pdir
      
@@ -500,8 +440,7 @@ subroutine ZbcSendRecv(varsendZstt,varsendZend,varrecvZstt,varrecvZend)
   integer::i,j,k,n
   
   single: if(ntiles(3) == 1) then
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)  private(n)
+!$omp parallel do collapse(3)  private(n)
   do k=1,mgn
   do j=1,jn-1
   do i=1,in-1
@@ -541,25 +480,12 @@ subroutine ZbcSendRecv(varsendZstt,varsendZend,varrecvZstt,varrecvZend)
   enddo
   enddo
   enddo
-!$omp end target
   else ! single
 
      n3mdir: if (n3m /= MPI_PROC_NULL) then
-!$omp target data use_device_ptr(varsendZstt,varrecvZstt)
-        nreq = nreq + 1         
-        call MPI_IRECV(varrecvZstt,mgn*in*jn*nbc &
-    & , MPI_DOUBLE &
-    & , n3m, 3100, comm3d, req(nreq), ierr)
-
-        nreq = nreq + 1
-        call MPI_ISEND(varsendZstt,mgn*in*jn*nbc &
-    & , MPI_DOUBLE &
-    & , n3m, 3200, comm3d, req(nreq), ierr)
-!$omp end target data
      else
         
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)  private(n)
+!$omp parallel do collapse(3)  private(n)
         do k=1,mgn
         do j=1,jn-1
         do i=1,in-1
@@ -579,24 +505,11 @@ subroutine ZbcSendRecv(varsendZstt,varsendZend,varrecvZstt,varrecvZend)
         enddo
         enddo
         enddo
-!$omp end target
      endif n3mdir
      
      n3pdir: if (n3p /= MPI_PROC_NULL) then
-!$omp target data use_device_ptr(varsendZend,varrecvZend)
-        nreq = nreq + 1
-        call MPI_IRECV(varrecvZend,mgn*in*jn*nbc &
-    & , MPI_DOUBLE &
-    & , n3p, 3200, comm3d, req(nreq), ierr)
-
-        nreq = nreq + 1
-        call MPI_ISEND(varsendZend,mgn*in*jn*nbc &
-    & , MPI_DOUBLE &
-    & , n3p, 3100, comm3d, req(nreq), ierr)
-!$omp end target data
      else
-        !$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)  private(n)
+!$omp parallel do collapse(3)  private(n)
         do j=1,jn-1
         do i=1,in-1
         do k=1,mgn
@@ -616,7 +529,6 @@ subroutine ZbcSendRecv(varsendZstt,varsendZend,varrecvZstt,varrecvZend)
   enddo
   enddo
   enddo
-!$omp end target
      endif n3pdir
      if(nreq .ne. 0) call MPI_WAITALL ( nreq, req, stat, ierr )
      nreq = 0
