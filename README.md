@@ -19,7 +19,7 @@ cd MHDTurbulence
 
 ### Compile
 
-To run the code, compile `Simulation.f90` on a GPU server. OpenACC version, `srcacc` is our defalut setup.
+To run the code, first compile the source codes in a GPU server. OpenACC version, `srcacc` is our defalut setup.
 ```bash
 cd srcacc
 make
