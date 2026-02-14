@@ -5,7 +5,7 @@
 
 #include <omp.h>
 
-#include "resolution.hpp"
+#include "config.hpp"
 #include "mpi_config.hpp"
 
 // =============================

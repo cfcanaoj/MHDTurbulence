@@ -13,8 +13,8 @@
 #include <mpi.h>
 #include <omp.h>
 
-#include "resolution.hpp"
-#include "hydro.hpp"
+#include "config.hpp"
+#include "mhd.hpp"
 #include "boundary.hpp"
 
 #include "mpi_config.hpp"
@@ -23,12 +23,12 @@ using namespace hydflux_mod;
 
 namespace boundary_mod {
   // Default boundary configuration (same as the reference Fortran boundary.f90)
-  int boundary_xin  = periodicb;
-  int boundary_xout = periodicb;
-  int boundary_yin  = reflection;
-  int boundary_yout = reflection;
-  int boundary_zin  = periodicb;
-  int boundary_zout = periodicb;
+  int boundary_xin  = config::boundary_xin;
+  int boundary_xout = config::boundary_xout;
+  int boundary_yin  = config::boundary_yin;
+  int boundary_yout = config::boundary_yout;
+  int boundary_zin  = config::boundary_zin;
+  int boundary_zout = config::boundary_zout;
 
 #pragma omp declare target
   BoundaryArray<double> Bs,Br;

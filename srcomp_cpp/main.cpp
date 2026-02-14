@@ -13,13 +13,12 @@
 #include <chrono>
 #include <random>
 
-#include "resolution.hpp"
+#include "config.hpp"
+#include "mpi_config.hpp"
 #include "mhd.hpp"
 #include "boundary.hpp"
-
-#include "main.hpp"
-#include "mpi_config.hpp"
 #include "output.hpp"
+#include "main.hpp"
 
 
 static void GenerateGrid(hydflux_mod::GridArray<double>& G) {

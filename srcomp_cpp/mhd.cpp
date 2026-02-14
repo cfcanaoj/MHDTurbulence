@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <omp.h>
 
-#include "resolution.hpp"
+#include "config.hpp"
 #include "mhd.hpp"
 
 #include "mpi_config.hpp"

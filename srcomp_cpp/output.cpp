@@ -15,10 +15,11 @@
 #include<iomanip>
 #include<vector>
 #include<sys/stat.h>
+
+#include "config.hpp"
 #include "mpi_config.hpp"
-#include "output.hpp"
 #include "mhd.hpp"
-#include "resolution.hpp"
+#include "output.hpp"
 
 // ==================================================
 // DATA IO (MPI-IO)

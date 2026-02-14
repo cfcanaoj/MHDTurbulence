@@ -1,10 +1,12 @@
 /**
- * @file resolution.hpp
+ * @file config.hpp
  * @brief 
  * @author Tomoya Takiwaki
  * @date 2026-02-14
 */
 
+#ifndef CONFIG_HPP_
+#define CONFIG_HPP_
 namespace config {
   inline constexpr double time_max = 15.0e0;
   inline constexpr double dtout = time_max/100;
@@ -21,8 +23,19 @@ namespace config {
   inline constexpr double x3min(-0.5),x3max(+0.5); // computing region for z
 
   inline constexpr int ntiles[3]   = {2,2,1};
-  inline constexpr int periodic[3] = {1,1,1}; //1:periodic
+  inline constexpr int periodic[3] = {1,0,1}; //1:periodic
 
+  // Boundary condition types
+  inline constexpr int periodicb   = 1;
+  inline constexpr int reflection  = 2;
+  inline constexpr int outflow     = 3;
+  
+  inline constexpr int boundary_xin  = periodicb;
+  inline constexpr int boundary_xout = periodicb;
+  inline constexpr int boundary_yin  = reflection;
+  inline constexpr int boundary_yout = reflection;
+  inline constexpr int boundary_zin  = periodicb;
+  inline constexpr int boundary_zout = periodicb;
 };
 
 namespace resolution_mod {
@@ -51,3 +64,4 @@ namespace resolution_mod {
   inline constexpr double x2min=config::x2min,x2max=config::x2max;
   inline constexpr double x3min=config::x3min,x3max=config::x3max;
 };
+#endif
