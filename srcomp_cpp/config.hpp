@@ -38,7 +38,7 @@ namespace config {
   inline constexpr int boundary_zout = periodicb;
   
   inline constexpr bool asciiout = true ;// Ascii-files are additionaly damped.
-  inline constexpr bool benchmarkmode = false ;// If true, only initial and final outputs are damped. 
+  inline constexpr bool benchmarkmode = true ;// If true, only initial and final outputs are damped. 
 };
 
 namespace resolution_mod {

@@ -68,7 +68,7 @@ static void GenerateGrid(hydflux_mod::GridArray<double>& G) {
   
 }
 static void GenerateProblem(hydflux_mod::GridArray<double>& G,hydflux_mod::FieldArray<double>& P,hydflux_mod::FieldArray<double>& U) {
-  // Kelvin-Helmholtz initial condition (ported from Fortran main.f90::GenerateProblem)
+  // Kelvin-Helmholtz initial condition
   using namespace resolution_mod;
   using namespace mpi_config_mod;
   using namespace hydflux_mod;
@@ -136,15 +136,28 @@ static void GenerateProblem(hydflux_mod::GridArray<double>& G,hydflux_mod::Field
   std::mt19937_64 rng(static_cast<unsigned long long>(1 + myid_w * 1000003ULL));
   std::uniform_real_distribution<double> uni(0.0, 1.0);
 
-  for (int k = ks; k <= ke; ++k)
-    for (int j = js; j <= je; ++j) {
-      const double r = uni(rng);
-      const double dv_rand = dv * rrv * (r - 0.5);
+  for (int k = ks; k <= ke; k++)
+    for (int j = js; j <= je; j++) {
+      //      const double r = uni(rng);
+      // const double dv_rand = dv * rrv * (r - 0.5);
       for (int i = is; i <= ie; ++i) {
-        P(nve1,k,j,i) += dv_rand;
+        //P(nve1,k,j,i) += dv_rand;
       }
     }
 
+  namespace res = resolution_mod; 
+  for (int k = ks; k <= ke; k++)
+    for (int j = js; j <= je; j++) {
+      const double y = G.x2b(j);
+      const double z = G.x3b(k);
+      const double dv_harm = dv * rrv * std::cos(6*2*pi*(y - res::x2min)/(res::x2max - res::x2min))
+                                      * std::cos(6*2*pi*(z - res::x3min)/(res::x3max - res::x3min));
+      for (int i = is; i <= ie; i++) {
+        P(nve1,k,j,i) += dv_harm;
+      }
+    }
+
+  
   // Build conserved variables U from primitives P
   for (int k = ks-ngh; k <= ke+ngh; ++k)
     for (int j = js-ngh; j <= je+ngh; ++j)
