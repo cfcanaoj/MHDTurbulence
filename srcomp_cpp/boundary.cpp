@@ -10,11 +10,10 @@
 #include <cstdio>
 #include <cstdlib>
 #include <algorithm>
-#include <vector>
 #include <mpi.h>
 #include <omp.h>
 
-#include "config.hpp"
+#include "resolution.hpp"
 #include "mhd.hpp"
 #include "boundary.hpp"
 
@@ -23,14 +22,6 @@
 using namespace hydflux_mod;
 
 namespace boundary_mod {
-  // Default boundary configuration (same as the reference Fortran boundary.f90)
-  int boundary_xin  = config::boundary_xin;
-  int boundary_xout = config::boundary_xout;
-  int boundary_yin  = config::boundary_yin;
-  int boundary_yout = config::boundary_yout;
-  int boundary_zin  = config::boundary_zin;
-  int boundary_zout = config::boundary_zout;
-
 #pragma omp declare target
   BoundaryArray<double> Bs,Br;
 #pragma omp end declare target 
@@ -157,441 +148,93 @@ void DeallocateBoundaryVariables(BoundaryArray<double>& Bs,BoundaryArray<double>
 void SendRecvBoundary(const BoundaryArray<double>& Bs,BoundaryArray<double>& Br){
   using namespace mpi_config_mod;
   using namespace resolution_mod;
-
-	  const int dev  = omp_get_default_device();
-	  const int host = omp_get_initial_device();
-
-	  // If p is a mapped host pointer, return the device mapping.
-	  // If p is already a device pointer (or not mapped), fall back to p.
-	  auto devptr_ro = [&](const void* p)->const void*{
-	    const void* dp = omp_get_mapped_ptr(const_cast<void*>(p), dev);
-	    return dp ? dp : p;
-	  };
-	  auto devptr_rw = [&](void* p)->void*{
-	    void* dp = omp_get_mapped_ptr(p, dev);
-	    return dp ? dp : p;
-	  };
-
-	  // Dedicated host staging buffers (allocated once, reused). This guarantees MPI never
-	  // touches device pointers even if the BoundaryArray storage changes in the future.
-	  static std::vector<double> hsend_Xs, hsend_Xe, hrecv_Xs, hrecv_Xe;
-	  static std::vector<double> hsend_Ys, hsend_Ye, hrecv_Ys, hrecv_Ye;
-	  static std::vector<double> hsend_Zs, hsend_Ze, hrecv_Zs, hrecv_Ze;
+  int dev = omp_get_default_device();
+  //printf("myid gpuid=%i %i",myid_w,dev);
   int rc;
   int nreq = 0;
-
-  // ---- X direction ----
-  if (ntiles[dir1] == 1) {
-    const int bc_in  = boundary_xin;
-    const int bc_out = boundary_xout;
-
-    // Br.Xs : ghost at x-in  (left)
-    if (bc_in == periodicb) {
+  
+  if(ntiles[dir1] == 1){    
+  // |     |Bs.Xe   Bs.Xs|     |
+  // |Br.Xs|             |Br.Xe|
 #pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=ks; k<=ke; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=0; i<ngh; i++)
-              Br.Xs(n,k,j,i) = Bs.Xs(n,k,j,i);   // from x-out send buffer
-    } else if (bc_in == reflection) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=ks; k<=ke; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=0; i<ngh; i++)
-              Br.Xs(n,k,j,i) = Bs.Xe(n,k,j,ngh-1-i);
-      // flip normal velocity v1
-#pragma omp target teams distribute parallel for collapse(3)
+    for (int n=0; n<nprim; n++)
       for (int k=ks; k<=ke; k++)
-        for (int j=js; j<=je; j++)
-          for (int i=0; i<ngh; i++)
-            Br.Xs(nve1,k,j,i) = -Br.Xs(nve1,k,j,i);
-    } else if (bc_in == outflow) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=ks; k<=ke; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=0; i<ngh; i++)
-              Br.Xs(n,k,j,i) = Bs.Xe(n,k,j,0);
-    }
-
-    // Br.Xe : ghost at x-out (right)
-    if (bc_out == periodicb) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=ks; k<=ke; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=0; i<ngh; i++)
-              Br.Xe(n,k,j,i) = Bs.Xe(n,k,j,i);   // from x-in send buffer
-    } else if (bc_out == reflection) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=ks; k<=ke; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=0; i<ngh; i++)
-              Br.Xe(n,k,j,i) = Bs.Xs(n,k,j,ngh-1-i);
-      // flip normal velocity v1
-#pragma omp target teams distribute parallel for collapse(3)
-      for (int k=ks; k<=ke; k++)
-        for (int j=js; j<=je; j++)
-          for (int i=0; i<ngh; i++)
-            Br.Xe(nve1,k,j,i) = -Br.Xe(nve1,k,j,i);
-    } else if (bc_out == outflow) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=ks; k<=ke; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=0; i<ngh; i++)
-              Br.Xe(n,k,j,i) = Bs.Xs(n,k,j,ngh-1);
-    }
-  } else {
-    // MPI exchange where neighbors exist; apply reflection/outflow when neighbor is MPI_PROC_NULL
-    // IMPORTANT:
-    //   Do NOT pass device pointers to MPI unless you are 100% sure the MPI stack is
-    //   CUDA-aware and correctly configured for your OpenMP offload runtime.
-    //   We therefore stage through host buffers:
-    //     device -> host (send buffers), MPI on host, host -> device (recv buffers).
-    // This avoids cuMemGetAddressRange / CUDA-aware detection paths entirely.
-
-	    // Stage device send buffers -> host staging buffers.
-	    hsend_Xe.resize(Bs.size1);
-	    hsend_Xs.resize(Bs.size1);
-	    hrecv_Xs.resize(Br.size1);
-	    hrecv_Xe.resize(Br.size1);
-	    omp_target_memcpy(hsend_Xe.data(), devptr_ro(Bs.Xe_data), sizeof(double)*Bs.size1, 0, 0, host, dev);
-	    omp_target_memcpy(hsend_Xs.data(), devptr_ro(Bs.Xs_data), sizeof(double)*Bs.size1, 0, 0, host, dev);
-
-	    double* h_Bs_Xe = hsend_Xe.data();
-	    double* h_Bs_Xs = hsend_Xs.data();
-	    double* h_Br_Xs = hrecv_Xs.data();
-	    double* h_Br_Xe = hrecv_Xe.data();
-
-    if (n1m != MPI_PROC_NULL) {
-      rc = MPI_Irecv(h_Br_Xs, Br.size1, MPI_DOUBLE, n1m, 1100, comm3d, &req[nreq++]);
-      rc = MPI_Isend(h_Bs_Xe, Bs.size1, MPI_DOUBLE, n1m, 1200, comm3d, &req[nreq++]);
-    } else {
-      // x-in physical boundary
-      if (boundary_xin == reflection) {
-#pragma omp target teams distribute parallel for collapse(4)
-        for (int n=0; n<nprim; n++)
-          for (int k=ks; k<=ke; k++)
-            for (int j=js; j<=je; j++)
-              for (int i=0; i<ngh; i++)
-                Br.Xs(n,k,j,i) = Bs.Xe(n,k,j,ngh-1-i);
-#pragma omp target teams distribute parallel for collapse(3)
-        for (int k=ks; k<=ke; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=0; i<ngh; i++)
-              Br.Xs(nve1,k,j,i) = -Br.Xs(nve1,k,j,i);
-      } else if (boundary_xin == outflow) {
-#pragma omp target teams distribute parallel for collapse(4)
-        for (int n=0; n<nprim; n++)
-          for (int k=ks; k<=ke; k++)
-            for (int j=js; j<=je; j++)
-              for (int i=0; i<ngh; i++)
-                Br.Xs(n,k,j,i) = Bs.Xe(n,k,j,0);
-      }
-    }
-
-    if (n1p != MPI_PROC_NULL) {
-      rc = MPI_Irecv(h_Br_Xe, Br.size1, MPI_DOUBLE, n1p, 1200, comm3d, &req[nreq++]);
-      rc = MPI_Isend(h_Bs_Xs, Bs.size1, MPI_DOUBLE, n1p, 1100, comm3d, &req[nreq++]);
-    } else {
-      // x-out physical boundary
-      if (boundary_xout == reflection) {
-#pragma omp target teams distribute parallel for collapse(4)
-        for (int n=0; n<nprim; n++)
-          for (int k=ks; k<=ke; k++)
-            for (int j=js; j<=je; j++)
-              for (int i=0; i<ngh; i++)
-                Br.Xe(n,k,j,i) = Bs.Xs(n,k,j,ngh-1-i);
-#pragma omp target teams distribute parallel for collapse(3)
-        for (int k=ks; k<=ke; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=0; i<ngh; i++)
-              Br.Xe(nve1,k,j,i) = -Br.Xe(nve1,k,j,i);
-      } else if (boundary_xout == outflow) {
-#pragma omp target teams distribute parallel for collapse(4)
-        for (int n=0; n<nprim; n++)
-          for (int k=ks; k<=ke; k++)
-            for (int j=js; j<=je; j++)
-              for (int i=0; i<ngh; i++)
-                Br.Xe(n,k,j,i) = Bs.Xs(n,k,j,ngh-1);
-      }
-    }
-  }
-
-  // ---- Y direction ----
-  if (ntiles[dir2] == 1) {
-    const int bc_in  = boundary_yin;
-    const int bc_out = boundary_yout;
-
-    if (bc_in == periodicb) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=ks; k<=ke; k++)
-          for (int j=0; j<ngh; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Ys(n,k,j,i) = Bs.Ys(n,k,j,i);
-    } else if (bc_in == reflection) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=ks; k<=ke; k++)
-          for (int j=0; j<ngh; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Ys(n,k,j,i) = Bs.Ye(n,k,ngh-1-j,i);
-#pragma omp target teams distribute parallel for collapse(3)
-      for (int k=ks; k<=ke; k++)
-        for (int j=0; j<ngh; j++)
-          for (int i=is; i<=ie; i++)
-            Br.Ys(nve2,k,j,i) = -Br.Ys(nve2,k,j,i);
-    } else if (bc_in == outflow) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=ks; k<=ke; k++)
-          for (int j=0; j<ngh; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Ys(n,k,j,i) = Bs.Ye(n,k,0,i);
-    }
-
-    if (bc_out == periodicb) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=ks; k<=ke; k++)
-          for (int j=0; j<ngh; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Ye(n,k,j,i) = Bs.Ye(n,k,j,i);
-    } else if (bc_out == reflection) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=ks; k<=ke; k++)
-          for (int j=0; j<ngh; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Ye(n,k,j,i) = Bs.Ys(n,k,ngh-1-j,i);
-#pragma omp target teams distribute parallel for collapse(3)
-      for (int k=ks; k<=ke; k++)
-        for (int j=0; j<ngh; j++)
-          for (int i=is; i<=ie; i++)
-            Br.Ye(nve2,k,j,i) = -Br.Ye(nve2,k,j,i);
-    } else if (bc_out == outflow) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=ks; k<=ke; k++)
-          for (int j=0; j<ngh; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Ye(n,k,j,i) = Bs.Ys(n,k,ngh-1,i);
-    }
-  } else {
-	    // Host staging for MPI (see X direction block for rationale)
-	    hsend_Ye.resize(Bs.size2);
-	    hsend_Ys.resize(Bs.size2);
-	    hrecv_Ys.resize(Br.size2);
-	    hrecv_Ye.resize(Br.size2);
-	    omp_target_memcpy(hsend_Ye.data(), devptr_ro(Bs.Ye_data), sizeof(double)*Bs.size2, 0, 0, host, dev);
-	    omp_target_memcpy(hsend_Ys.data(), devptr_ro(Bs.Ys_data), sizeof(double)*Bs.size2, 0, 0, host, dev);
-
-	    double* h_Bs_Ye = hsend_Ye.data();
-	    double* h_Bs_Ys = hsend_Ys.data();
-	    double* h_Br_Ys = hrecv_Ys.data();
-	    double* h_Br_Ye = hrecv_Ye.data();
-
-    if (n2m != MPI_PROC_NULL) {
-      rc = MPI_Irecv(h_Br_Ys, Br.size2, MPI_DOUBLE, n2m, 2100, comm3d, &req[nreq++]);
-      rc = MPI_Isend(h_Bs_Ye, Bs.size2, MPI_DOUBLE, n2m, 2200, comm3d, &req[nreq++]);
-    } else {
-      if (boundary_yin == reflection) {
-#pragma omp target teams distribute parallel for collapse(4)
-        for (int n=0; n<nprim; n++)
-          for (int k=ks; k<=ke; k++)
-            for (int j=0; j<ngh; j++)
-              for (int i=is; i<=ie; i++)
-                Br.Ys(n,k,j,i) = Bs.Ye(n,k,ngh-1-j,i);
-#pragma omp target teams distribute parallel for collapse(3)
-        for (int k=ks; k<=ke; k++)
-          for (int j=0; j<ngh; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Ys(nve2,k,j,i) = -Br.Ys(nve2,k,j,i);
-      } else if (boundary_yin == outflow) {
-#pragma omp target teams distribute parallel for collapse(4)
-        for (int n=0; n<nprim; n++)
-          for (int k=ks; k<=ke; k++)
-            for (int j=0; j<ngh; j++)
-              for (int i=is; i<=ie; i++)
-                Br.Ys(n,k,j,i) = Bs.Ye(n,k,0,i);
-      }
-    }
-
-    if (n2p != MPI_PROC_NULL) {
-      rc = MPI_Irecv(h_Br_Ye, Br.size2, MPI_DOUBLE, n2p, 2200, comm3d, &req[nreq++]);
-      rc = MPI_Isend(h_Bs_Ys, Bs.size2, MPI_DOUBLE, n2p, 2100, comm3d, &req[nreq++]);
-    } else {
-      if (boundary_yout == reflection) {
-#pragma omp target teams distribute parallel for collapse(4)
-        for (int n=0; n<nprim; n++)
-          for (int k=ks; k<=ke; k++)
-            for (int j=0; j<ngh; j++)
-              for (int i=is; i<=ie; i++)
-                Br.Ye(n,k,j,i) = Bs.Ys(n,k,ngh-1-j,i);
-#pragma omp target teams distribute parallel for collapse(3)
-        for (int k=ks; k<=ke; k++)
-          for (int j=0; j<ngh; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Ye(nve2,k,j,i) = -Br.Ye(nve2,k,j,i);
-      } else if (boundary_yout == outflow) {
-#pragma omp target teams distribute parallel for collapse(4)
-        for (int n=0; n<nprim; n++)
-          for (int k=ks; k<=ke; k++)
-            for (int j=0; j<ngh; j++)
-              for (int i=is; i<=ie; i++)
-                Br.Ye(n,k,j,i) = Bs.Ys(n,k,ngh-1,i);
-      }
-    }
-  }
-
-  // ---- Z direction ----
-  if (ntiles[dir3] == 1) {
-    const int bc_in  = boundary_zin;
-    const int bc_out = boundary_zout;
-
-    if (bc_in == periodicb) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=0; k<ngh; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Zs(n,k,j,i) = Bs.Zs(n,k,j,i);
-    } else if (bc_in == reflection) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=0; k<ngh; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Zs(n,k,j,i) = Bs.Ze(n,ngh-1-k,j,i);
-#pragma omp target teams distribute parallel for collapse(3)
-      for (int k=0; k<ngh; k++)
-        for (int j=js; j<=je; j++)
-          for (int i=is; i<=ie; i++)
-            Br.Zs(nve3,k,j,i) = -Br.Zs(nve3,k,j,i);
-    } else if (bc_in == outflow) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=0; k<ngh; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Zs(n,k,j,i) = Bs.Ze(n,0,j,i);
-    }
-
-    if (bc_out == periodicb) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=0; k<ngh; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Ze(n,k,j,i) = Bs.Ze(n,k,j,i);
-    } else if (bc_out == reflection) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=0; k<ngh; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Ze(n,k,j,i) = Bs.Zs(n,ngh-1-k,j,i);
-#pragma omp target teams distribute parallel for collapse(3)
-      for (int k=0; k<ngh; k++)
-        for (int j=js; j<=je; j++)
-          for (int i=is; i<=ie; i++)
-            Br.Ze(nve3,k,j,i) = -Br.Ze(nve3,k,j,i);
-    } else if (bc_out == outflow) {
-#pragma omp target teams distribute parallel for collapse(4)
-      for (int n=0; n<nprim; n++)
-        for (int k=0; k<ngh; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Ze(n,k,j,i) = Bs.Zs(n,ngh-1,j,i);
-    }
-  } else {
-	    // Host staging for MPI (see X direction block for rationale)
-	    hsend_Ze.resize(Bs.size3);
-	    hsend_Zs.resize(Bs.size3);
-	    hrecv_Zs.resize(Br.size3);
-	    hrecv_Ze.resize(Br.size3);
-	    omp_target_memcpy(hsend_Ze.data(), devptr_ro(Bs.Ze_data), sizeof(double)*Bs.size3, 0, 0, host, dev);
-	    omp_target_memcpy(hsend_Zs.data(), devptr_ro(Bs.Zs_data), sizeof(double)*Bs.size3, 0, 0, host, dev);
-
-	    double* h_Bs_Ze = hsend_Ze.data();
-	    double* h_Bs_Zs = hsend_Zs.data();
-	    double* h_Br_Zs = hrecv_Zs.data();
-	    double* h_Br_Ze = hrecv_Ze.data();
-
-    if (n3m != MPI_PROC_NULL) {
-      rc = MPI_Irecv(h_Br_Zs, Br.size3, MPI_DOUBLE, n3m, 3100, comm3d, &req[nreq++]);
-      rc = MPI_Isend(h_Bs_Ze, Bs.size3, MPI_DOUBLE, n3m, 3200, comm3d, &req[nreq++]);
-    } else {
-      if (boundary_zin == reflection) {
-#pragma omp target teams distribute parallel for collapse(4)
-        for (int n=0; n<nprim; n++)
-          for (int k=0; k<ngh; k++)
-            for (int j=js; j<=je; j++)
-              for (int i=is; i<=ie; i++)
-                Br.Zs(n,k,j,i) = Bs.Ze(n,ngh-1-k,j,i);
-#pragma omp target teams distribute parallel for collapse(3)
-        for (int k=0; k<ngh; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Zs(nve3,k,j,i) = -Br.Zs(nve3,k,j,i);
-      } else if (boundary_zin == outflow) {
-#pragma omp target teams distribute parallel for collapse(4)
-        for (int n=0; n<nprim; n++)
-          for (int k=0; k<ngh; k++)
-            for (int j=js; j<=je; j++)
-              for (int i=is; i<=ie; i++)
-                Br.Zs(n,k,j,i) = Bs.Ze(n,0,j,i);
-      }
-    }
-
-    if (n3p != MPI_PROC_NULL) {
-      rc = MPI_Irecv(h_Br_Ze, Br.size3, MPI_DOUBLE, n3p, 3200, comm3d, &req[nreq++]);
-      rc = MPI_Isend(h_Bs_Zs, Bs.size3, MPI_DOUBLE, n3p, 3100, comm3d, &req[nreq++]);
-    } else {
-      if (boundary_zout == reflection) {
-#pragma omp target teams distribute parallel for collapse(4)
-        for (int n=0; n<nprim; n++)
-          for (int k=0; k<ngh; k++)
-            for (int j=js; j<=je; j++)
-              for (int i=is; i<=ie; i++)
-                Br.Ze(n,k,j,i) = Bs.Zs(n,ngh-1-k,j,i);
-#pragma omp target teams distribute parallel for collapse(3)
-        for (int k=0; k<ngh; k++)
-          for (int j=js; j<=je; j++)
-            for (int i=is; i<=ie; i++)
-              Br.Ze(nve3,k,j,i) = -Br.Ze(nve3,k,j,i);
-      } else if (boundary_zout == outflow) {
-#pragma omp target teams distribute parallel for collapse(4)
-        for (int n=0; n<nprim; n++)
-          for (int k=0; k<ngh; k++)
-            for (int j=js; j<=je; j++)
-              for (int i=is; i<=ie; i++)
-                Br.Ze(n,k,j,i) = Bs.Zs(n,ngh-1,j,i);
-      }
-    }
-  }
-
-	  if (nreq != 0) {
-	    MPI_Waitall(nreq, req, MPI_STATUSES_IGNORE);
-	    // Copy host-received buffers -> device buffers (only for directions that used MPI)
-	    if (ntiles[dir1] != 1) {
-	      omp_target_memcpy(devptr_rw(Br.Xs_data), hrecv_Xs.data(), sizeof(double)*Br.size1, 0, 0, dev, host);
-	      omp_target_memcpy(devptr_rw(Br.Xe_data), hrecv_Xe.data(), sizeof(double)*Br.size1, 0, 0, dev, host);
-	    }
-	    if (ntiles[dir2] != 1) {
-	      omp_target_memcpy(devptr_rw(Br.Ys_data), hrecv_Ys.data(), sizeof(double)*Br.size2, 0, 0, dev, host);
-	      omp_target_memcpy(devptr_rw(Br.Ye_data), hrecv_Ye.data(), sizeof(double)*Br.size2, 0, 0, dev, host);
-	    }
-	    if (ntiles[dir3] != 1) {
-	      omp_target_memcpy(devptr_rw(Br.Zs_data), hrecv_Zs.data(), sizeof(double)*Br.size3, 0, 0, dev, host);
-	      omp_target_memcpy(devptr_rw(Br.Ze_data), hrecv_Ze.data(), sizeof(double)*Br.size3, 0, 0, dev, host);
-	    }
+	for (int j=js; j<=je;j++)
+	  for (int i=0; i<ngh; i++) {
+	    Br.Xs(n,k,j,i) = Bs.Xs(n,k,j,i);
+	    Br.Xe(n,k,j,i) = Bs.Xe(n,k,j,i);
 	  }
-  nreq = 0;
+  } else {
+  // |     |Bs.Xe   Bs.Xs|     |
+  // |Br.Xs|             |Br.Xe|
+    void* d_Bs_Xs = omp_get_mapped_ptr(Bs.Xs_data, dev);
+    void* d_Bs_Xe = omp_get_mapped_ptr(Bs.Xe_data, dev);
+    void* d_Br_Xs = omp_get_mapped_ptr(Br.Xs_data, dev);
+    void* d_Br_Xe = omp_get_mapped_ptr(Br.Xe_data, dev);
+    rc = MPI_Irecv(d_Br_Xs,Br.size1, MPI_DOUBLE, n1m, 1100, comm3d, &req[nreq++]);
+    rc = MPI_Isend(d_Bs_Xe,Bs.size1, MPI_DOUBLE, n1m, 1200, comm3d, &req[nreq++]);
+    rc = MPI_Irecv(d_Br_Xe,Br.size1, MPI_DOUBLE, n1p, 1200, comm3d, &req[nreq++]);
+    rc = MPI_Isend(d_Bs_Xs,Bs.size1, MPI_DOUBLE, n1p, 1100, comm3d, &req[nreq++]);
+   
+   }
+
+
+  if(ntiles[dir2] == 1){    
+  // |     |Bs.Ye   Bs.Ys|     |
+  // |Br.Ys|             |Br.Ye|
+#pragma omp target teams distribute parallel for collapse(4)
+    for (int n=0; n<nprim; n++)
+      for (int k=ks; k<=ke; k++)
+	for (int j=0; j<ngh;j++)
+	  for (int i=is; i<=ie; i++) {
+	    Br.Ys(n,k,j,i) = Bs.Ys(n,k,j,i);
+	    Br.Ye(n,k,j,i) = Bs.Ye(n,k,j,i);
+	  }
+  } else {
+  // |     |Bs.Ye   Bs.Ys|     |
+  // |Br.Ys|             |Br.Ye|
+  //               |     |Bs.Ye   Bs.Ys|     |
+  //               |Br.Ys|             |Br.Ye|
+    void* d_Bs_Ys = omp_get_mapped_ptr(Bs.Ys_data, dev);
+    void* d_Bs_Ye = omp_get_mapped_ptr(Bs.Ye_data, dev);
+    void* d_Br_Ys = omp_get_mapped_ptr(Br.Ys_data, dev);
+    void* d_Br_Ye = omp_get_mapped_ptr(Br.Ye_data, dev);
+    
+    rc = MPI_Irecv(d_Br_Ys,Br.size2, MPI_DOUBLE, n2m, 2100, comm3d, &req[nreq++]);
+    rc = MPI_Isend(d_Bs_Ye,Bs.size2, MPI_DOUBLE, n2m, 2200, comm3d, &req[nreq++]);
+    rc = MPI_Irecv(d_Br_Ye,Br.size2, MPI_DOUBLE, n2p, 2200, comm3d, &req[nreq++]);
+    rc = MPI_Isend(d_Bs_Ys,Bs.size2, MPI_DOUBLE, n2p, 2100, comm3d, &req[nreq++]);
+
+  }
+
+
+  if(ntiles[dir3] == 1){    
+  // |     |Bs.Ze   Bs.Zs|     |
+  // |Br.Zs|             |Br.Ze|
+#pragma omp target teams distribute parallel for collapse(4)
+    for (int n=0; n<nprim; n++)
+      for (int k=0; k<ngh; k++)
+	for (int j=js; j<=je;j++)
+	  for (int i=is; i<=ie; i++) {
+	    Br.Zs(n,k,j,i) = Bs.Zs(n,k,j,i);
+	    Br.Ze(n,k,j,i) = Bs.Ze(n,k,j,i);
+	  }
+  } else {
+  // |     |Bs.Ze   Bs.Zs|     |
+  // |Br.Zs|             |Br.Ze|  
+    void* d_Bs_Zs = omp_get_mapped_ptr(Bs.Zs_data, dev);
+    void* d_Bs_Ze = omp_get_mapped_ptr(Bs.Ze_data, dev);
+    void* d_Br_Zs = omp_get_mapped_ptr(Br.Zs_data, dev);
+    void* d_Br_Ze = omp_get_mapped_ptr(Br.Ze_data, dev);
+    
+    rc = MPI_Irecv(d_Br_Zs,Br.size3, MPI_DOUBLE, n3m, 3100, comm3d, &req[nreq++]);
+    rc = MPI_Isend(d_Bs_Ze,Bs.size3, MPI_DOUBLE, n3m, 3200, comm3d, &req[nreq++]);
+    rc = MPI_Irecv(d_Br_Ze,Br.size3, MPI_DOUBLE, n3p, 3200, comm3d, &req[nreq++]);
+    rc = MPI_Isend(d_Bs_Zs,Bs.size3, MPI_DOUBLE, n3p, 3100, comm3d, &req[nreq++]);
+   }
+
+    if(nreq != 0) MPI_Waitall ( nreq, req, MPI_STATUSES_IGNORE);
+    nreq = 0;	
 };
 
 
