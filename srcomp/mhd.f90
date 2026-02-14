@@ -51,7 +51,6 @@ module basicmod
 !$omp declare target (b1,b2,b3,bp)
 !$omp declare target (gp,gp1a,gp2a,gp3a)
 
-!$omp declare target (ncomp)
 !$omp declare target (Dxcomp,Xcomp)
       
 end module basicmod

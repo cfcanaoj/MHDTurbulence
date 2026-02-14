@@ -1,5 +1,5 @@
 
-exed := ../exe
+exed := ../exeomp
 
 exe=Simulation.x
 
@@ -20,12 +20,13 @@ foptgpu = -mp=gpu -Minfo=mp
 .f90.o: 
 	${fc} ${fopt} ${foptgpu} -c $< 
 
-OBJS = main.o output.o boundary.o mhd.o mpiroutines.o
+OBJS = main.o output.o boundary.o mhd.o mpiroutines.o config.o
 
-mpiroutines.o: mpiroutines.f90
-mhd.o: mhd.f90 mpiroutines.o
-boundary.o: boundary.f90 mhd.o mpiroutines.o 
-output.o: output.f90 boundary.o mhd.o mpiroutines.o
+config.o: config.f90
+mpiroutines.o: mpiroutines.f90 config.o
+mhd.o: mhd.f90 mpiroutines.o config.o
+boundary.o: boundary.f90 mhd.o mpiroutines.o  config.o
+output.o: output.f90 boundary.o mhd.o mpiroutines.o config.o
 main.o: main.f90 output.o boundary.o mhd.o mpiroutines.o
 
 ${exed}/${exe}: ${OBJS}

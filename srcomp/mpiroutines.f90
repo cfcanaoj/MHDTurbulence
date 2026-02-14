@@ -1,4 +1,5 @@
 module mpimod
+  use config, only: ntiles, periodic
   use mpi
   implicit none
   integer, parameter :: mreq  = 300
@@ -8,8 +9,7 @@ module mpimod
   integer :: ierr,myid_w, nprocs_w
   integer :: mpi_comm_hyd,myid_hyd, nprocs_hyd
   integer :: comm3d,myid, nprocs
-  logical :: periodic(3)
-  integer :: ntiles(3), coords(3)
+  integer :: coords(3)
   logical :: reorder
   integer :: n1m, n1p, n2m, n2p, n3m, n3p
   integer :: nreq, nsub
@@ -91,19 +91,12 @@ subroutine MPIminfind
   implicit none
   integer :: err_len
   character(len=MPI_MAX_ERROR_STRING) :: err_string
-#ifdef USE_CUDA_AWARE_MPI
-!$omp target data use_device_ptr(bufinpmin,bufoutmin)
-call MPI_ALLREDUCE( bufinpmin(1), bufoutmin(1), 1 &
-     &                   , MPI_2DOUBLE_PRECISION   &
-     &                   , MPI_MINLOC, comm3d, ierr)
-!$omp end target data
-#else
 !$omp target update from(bufinpmin)
 call MPI_ALLREDUCE( bufinpmin(1), bufoutmin(1), 1 &
      &                   , MPI_2DOUBLE_PRECISION   &
      &                   , MPI_MINLOC, comm3d, ierr)
 !$omp target update to(bufoutmin)
-#endif
+
        if (ierr /= MPI_SUCCESS) then
           call MPI_Error_string(ierr, err_string, err_len, ierr)
           print *,"error in MPIminfind", trim(err_string)
@@ -114,19 +107,12 @@ subroutine MPImaxfind
   implicit none
   integer :: err_len
   character(len=MPI_MAX_ERROR_STRING) :: err_string
-#ifdef USE_CUDA_AWARE_MPI
-!$omp target data use_device_ptr(bufinpmax,bufoutmax)
-call MPI_ALLREDUCE( bufinpmax(1), bufoutmax(1), 1 &
-     &                   , MPI_2DOUBLE_PRECISION   &
-     &                   , MPI_MAXLOC, comm3d, ierr)
-!$omp end target data
-#else
 !$omp target update from(bufinpmax)
 call MPI_ALLREDUCE( bufinpmax(1), bufoutmax(1), 1 &
      &                   , MPI_2DOUBLE_PRECISION   &
      &                   , MPI_MAXLOC, comm3d, ierr)
 !$omp target update to(bufoutmax)
-#endif
+
        if (ierr /= MPI_SUCCESS) then
           call MPI_Error_string(ierr, err_string, err_len, ierr)
           print *,"error in MPIminfind", trim(err_string)
