@@ -1,13 +1,14 @@
 module boundarymod
+  use config, only: periodicb, reflection, outflow &
+       & , boundary_xin, boundary_xout &
+       & , boundary_yin, boundary_yout &
+       & , boundary_zin, boundary_zout &
+       & , ncomp
   use basicmod
   implicit none
   private
 
-  integer,parameter:: periodicb=1,reflection=2,outflow=3
-  integer,parameter:: boundary_xin=periodicb , boundary_xout=periodicb
-  integer,parameter:: boundary_yin=reflection, boundary_yout=reflection
-  integer,parameter:: boundary_zin=periodicb , boundary_zout=periodicb
-  
+  integer,parameter:: nbc = 9+ncomp
   integer,parameter:: nv1=3,nv2=4,nv3=5
  
 !!  real(8),dimension(mgn,jn,kn,nbc):: varsendXstt,varsendXend

@@ -3,27 +3,27 @@ program main
   use basicmod
   use mpimod
   use boundarymod
+  use config, only: benchmarkmode
   implicit none
   real(8)::time_begin,time_end
   logical::is_final
-  logical,parameter::nooutput=.false.
   logical,parameter:: forceoutput=.true., usualoutput=.false.
   data is_final /.false./
   call InitializeMPI
   if(myid_w == 0) print *, "setup grids and fields"
   if(myid_w == 0) print *, "grid size for x y z",ngrid1*ntiles(1),ngrid2*ntiles(2),ngrid3*ntiles(3)
-  if(myid_w == 0 .and. nooutput ) print *, "Intermediate results are not outputed"
+  if(myid_w == 0 .and. benchmarkmode ) print *, "Intermediate results are not outputed"
   call GenerateGrid
   call GenerateProblem
   call ConsvVariable
   call Output(forceoutput)  
   if(myid_w == 0) print *, "entering main loop"
 ! main loop
-  if(myid_w == 0 .and. .not. nooutput )                        print *,"step ","time ","dt"
+  if(myid_w == 0 .and. .not. benchmarkmode)                        print *,"step ","time ","dt"
   time_begin = omp_get_wtime()
   mloop: do nhy=1,nhymax
      call TimestepControl
-     if(mod(nhy,nhydis) .eq. 0  .and. .not. nooutput .and. myid_w == 0) print *,nhy,time,dt
+     if(mod(nhy,nhydis) .eq. 0  .and. .not. benchmarkmode .and. myid_w == 0) print *,nhy,time,dt
      call BoundaryCondition
      call StateVevtor
      call GravForce
@@ -35,7 +35,7 @@ program main
      call DampPsi
      call PrimVariable
      time=time+dt
-     if(.not. nooutput ) call Output(usualoutput)
+     if(.not. benchmarkmode ) call Output(usualoutput)
      if(time > timemax) exit mloop
   enddo mloop
 

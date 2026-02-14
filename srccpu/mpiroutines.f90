@@ -1,4 +1,5 @@
 module mpimod
+  use config, only: ntiles, periodic
   use mpi
   implicit none
   integer, parameter :: mreq  = 300
@@ -8,8 +9,7 @@ module mpimod
   integer :: ierr,myid_w, nprocs_w
   integer :: mpi_comm_hyd,myid_hyd, nprocs_hyd
   integer :: comm3d,myid, nprocs
-  logical :: periodic(3)
-  integer :: ntiles(3), coords(3)
+  integer ::  coords(3)
   logical :: reorder
   integer :: n1m, n1p, n2m, n2p, n3m, n3p
   integer :: nreq, nsub
@@ -28,12 +28,6 @@ subroutine InitializeMPI
   call MPI_COMM_SIZE( MPI_COMM_WORLD, nprocs_w, ierr )
   call MPI_COMM_RANK( MPI_COMM_WORLD, myid_w  , ierr )
   
-  ntiles(1)=4
-  ntiles(2)=4
-  ntiles(3)=6
-  periodic(1)=.true.
-  periodic(2)=.true.
-  periodic(3)=.true.
   if(myid_w == 0) then
      print *, "MPI process=",nprocs_w
      print *, "decomposition=",ntiles(1),ntiles(2),ntiles(3)

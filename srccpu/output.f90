@@ -504,6 +504,7 @@ subroutine Output(is_final)
   use mpimod
   use basicmod
   use mpiiomod
+  use config, only: asciiout
   implicit none
 
   logical, intent(in):: is_final
@@ -521,12 +522,11 @@ subroutine Output(is_final)
 
   if(time .lt. tout+dtout .and. .not. is_final) return
 
-
-  if(binaryout) then
-     call MPI_IO_Pack(nout)
-     call MPI_IO_Write(nout)
-     if(myid_w==0) call WriteXDMF(time,nout)
-  else
+  call MPI_IO_Pack(nout)
+  call MPI_IO_Write(nout)
+  if(myid_w==0) call WriteXDMF(time,nout)
+  
+  if(asciiout) then
      call ASC_WRITE(nout)
   endif
   
