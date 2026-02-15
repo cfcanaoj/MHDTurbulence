@@ -97,8 +97,8 @@ The typical performance in representative environments is shown below.
 
 |Code|Grid size|Physical　time|Wall time [s]|time/cell/step [s]|Environment|
 |:---|---:|---:|---:|---:|:---|
-|`srcacc`    |150^3|15|408.18|8.06e-16|CfCA GPU server, A100 4 GPU|
-|`srcomp_cpp`|150^3|15|1145  |2.26e-9 |CfCA GPU server, A100 4 GPU|
+|`srcacc`    |150^3|15|408.18|8.06e-10|CfCA GPU server, A100 4 GPU|
+|`srcomp_cpp`|150^3|15|1145  |22.6e-10|CfCA GPU server, A100 4 GPU|
 |`srccpu`    |156^3|15|      |        |CfCA XD2000, Xeon Max 1 node|
 
 
