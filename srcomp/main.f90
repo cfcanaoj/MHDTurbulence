@@ -19,12 +19,12 @@ program main
 !$omp target enter data map(alloc: b1,b2,b3,bp)
 !$omp target enter data map(alloc: gp)
 !$omp target enter data map(alloc: DXcomp,Xcomp)
+!$omp target enter data map(alloc: BsXstt,BsXend,BsYstt,BsYend,BsZstt,BsZend)
+!$omp target enter data map(alloc: BrXstt,BrXend,BrYstt,BrYend,BrZstt,BrZend)
 
   call GenerateGrid
   call GenerateProblem
-  print *, "consv",myid_w
   call ConsvVariable
-  print *, "output",myid_w
   call Output(forceoutput)  
   if(myid_w == 0) print *, "entering main loop"
 ! main loop
@@ -63,6 +63,8 @@ program main
 !$omp target exit data map(delete: b1,b2,b3,bp)
 !$omp target exit data map(delete: gp)
 !$omp target exit data map(delete: DXcomp,Xcomp)
+!$omp target exit data map(delete: BsXstt,BsXend,BsYstt,BsYend,BsZstt,BsZend)
+!$omp target exit data map(delete: BrXstt,BrXend,BrYstt,BrYend,BrZstt,BrZend)
 
   if(myid_w == 0) print *, "program has been finished"
   

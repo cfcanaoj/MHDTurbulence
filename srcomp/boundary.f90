@@ -1,73 +1,33 @@
 module boundarymod
   use config, only: periodicb, reflection, outflow, &
-       & boundary_xin, boundary_xout, boundary_yin, boundary_yout, boundary_zin, boundary_zout
+       & boundary_xin, boundary_xout, &
+       & boundary_yin, boundary_yout, &
+       & boundary_zin, boundary_zout
   use basicmod
   implicit none
-  private
 
   integer,parameter :: nv1 = 3, nv2 = 4, nv3 = 5
   integer,parameter :: nbc = 9 + ncomp
-
-  ! Persistent halo buffers (host + device mapped)
-  real(8), allocatable, save :: BsXstt(:,:,:,:), BsXend(:,:,:,:)
-  real(8), allocatable, save :: BsYstt(:,:,:,:), BsYend(:,:,:,:)
-  real(8), allocatable, save :: BsZstt(:,:,:,:), BsZend(:,:,:,:)
-
-  real(8), allocatable, save :: BrXstt(:,:,:,:), BrXend(:,:,:,:)
-  real(8), allocatable, save :: BrYstt(:,:,:,:), BrYend(:,:,:,:)
-  real(8), allocatable, save :: BrZstt(:,:,:,:), BrZend(:,:,:,:)
-
-  logical, save :: buffers_initialized = .false.
-  logical, save :: main_arrays_initialized = .false.
-
-  public :: BoundaryCondition, InitBoundaryBuffers, FinalizeBoundaryBuffers, InitMainArraysOnDevice
+  
+  real(8),dimension(mgn,jn,kn,nbc):: BsXstt,BsXend
+  real(8),dimension(in,mgn,kn,nbc):: BsYstt,BsYend
+  real(8),dimension(in,jn,mgn,nbc):: BsZstt,BsZend
+  real(8),dimension(mgn,jn,kn,nbc):: BrXstt,BrXend
+  real(8),dimension(in,mgn,kn,nbc):: BrYstt,BrYend
+  real(8),dimension(in,jn,mgn,nbc):: BrZstt,BrZend
+    
+!$omp declare target (BsXtt,BsXend)
+!$omp declare target (BsYtt,BsYend)
+!$omp declare target (BsZtt,BsZend)
+!$omp declare target (BrXtt,BrXend)
+!$omp declare target (BrYtt,BrYend)
+!$omp declare target (BrZtt,BrZend)
 
 contains
-
-
-  subroutine InitBoundaryBuffers()
-    implicit none
-    if (buffers_initialized) return
-
-    allocate(BsXstt(mgn,jn,kn,nbc), BsXend(mgn,jn,kn,nbc))
-    allocate(BsYstt(in,mgn,kn,nbc), BsYend(in,mgn,kn,nbc))
-    allocate(BsZstt(in,jn,mgn,nbc), BsZend(in,jn,mgn,nbc))
-
-    allocate(BrXstt(mgn,jn,kn,nbc), BrXend(mgn,jn,kn,nbc))
-    allocate(BrYstt(in,mgn,kn,nbc), BrYend(in,mgn,kn,nbc))
-    allocate(BrZstt(in,jn,mgn,nbc), BrZend(in,jn,mgn,nbc))
-
-    ! Map buffers to device once. (Field arrays like d,ei,... must be mapped elsewhere.)
-!$omp target enter data map(alloc: BsXstt, BsXend, BsYstt, BsYend, BsZstt, BsZend)
-!$omp target enter data map(alloc: BrXstt, BrXend, BrYstt, BrYend, BrZstt, BrZend)
-
-    buffers_initialized = .true.
-  end subroutine InitBoundaryBuffers
-
-
-  subroutine FinalizeBoundaryBuffers()
-    implicit none
-    if (.not. buffers_initialized) return
-
-!$omp target exit data map(delete: BsXstt, BsXend, BsYstt, BsYend, BsZstt, BsZend)
-!$omp target exit data map(delete: BrXstt, BrXend, BrYstt, BrYend, BrZstt, BrZend)
-
-    deallocate(BsXstt, BsXend, BsYstt, BsYend, BsZstt, BsZend)
-    deallocate(BrXstt, BrXend, BrYstt, BrYend, BrZstt, BrZend)
-
-    buffers_initialized = .false.
-  end subroutine FinalizeBoundaryBuffers
-
 
   subroutine BoundaryCondition
     implicit none
     integer :: i,j,k
-
-    call InitBoundaryBuffers()
-
-    ! ----------------------
-    ! Pack to send buffers on device
-    ! ----------------------
 
 !$omp target teams distribute parallel do collapse(3)
     do k=1,kn-1
@@ -171,7 +131,7 @@ contains
     do k=1,kn-1
     do j=1,jn-1
     do i=1,mgn
-      d(i,j,k) = BrXstt(i,j,k,1)
+       d(i,j,k) = BrXstt(i,j,k,1)
       ei(i,j,k) = BrXstt(i,j,k,2)
       v1(i,j,k) = BrXstt(i,j,k,nv1)
       v2(i,j,k) = BrXstt(i,j,k,nv2)
@@ -182,7 +142,7 @@ contains
       bp(i,j,k) = BrXstt(i,j,k,9)
       Xcomp(1:ncomp,i,j,k) = BrXstt(i,j,k,10:nbc)
 
-      d(ie+i,j,k) = BrXend(i,j,k,1)
+       d(ie+i,j,k) = BrXend(i,j,k,1)
       ei(ie+i,j,k) = BrXend(i,j,k,2)
       v1(ie+i,j,k) = BrXend(i,j,k,nv1)
       v2(ie+i,j,k) = BrXend(i,j,k,nv2)
@@ -198,9 +158,9 @@ contains
 
 !$omp target teams distribute parallel do collapse(3)
     do k=1,kn-1
-    do i=1,in-1
     do j=1,mgn
-      d(i,j,k) = BrYstt(i,j,k,1)
+    do i=1,in-1
+       d(i,j,k) = BrYstt(i,j,k,1)
       ei(i,j,k) = BrYstt(i,j,k,2)
       v1(i,j,k) = BrYstt(i,j,k,nv1)
       v2(i,j,k) = BrYstt(i,j,k,nv2)
@@ -211,7 +171,7 @@ contains
       bp(i,j,k) = BrYstt(i,j,k,9)
       Xcomp(1:ncomp,i,j,k) = BrYstt(i,j,k,10:nbc)
 
-      d(i,je+j,k) = BrYend(i,j,k,1)
+       d(i,je+j,k) = BrYend(i,j,k,1)
       ei(i,je+j,k) = BrYend(i,j,k,2)
       v1(i,je+j,k) = BrYend(i,j,k,nv1)
       v2(i,je+j,k) = BrYend(i,j,k,nv2)
@@ -226,10 +186,10 @@ contains
     end do
 
 !$omp target teams distribute parallel do collapse(3)
+    do k=1,mgn
     do j=1,jn-1
     do i=1,in-1
-    do k=1,mgn
-      d(i,j,k) = BrZstt(i,j,k,1)
+       d(i,j,k) = BrZstt(i,j,k,1)
       ei(i,j,k) = BrZstt(i,j,k,2)
       v1(i,j,k) = BrZstt(i,j,k,nv1)
       v2(i,j,k) = BrZstt(i,j,k,nv2)
@@ -240,7 +200,7 @@ contains
       bp(i,j,k) = BrZstt(i,j,k,9)
       Xcomp(1:ncomp,i,j,k) = BrZstt(i,j,k,10:nbc)
 
-      d(i,j,ke+k) = BrZend(i,j,k,1)
+       d(i,j,ke+k) = BrZend(i,j,k,1)
       ei(i,j,ke+k) = BrZend(i,j,k,2)
       v1(i,j,ke+k) = BrZend(i,j,k,nv1)
       v2(i,j,ke+k) = BrZend(i,j,k,nv2)
@@ -262,7 +222,7 @@ contains
     implicit none
     integer :: i,j,k,n
 
-    if (ntiles(1) == 1) then
+    single: if (ntiles(1) == 1) then
       ! Local-only: compute halos on device
 !$omp target teams distribute parallel do collapse(3)
       do k=1,kn-1
@@ -290,9 +250,10 @@ contains
       end do
       end do
       end do
+   
       return
-    end if
-
+    end if single
+    
     ! Ensure host has latest send buffers
 !$omp target update from(BsXstt, BsXend)
 

@@ -14,7 +14,7 @@ all: ${exed}/${exe}
 fc= mpif90
 fopt = -g -traceback -O2 -mcmodel=medium
 foptgpu = -mp=gpu -Minfo=mp
-
+#  -Mbounds  -Mchkptr -Ktrap=fp -Minfo=all  -gpu=managed
 .SUFFIXES: .f90 .o
 
 .f90.o: 
