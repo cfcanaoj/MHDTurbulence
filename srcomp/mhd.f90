@@ -179,37 +179,36 @@ subroutine TimestepControl
   integer::theid
   real(8)::ctot
   integer::i,j,k
-
-!$omp target defaultmap(tofrom:scalar)
-  dtmin=1.0d90
-!$omp teams distribute parallel do collapse(3) reduction(min:dtmin)
+  dtmin = 1.0d90
+!$omp target teams distribute parallel do collapse(3) defaultmap(tofrom:scalar) reduction(min:dtmin)
   do k=ks,ke
   do j=js,je
   do i=is,ie
-         ctot = sqrt(cs(i,j,k)**2 &
-     &            +( b1(i,j,k)**2 &
-     &              +b2(i,j,k)**2 &
-     &              +b3(i,j,k)**2 &
-     &                           )/d(i,j,k))
-         dtl1 =(x1a(i+1)-x1a(i))/(abs(v1(i,j,k)) + ctot)
-         dtl2 =(x2a(j+1)-x2a(j))/(abs(v2(i,j,k)) + ctot)
-         dtl3 =(x3a(k+1)-x3a(k))/(abs(v3(i,j,k)) + ctot)
-         dtlocal = min (dtl1,dtl2,dtl3)
-         if(dtlocal .lt. dtmin) dtmin = dtlocal
+      
+     ctot = sqrt( cs(i,j,k)**2 &
+          &      +( b1(i,j,k)**2 &
+          &        +b2(i,j,k)**2 &
+          &        +b3(i,j,k)**2 &
+          &       )/d(i,j,k))
+     dtl1 =(x1a(i+1)-x1a(i))/(abs(v1(i,j,k)) + ctot)
+     dtl2 =(x2a(j+1)-x2a(j))/(abs(v2(i,j,k)) + ctot)
+     dtl3 =(x3a(k+1)-x3a(k))/(abs(v3(i,j,k)) + ctot)     
+     dtlocal = min(dtl1,dtl2,dtl3)
+     dtmin = min(dtmin, dtlocal)
   enddo
   enddo
   enddo
-  bufinpmin(1) = dtmin
-  bufinpmin(2) = dble(myid_w)
-!$omp end teams distribute parallel do
-!$omp end target
-  call MPIminfind
-!$omp target defaultmap(tofrom:scalar)
-  dtmin =     bufoutmin(1)
-  theid = int(bufoutmin(2))
-  dt = 0.05d0 * dtmin
-!$omp end target
-!$omp target update from(dt)
+!$omp end target teams distribute parallel do
+  
+bufinpmin(1) = dtmin
+bufinpmin(2) = dble(myid_w)
+call MPIminfind
+
+dtmin = bufoutmin(1)
+theid = int(bufoutmin(2))
+dt = 0.05d0 * dtmin
+
+!$omp target update to(dt)
   
   return
 end subroutine TimestepControl
@@ -1635,12 +1634,11 @@ subroutine EvaulateCh
   real(8),parameter:: huge=1.0d90
   integer::theid
 
-!$omp target defaultmap(tofrom:scalar)
   chd = 0.0d0
   ch1l = 0.0d0; ch2l = 0.0d0; ch3l = 0.0d0
   dhd = huge
   dh1l =  huge; dh2l =  huge; dh3l =  huge
-!$omp teams distribute parallel do collapse(3) reduction(max:chd)
+!$omp target teams distribute parallel do collapse(3) defaultmap(tofrom:scalar) reduction(max:chd)
   do k=ks,ke
   do j=js,je
   do i=is,ie
@@ -1669,16 +1667,15 @@ subroutine EvaulateCh
   enddo
   enddo
   enddo
+!$omp end target teams distribute parallel do
+
   bufinpmax(1) = chd
   bufinpmax(2) = dble(myid_w)
-!$omp end teams distribute parallel do
-!$omp end target
   call MPImaxfind
-!$omp target defaultmap(tofrom:scalar)
   chd = bufoutmax(1)
   theid = int(bufoutmax(2)) 
   chg      =      chd
-!$omp end target
+!$omp target update to(chg)
   
   return
 end subroutine  EvaulateCh
@@ -1693,11 +1690,10 @@ end subroutine  EvaulateCh
       real(8):: dhl,dh1l,dh2l,dh3l
       real(8),parameter:: huge=1.0d90 
 
-!$omp target defaultmap(tofrom:scalar)
       dh1l=huge
       dh2l=huge
       dh3l=huge
-!$omp teams distribute parallel do collapse(3)
+!$omp target teams distribute parallel do collapse(3) defaultmap(tofrom:scalar)
       do k=ks,ke
       do j=js,je
       do i=is,ie
@@ -1711,8 +1707,7 @@ end subroutine  EvaulateCh
       enddo
       enddo
       enddo
-!$omp end teams distribute parallel do
-!$omp end target
+!$omp end target teams distribute parallel do
 
       return
 end subroutine  DampPsi

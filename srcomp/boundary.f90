@@ -24,21 +24,6 @@ module boundarymod
 
 contains
 
-  subroutine InitMainArraysOnDevice(copyin)
-    !! Map main field arrays to device once (C++-like resident data model).
-    !! If copyin=.true. (default) copy host->device once.
-    logical, intent(in), optional :: copyin
-    logical :: do_copy
-    if (main_arrays_initialized) return
-    do_copy = .true.
-    if (present(copyin)) do_copy = copyin
-    if (do_copy) then
-!$omp target enter data map(to: d,ei,v1,v2,v3,b1,b2,b3,bp,Xcomp)
-    else
-!$omp target enter data map(alloc: d,ei,v1,v2,v3,b1,b2,b3,bp,Xcomp)
-    end if
-    main_arrays_initialized = .true.
-  end subroutine InitMainArraysOnDevice
 
   subroutine InitBoundaryBuffers()
     implicit none
