@@ -11,6 +11,22 @@ module boundarymod
   integer,parameter:: nbc=9+ncomp
   !$omp declare target (nbc)
   integer,parameter:: nv1=3,nv2=4,nv3=5
+
+  !-----------------------------------------------------------------
+  ! GPU-offload friendly boundary buffers
+  !-----------------------------------------------------------------
+
+  logical :: bcbuf_ready = .false.
+
+  real(8),allocatable :: varsendXstt(:,:,:,:), varsendXend(:,:,:,:)
+  real(8),allocatable :: varsendYstt(:,:,:,:), varsendYend(:,:,:,:)
+  real(8),allocatable :: varsendZstt(:,:,:,:), varsendZend(:,:,:,:)
+  real(8),allocatable :: varrecvXstt(:,:,:,:), varrecvXend(:,:,:,:)
+  real(8),allocatable :: varrecvYstt(:,:,:,:), varrecvYend(:,:,:,:)
+  real(8),allocatable :: varrecvZstt(:,:,:,:), varrecvZend(:,:,:,:)
+
+  !$omp declare target (varsendXstt,varsendXend,varsendYstt,varsendYend,varsendZstt,varsendZend)
+  !$omp declare target (varrecvXstt,varrecvXend,varrecvYstt,varrecvYend,varrecvZstt,varrecvZend)
  
 !!  real(8),dimension(mgn,jn,kn,nbc):: varsendXstt,varsendXend
 !!  real(8),dimension(in,mgn,kn,nbc):: varsendYstt,varsendYend
@@ -27,20 +43,45 @@ module boundarymod
 !!!$omp declare target (varrecvZstt,varrecvZend)
 !!  
   public:: BoundaryCondition
+  public:: InitBoundaryBuffers, FinalizeBoundaryBuffers
 contains
+
+  subroutine InitBoundaryBuffers
+    implicit none
+    if (bcbuf_ready) return
+
+    allocate(varsendXstt(mgn,jn,kn,nbc), varsendXend(mgn,jn,kn,nbc))
+    allocate(varsendYstt(in ,mgn,kn,nbc), varsendYend(in ,mgn,kn,nbc))
+    allocate(varsendZstt(in ,jn ,mgn,nbc), varsendZend(in ,jn ,mgn,nbc))
+    allocate(varrecvXstt(mgn,jn,kn,nbc), varrecvXend(mgn,jn,kn,nbc))
+    allocate(varrecvYstt(in ,mgn,kn,nbc), varrecvYend(in ,mgn,kn,nbc))
+    allocate(varrecvZstt(in ,jn ,mgn,nbc), varrecvZend(in ,jn ,mgn,nbc))
+
+    !$omp target enter data map(alloc: varsendXstt,varsendXend,varsendYstt,varsendYend,varsendZstt,varsendZend)
+    !$omp target enter data map(alloc: varrecvXstt,varrecvXend,varrecvYstt,varrecvYend,varrecvZstt,varrecvZend)
+
+    bcbuf_ready = .true.
+  end subroutine InitBoundaryBuffers
+
+  subroutine FinalizeBoundaryBuffers
+    implicit none
+    if (.not. bcbuf_ready) return
+
+    !$omp target exit data map(delete: varsendXstt,varsendXend,varsendYstt,varsendYend,varsendZstt,varsendZend)
+    !$omp target exit data map(delete: varrecvXstt,varrecvXend,varrecvYstt,varrecvYend,varrecvZstt,varrecvZend)
+
+    deallocate(varsendXstt,varsendXend,varsendYstt,varsendYend,varsendZstt,varsendZend)
+    deallocate(varrecvXstt,varrecvXend,varrecvYstt,varrecvYend,varrecvZstt,varrecvZend)
+
+    bcbuf_ready = .false.
+  end subroutine FinalizeBoundaryBuffers
+
   subroutine BoundaryCondition
     implicit none
     integer::i,j,k
-    real(8),dimension(mgn,jn,kn,nbc):: varsendXstt,varsendXend
-    real(8),dimension(in,mgn,kn,nbc):: varsendYstt,varsendYend
-    real(8),dimension(in,jn,mgn,nbc):: varsendZstt,varsendZend
-    real(8),dimension(mgn,jn,kn,nbc):: varrecvXstt,varrecvXend
-    real(8),dimension(in,mgn,kn,nbc):: varrecvYstt,varrecvYend
-    real(8),dimension(in,jn,mgn,nbc):: varrecvZstt,varrecvZend
-
-!$acc data create(varsendXstt,varsendXend,varsendYstt,varsendYend,varsendZstt,varsendZend,varrecvXstt,varrecvXend,varrecvYstt,varrecvYend,varrecvZstt,varrecvZend)
+    if (.not. bcbuf_ready) call InitBoundaryBuffers
   
-!$omp parallel do collapse(3)
+!$omp target teams distribute parallel do collapse(3)
   do k=1,kn-1
   do j=1,jn-1
   do i=1,mgn
@@ -69,7 +110,7 @@ contains
   enddo
   enddo
 
-!$omp parallel do collapse(3)
+!$omp target teams distribute parallel do collapse(3)
   do k=1,kn-1
   do i=1,in-1
   do j=1,mgn
@@ -98,8 +139,9 @@ contains
   enddo
   enddo
 
-!$omp parallel do collapse(3)
+!$omp target teams distribute parallel do collapse(3)
   do j=1,jn-1
+  !$omp target update from(varsendXstt,varsendXend,varsendYstt,varsendYend,varsendZstt,varsendZend)
   do i=1,in-1
   do k=1,mgn
      varsendZend(i,j,k,1) =  d(i,j,ke-mgn+k)
@@ -130,8 +172,10 @@ contains
   call XbcSendRecv(varsendXstt,varsendXend,varrecvXstt,varrecvXend)
   call YbcSendRecv(varsendYstt,varsendYend,varrecvYstt,varrecvYend)
   call ZbcSendRecv(varsendZstt,varsendZend,varrecvZstt,varrecvZend)
+
+  !$omp target update to(varrecvXstt,varrecvXend,varrecvYstt,varrecvYend,varrecvZstt,varrecvZend)
   
-!$omp parallel do collapse(3)
+!$omp target teams distribute parallel do collapse(3)
   do k=1,kn-1
   do j=1,jn-1
   do i=1,mgn
@@ -160,7 +204,7 @@ contains
   enddo
   enddo
 
-!$omp parallel do collapse(3)
+!$omp target teams distribute parallel do collapse(3)
   do k=1,kn-1
   do i=1,in-1
   do j=1,mgn
@@ -190,7 +234,7 @@ contains
   enddo
 
 
-!$omp parallel do collapse(3)
+!$omp target teams distribute parallel do collapse(3)
   do j=1,jn-1
   do i=1,in-1
   do k=1,mgn
@@ -218,7 +262,6 @@ contains
   enddo
   enddo
   enddo
-!$acc end data
   
   return
 end subroutine BoundaryCondition
