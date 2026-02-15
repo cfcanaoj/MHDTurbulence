@@ -86,10 +86,10 @@ time/count/cell : 2.262434e-09
 The performance is shown in the typical environment.
 
 |code|size|sim_time|time [s]|time/cell/count [s]| environment|
-|:---|:---:|:---|:---|:---|
-|`srcacc`|150^3|15|408.18|8.06e-16|CfCA GPU server, A100 4 GPU|
-|`srcomp_cpp`|150^3|15|1145|2.26e-9|CfCA GPU server, A100 4 GPU|
-|`srccpu`|156^3|15|???|???|CfCA XD2000, XeonMax 1 node|
+|:---|---:|---:|---:|---:|---:|
+|`srcacc`    |150^3|15|408.18|8.06e-16|CfCA GPU server, A100 4 GPU|
+|`srcomp_cpp`|150^3|15|1145  |2.26e-9 |CfCA GPU server, A100 4 GPU|
+|`srccpu`    |156^3|15|      |        |CfCA XD2000, XeonMax 1 node|
 
 
 ### 1. Quick check: Text output (ASCII)
