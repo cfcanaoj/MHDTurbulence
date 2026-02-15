@@ -78,14 +78,24 @@ This mode is recommended for:
 -   GPU/CPU performance comparisons
 -   Pure solver benchmarking
 
-In the standard output, following message is shown.
+#### Performance Information
+During execution, the following performance information is printed to the standard output:
 ```bash
 sim time [s]: 1.145357e+03
 time/count/cell : 2.262434e-09
 ```
-The performance is shown in the typical environment.
+- sim time [s] : total wall-clock time of the simulation
+- time/count/cell : wall-clock time per cell per time step
+These values are useful for benchmarking and performance comparison.
 
-|code|size|sim_time|time [s]|time/cell/count [s]| environment|
+#### Benchmark Results
+The typical performance in representative environments is shown below.
+- Grid size: number of cells in each direction
+- Physicsl time (t): physical end time of the simulation
+- Wall time: total elapsed wall-clock time
+- time/cell/step: wall-clock time per cell per time step
+
+|Code|Grid size|Physical　time|Wall time [s]|time/cell/step [s]| Environment|
 |:---|---:|---:|---:|---:|---:|
 |`srcacc`    |150^3|15|408.18|8.06e-16|CfCA GPU server, A100 4 GPU|
 |`srcomp_cpp`|150^3|15|1145  |2.26e-9 |CfCA GPU server, A100 4 GPU|
