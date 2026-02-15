@@ -261,7 +261,7 @@ contains
     if (n1m /= MPI_PROC_NULL) then
       call MPI_IRECV(BrXstt, size(BrXstt), MPI_DOUBLE_PRECISION, n1m, 1100, comm3d, req(nreq+1), ierr)
       nreq = nreq + 1
-      call MPI_ISEND(BsXend, size(BsXend), MPI_DOUBLE_PRECISION, n1m, 1200, comm3d, req(nreq+1), ierr)
+      call MPI_ISEND(BsXstt, size(BsXstt), MPI_DOUBLE_PRECISION, n1m, 1200, comm3d, req(nreq+1), ierr)
       nreq = nreq + 1
     else
       if (boundary_xin == reflection) then
@@ -281,7 +281,7 @@ contains
     if (n1p /= MPI_PROC_NULL) then
       call MPI_IRECV(BrXend, size(BrXend), MPI_DOUBLE_PRECISION, n1p, 1200, comm3d, req(nreq+1), ierr)
       nreq = nreq + 1
-      call MPI_ISEND(BsXstt, size(BsXstt), MPI_DOUBLE_PRECISION, n1p, 1100, comm3d, req(nreq+1), ierr)
+      call MPI_ISEND(BsXend, size(BsXend), MPI_DOUBLE_PRECISION, n1p, 1100, comm3d, req(nreq+1), ierr)
       nreq = nreq + 1
     else
       if (boundary_xout == reflection) then
@@ -353,7 +353,7 @@ contains
     if (n2m /= MPI_PROC_NULL) then
       call MPI_IRECV(BrYstt, size(BrYstt), MPI_DOUBLE_PRECISION, n2m, 2100, comm3d, req(nreq+1), ierr)
       nreq = nreq + 1
-      call MPI_ISEND(BsYend, size(BsYend), MPI_DOUBLE_PRECISION, n2m, 2200, comm3d, req(nreq+1), ierr)
+      call MPI_ISEND(BsYstt, size(BsYstt), MPI_DOUBLE_PRECISION, n2m, 2200, comm3d, req(nreq+1), ierr)
       nreq = nreq + 1
     else
       if (boundary_yin == reflection) then
@@ -373,7 +373,7 @@ contains
     if (n2p /= MPI_PROC_NULL) then
       call MPI_IRECV(BrYend, size(BrYend), MPI_DOUBLE_PRECISION, n2p, 2200, comm3d, req(nreq+1), ierr)
       nreq = nreq + 1
-      call MPI_ISEND(BsYstt, size(BsYstt), MPI_DOUBLE_PRECISION, n2p, 2100, comm3d, req(nreq+1), ierr)
+      call MPI_ISEND(BsYend, size(BsYend), MPI_DOUBLE_PRECISION, n2p, 2100, comm3d, req(nreq+1), ierr)
       nreq = nreq + 1
     else
       if (boundary_yout == reflection) then
@@ -444,7 +444,7 @@ contains
     if (n3m /= MPI_PROC_NULL) then
       call MPI_IRECV(BrZstt, size(BrZstt), MPI_DOUBLE_PRECISION, n3m, 3100, comm3d, req(nreq+1), ierr)
       nreq = nreq + 1
-      call MPI_ISEND(BsZend, size(BsZend), MPI_DOUBLE_PRECISION, n3m, 3200, comm3d, req(nreq+1), ierr)
+      call MPI_ISEND(BsZstt, size(BsZstt), MPI_DOUBLE_PRECISION, n3m, 3200, comm3d, req(nreq+1), ierr)
       nreq = nreq + 1
     else
       if (boundary_zin == reflection) then
@@ -464,7 +464,7 @@ contains
     if (n3p /= MPI_PROC_NULL) then
       call MPI_IRECV(BrZend, size(BrZend), MPI_DOUBLE_PRECISION, n3p, 3200, comm3d, req(nreq+1), ierr)
       nreq = nreq + 1
-      call MPI_ISEND(BsZstt, size(BsZstt), MPI_DOUBLE_PRECISION, n3p, 3100, comm3d, req(nreq+1), ierr)
+      call MPI_ISEND(BsZend, size(BsZend), MPI_DOUBLE_PRECISION, n3p, 3100, comm3d, req(nreq+1), ierr)
       nreq = nreq + 1
     else
       if (boundary_zout == reflection) then
