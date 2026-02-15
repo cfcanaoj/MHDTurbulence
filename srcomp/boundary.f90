@@ -18,10 +18,27 @@ module boundarymod
   real(8), allocatable, save :: BrZstt(:,:,:,:), BrZend(:,:,:,:)
 
   logical, save :: buffers_initialized = .false.
+  logical, save :: main_arrays_initialized = .false.
 
-  public :: BoundaryCondition, InitBoundaryBuffers, FinalizeBoundaryBuffers
+  public :: BoundaryCondition, InitBoundaryBuffers, FinalizeBoundaryBuffers, InitMainArraysOnDevice
 
 contains
+
+  subroutine InitMainArraysOnDevice(copyin)
+    !! Map main field arrays to device once (C++-like resident data model).
+    !! If copyin=.true. (default) copy host->device once.
+    logical, intent(in), optional :: copyin
+    logical :: do_copy
+    if (main_arrays_initialized) return
+    do_copy = .true.
+    if (present(copyin)) do_copy = copyin
+    if (do_copy) then
+!$omp target enter data map(to: d,ei,v1,v2,v3,b1,b2,b3,bp,Xcomp)
+    else
+!$omp target enter data map(alloc: d,ei,v1,v2,v3,b1,b2,b3,bp,Xcomp)
+    end if
+    main_arrays_initialized = .true.
+  end subroutine InitMainArraysOnDevice
 
   subroutine InitBoundaryBuffers()
     implicit none
@@ -67,7 +84,7 @@ contains
     ! Pack to send buffers on device
     ! ----------------------
 
-!$omp target teams distribute parallel do collapse(3) map(tofrom: d,ei,v1,v2,v3,b1,b2,b3,bp,Xcomp, BsXstt, BsXend)
+!$omp target teams distribute parallel do collapse(3)
     do k=1,kn-1
     do j=1,jn-1
     do i=1,mgn
@@ -96,7 +113,7 @@ contains
     end do
     end do
 
-!$omp target teams distribute parallel do collapse(3) map(tofrom: d,ei,v1,v2,v3,b1,b2,b3,bp,Xcomp, BsYstt, BsYend)
+!$omp target teams distribute parallel do collapse(3)
     do k=1,kn-1
     do i=1,in-1
     do j=1,mgn
@@ -125,7 +142,7 @@ contains
     end do
     end do
 
-!$omp target teams distribute parallel do collapse(3) map(tofrom: d,ei,v1,v2,v3,b1,b2,b3,bp,Xcomp, BsZstt, BsZend)
+!$omp target teams distribute parallel do collapse(3)
     do j=1,jn-1
     do i=1,in-1
     do k=1,mgn
@@ -165,7 +182,7 @@ contains
     ! Unpack from receive buffers on device
     ! ----------------------
 
-!$omp target teams distribute parallel do collapse(3) map(tofrom: d,ei,v1,v2,v3,b1,b2,b3,bp,Xcomp, BrXstt, BrXend)
+!$omp target teams distribute parallel do collapse(3)
     do k=1,kn-1
     do j=1,jn-1
     do i=1,mgn
@@ -194,7 +211,7 @@ contains
     end do
     end do
 
-!$omp target teams distribute parallel do collapse(3) map(tofrom: d,ei,v1,v2,v3,b1,b2,b3,bp,Xcomp, BrYstt, BrYend)
+!$omp target teams distribute parallel do collapse(3)
     do k=1,kn-1
     do i=1,in-1
     do j=1,mgn
@@ -223,7 +240,7 @@ contains
     end do
     end do
 
-!$omp target teams distribute parallel do collapse(3) map(tofrom: d,ei,v1,v2,v3,b1,b2,b3,bp,Xcomp, BrZstt, BrZend)
+!$omp target teams distribute parallel do collapse(3)
     do j=1,jn-1
     do i=1,in-1
     do k=1,mgn
@@ -262,7 +279,7 @@ contains
 
     if (ntiles(1) == 1) then
       ! Local-only: compute halos on device
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsXstt,BsXend,BrXstt,BrXend)
+!$omp target teams distribute parallel do collapse(3)
       do k=1,kn-1
       do j=1,jn-1
       do i=1,mgn
@@ -302,13 +319,13 @@ contains
       nreq = nreq + 1
     else
       if (boundary_xin == reflection) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsXstt, BrXstt)
+!$omp target teams distribute parallel do collapse(3)
         do k=1,kn-1; do j=1,jn-1; do i=1,mgn
           BrXstt(i,j,k,1:nbc) = BsXstt(mgn-i+1,j,k,1:nbc)
           BrXstt(i,j,k,nv1) = -BrXstt(i,j,k,nv1)
         end do; end do; end do
       else if (boundary_xin == outflow) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsXstt, BrXstt)
+!$omp target teams distribute parallel do collapse(3)
         do k=1,kn-1; do j=1,jn-1; do i=1,mgn
           BrXstt(i,j,k,1:nbc) = BsXstt(1,j,k,1:nbc)
         end do; end do; end do
@@ -322,13 +339,13 @@ contains
       nreq = nreq + 1
     else
       if (boundary_xout == reflection) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsXend, BrXend)
+!$omp target teams distribute parallel do collapse(3)
         do k=1,kn-1; do j=1,jn-1; do i=1,mgn
           BrXend(i,j,k,1:nbc) = BsXend(mgn-i+1,j,k,1:nbc)
           BrXend(i,j,k,nv1) = -BrXend(i,j,k,nv1)
         end do; end do; end do
       else if (boundary_xout == outflow) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsXend, BrXend)
+!$omp target teams distribute parallel do collapse(3)
         do k=1,kn-1; do j=1,jn-1; do i=1,mgn
           BrXend(i,j,k,1:nbc) = BsXend(mgn,j,k,1:nbc)
         end do; end do; end do
@@ -356,7 +373,7 @@ contains
     integer :: i,j,k
 
     if (ntiles(2) == 1) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsYstt,BsYend,BrYstt,BrYend)
+!$omp target teams distribute parallel do collapse(3)
       do k=1,kn-1
       do j=1,mgn
       do i=1,in-1
@@ -394,13 +411,13 @@ contains
       nreq = nreq + 1
     else
       if (boundary_yin == reflection) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsYstt, BrYstt)
+!$omp target teams distribute parallel do collapse(3)
         do k=1,kn-1; do j=1,mgn; do i=1,in-1
           BrYstt(i,j,k,1:nbc) = BsYstt(i,mgn-j+1,k,1:nbc)
           BrYstt(i,j,k,nv2) = -BrYstt(i,j,k,nv2)
         end do; end do; end do
       else if (boundary_yin == outflow) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsYstt, BrYstt)
+!$omp target teams distribute parallel do collapse(3)
         do k=1,kn-1; do j=1,mgn; do i=1,in-1
           BrYstt(i,j,k,1:nbc) = BsYstt(i,1,k,1:nbc)
         end do; end do; end do
@@ -414,13 +431,13 @@ contains
       nreq = nreq + 1
     else
       if (boundary_yout == reflection) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsYend, BrYend)
+!$omp target teams distribute parallel do collapse(3)
         do k=1,kn-1; do j=1,mgn; do i=1,in-1
           BrYend(i,j,k,1:nbc) = BsYend(i,mgn-j+1,k,1:nbc)
           BrYend(i,j,k,nv2) = -BrYend(i,j,k,nv2)
         end do; end do; end do
       else if (boundary_yout == outflow) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsYend, BrYend)
+!$omp target teams distribute parallel do collapse(3)
         do k=1,kn-1; do j=1,mgn; do i=1,in-1
           BrYend(i,j,k,1:nbc) = BsYend(i,mgn,k,1:nbc)
         end do; end do; end do
@@ -447,7 +464,7 @@ contains
     integer :: i,j,k
 
     if (ntiles(3) == 1) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsZstt,BsZend,BrZstt,BrZend)
+!$omp target teams distribute parallel do collapse(3)
       do j=1,jn-1
       do i=1,in-1
       do k=1,mgn
@@ -485,13 +502,13 @@ contains
       nreq = nreq + 1
     else
       if (boundary_zin == reflection) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsZstt, BrZstt)
+!$omp target teams distribute parallel do collapse(3)
         do j=1,jn-1; do i=1,in-1; do k=1,mgn
           BrZstt(i,j,k,1:nbc) = BsZstt(i,j,mgn-k+1,1:nbc)
           BrZstt(i,j,k,nv3) = -BrZstt(i,j,k,nv3)
         end do; end do; end do
       else if (boundary_zin == outflow) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsZstt, BrZstt)
+!$omp target teams distribute parallel do collapse(3)
         do j=1,jn-1; do i=1,in-1; do k=1,mgn
           BrZstt(i,j,k,1:nbc) = BsZstt(i,j,1,1:nbc)
         end do; end do; end do
@@ -505,13 +522,13 @@ contains
       nreq = nreq + 1
     else
       if (boundary_zout == reflection) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsZend, BrZend)
+!$omp target teams distribute parallel do collapse(3)
         do j=1,jn-1; do i=1,in-1; do k=1,mgn
           BrZend(i,j,k,1:nbc) = BsZend(i,j,mgn-k+1,1:nbc)
           BrZend(i,j,k,nv3) = -BrZend(i,j,k,nv3)
         end do; end do; end do
       else if (boundary_zout == outflow) then
-!$omp target teams distribute parallel do collapse(3) map(tofrom: BsZend, BrZend)
+!$omp target teams distribute parallel do collapse(3)
         do j=1,jn-1; do i=1,in-1; do k=1,mgn
           BrZend(i,j,k,1:nbc) = BsZend(i,j,mgn,1:nbc)
         end do; end do; end do
