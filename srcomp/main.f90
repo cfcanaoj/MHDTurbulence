@@ -214,8 +214,6 @@ subroutine GenerateProblem
 !$omp target update to(Xcomp)
             
   if(myid_w ==0 ) print *,"initial profile is set"
-  call BoundaryCondition
-  if(myid_w ==0 ) print *,"boundary condition is set"
 
   return
 end subroutine GenerateProblem
