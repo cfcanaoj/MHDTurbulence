@@ -199,7 +199,8 @@ subroutine TimestepControl
   enddo
   enddo
 !$omp end target teams distribute parallel do
-  
+!$omp target update from(dtmin)
+
 bufinpmin(1) = dtmin
 bufinpmin(2) = dble(myid_w)
 call MPIminfind
