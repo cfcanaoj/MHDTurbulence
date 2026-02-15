@@ -188,15 +188,16 @@ subroutine GenerateProblem
   enddo
   enddo
   enddo
-      
-  if(myid_w ==0 )print *,"initial profile is set"
-  call BoundaryCondition
 
 !$omp target update to(d,v1,v2,v3)
 !$omp target update to(p,ei,cs)
 !$omp target update to(b1,b2,b3,bp)
 !$omp target update to(gp)
 !$omp target update to(Xcomp)
-      
+            
+  if(myid_w ==0 ) print *,"initial profile is set"
+  call BoundaryCondition
+  if(myid_w ==0 ) print *,"boundary condition is set"
+
   return
 end subroutine GenerateProblem
