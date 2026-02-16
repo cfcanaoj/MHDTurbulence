@@ -1,5 +1,5 @@
 
-exed := ../exeomp
+exed := ../exe
 
 exe=Simulation.x
 
