@@ -88,19 +88,17 @@ These values are useful for benchmarking and performance comparison.
 
 #### Benchmark Results
 The typical performance in representative environments is shown below.
-- Grid size: number of cells in each direction
-- Physicsl time (t): physical end time of the simulation
-- Wall time: total elapsed wall-clock time
-- time/cell/step: wall-clock time per cell per time step
-
 |Code|Grid size x Physical time|Wall time [s]|time/cell/step [s]|Environment|
 |:---|:---:|---:|---:|:---|
 |`srcacc`    |150^3 x 15|408.18|2.01e-10|CfCA GPU server, A100 4 GPU|
 |`srcomp`|150^3 x 15|1296  |6.4e-10|CfCA GPU server, A100 4 GPU|
 |`srcomp_cpp`|150^3 x 15|1145  |5.6e-10|CfCA GPU server, A100 4 GPU|
 |`srccpu`    |156^3 x 15|5599  |24.5e-10|CfCA XD2000, Xeon Max 1 node|
-
-
+- Grid size: number of cells in each direction
+- Physicsl time (t): physical end time of the simulation
+- Wall time: total elapsed wall-clock time
+- time/cell/step: wall-clock time per cell per time step
+  
 ### 1. Quick check: Text output (ASCII)
 
 For quick inspection and debugging, ASCII output can be enabled in
