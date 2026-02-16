@@ -42,7 +42,7 @@ program main
   time_end = omp_get_wtime()
       
   if(myid_w == 0) print *, "sim time [s]:", time_end-time_begin
-  if(myid_w == 0) print *, "time/count/cell", (time_end-time_begin)/(ngrid1*ngrid2*ngrid3)/nhymax
+  if(myid_w == 0) print *, "time/count/cell", (time_end-time_begin)/(ngrid1*ngrid2*ngrid3*ntiles(1)*ntiles(2)*ntiles(3))/nhy
   
   is_final = .true.
   call Output(forceoutput)
@@ -172,7 +172,7 @@ subroutine GenerateProblem
   do j=js,je
      call random_number(rnum)
   do i=is,ie
-     !     v1(i,j,k)= v1(i,j,k) + dv*rrv*(rnum(1)-0.5d0) 
+          v1(i,j,k)= v1(i,j,k) + dv*rrv*(rnum(1)-0.5d0) 
   enddo
   enddo
   enddo
@@ -180,10 +180,10 @@ subroutine GenerateProblem
   ! pert     
   do k=ks,ke 
   do j=js,je
-     dv_harm = dv * rrv * cos(6*2*pi*(x2b(j)-x2min)/(x2max-x2min)) &
-                     &  * cos(6*2*pi*(x3b(k)-x3min)/(x3max-x3min))
+     !dv_harm = dv * rrv * cos(6*2*pi*(x2b(j)-x2min)/(x2max-x2min)) &
+     !                &  * cos(6*2*pi*(x3b(k)-x3min)/(x3max-x3min))
      do i=is,ie
-        v1(i,j,k)= v1(i,j,k) + dv_harm
+     !   v1(i,j,k)= v1(i,j,k) + dv_harm
      enddo
   enddo
   enddo
