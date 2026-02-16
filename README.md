@@ -92,8 +92,8 @@ The typical performance in representative environments is shown below.
 |:---|:---:|---:|---:|:---|
 |`srcacc`    |150^3 x 15|421   |1.14e-9|CfCA GPU server, A100 4 GPU|
 |`srcomp`    |150^3 x 15|1299  |3.52e-9|CfCA GPU server, A100 4 GPU|
-|`srcomp_cpp`|150^3 x 15|1151  |----|CfCA GPU server, A100 4 GPU|
-|`srccpu`    |156^3 x 15|5599  |24.5e-10|CfCA XD2000, Xeon Max 1 node|
+|`srcomp_cpp`|150^3 x 15|1151  |3.18e-9|CfCA GPU server, A100 4 GPU|
+|`srccpu`    |156^3 x 15|5599  |????|CfCA XD2000, Xeon Max 1 node|
 - Grid size: number of cells in each direction
 - Physicsl time (t): physical end time of the simulation
 - Wall time: total elapsed wall-clock time
