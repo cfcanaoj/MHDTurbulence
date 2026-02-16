@@ -42,7 +42,7 @@ program main
   time_end = omp_get_wtime()
       
   if(myid_w == 0) print *, "sim time [s]:", time_end-time_begin
-  if(myid_w == 0) print *, "time/count/cell", (time_end-time_begin)/(ngrid1*ngrid2*ngrid3)/nhymax
+  if(myid_w == 0) print *, "time/count/cell", (time_end-time_begin)/(ngrid1*ntiles(1)*ngrid2*ntiles(2)*ngrid3*ntiles(3))/nhymax
   
   is_final = .true.
   call Output(forceoutput)
