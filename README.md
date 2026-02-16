@@ -99,7 +99,7 @@ The typical performance in representative environments is shown below.
 |:---|:---:|---:|---:|:---|
 |`srcacc`    |150^3 x 15|408.18|8.06e-10|CfCA GPU server, A100 4 GPU|
 |`srcomp_cpp`|150^3 x 15|1145  |22.6e-10|CfCA GPU server, A100 4 GPU|
-|`srccpu`    |156^3 x 15|      |        |CfCA XD2000, Xeon Max 1 node|
+|`srccpu`    |156^3 x 15|5599  |2359e-10|CfCA XD2000, Xeon Max 1 node|
 
 
 ### 1. Quick check: Text output (ASCII)
