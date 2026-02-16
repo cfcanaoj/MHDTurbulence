@@ -101,8 +101,7 @@ end module basicmod
       implicit none
       integer::i,j,k
       
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)
+!$omp target teams distribute parallel do collapse(3) defaultmap(tofrom:scalar)
       do k=ks,ke
       do j=js,je
       do i=is,ie
@@ -122,7 +121,7 @@ end module basicmod
       enddo
       enddo
       enddo
-!$omp end target
+!$omp end target teams distribute parallel do
       
       return
       end subroutine Consvvariable
@@ -132,8 +131,7 @@ end module basicmod
       use eosmod  
       implicit none
       integer::i,j,k,n
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)  private(n)
+!$omp target teams distribute parallel do collapse(3)  private(n) defaultmap(tofrom:scalar)
       do k=ks,ke
       do j=js,je
       do i=is,ie
@@ -164,7 +162,7 @@ end module basicmod
       enddo
       enddo
       enddo
-!$omp end target
+!$omp end target teams distribute parallel do
 
       return
       end subroutine PrimVariable
@@ -181,36 +179,37 @@ subroutine TimestepControl
   integer::theid
   real(8)::ctot
   integer::i,j,k
-
-!$omp target defaultmap(tofrom:scalar)
-  dtmin=1.0d90
-!$omp loop order(concurrent) collapse(3) reduction(min:dtmin)
+  dtmin = 1.0d90
+!$omp target teams distribute parallel do collapse(3) defaultmap(tofrom:scalar) reduction(min:dtmin)
   do k=ks,ke
   do j=js,je
   do i=is,ie
-         ctot = sqrt(cs(i,j,k)**2 &
-     &            +( b1(i,j,k)**2 &
-     &              +b2(i,j,k)**2 &
-     &              +b3(i,j,k)**2 &
-     &                           )/d(i,j,k))
-         dtl1 =(x1a(i+1)-x1a(i))/(abs(v1(i,j,k)) + ctot)
-         dtl2 =(x2a(j+1)-x2a(j))/(abs(v2(i,j,k)) + ctot)
-         dtl3 =(x3a(k+1)-x3a(k))/(abs(v3(i,j,k)) + ctot)
-         dtlocal = min (dtl1,dtl2,dtl3)
-         if(dtlocal .lt. dtmin) dtmin = dtlocal
+      
+     ctot = sqrt( cs(i,j,k)**2 &
+          &      +( b1(i,j,k)**2 &
+          &        +b2(i,j,k)**2 &
+          &        +b3(i,j,k)**2 &
+          &       )/d(i,j,k))
+     dtl1 =(x1a(i+1)-x1a(i))/(abs(v1(i,j,k)) + ctot)
+     dtl2 =(x2a(j+1)-x2a(j))/(abs(v2(i,j,k)) + ctot)
+     dtl3 =(x3a(k+1)-x3a(k))/(abs(v3(i,j,k)) + ctot)     
+     dtlocal = min(dtl1,dtl2,dtl3)
+     dtmin = min(dtmin, dtlocal)
   enddo
   enddo
   enddo
-  bufinpmin(1) = dtmin
-  bufinpmin(2) = dble(myid_w)
-!$omp end target
-  call MPIminfind
-!$omp target defaultmap(tofrom:scalar)
-  dtmin =     bufoutmin(1)
-  theid = int(bufoutmin(2))
-  dt = 0.05d0 * dtmin
-!$omp end target
-!$omp target update from(dt)
+!$omp end target teams distribute parallel do
+!$omp target update from(dtmin)
+
+bufinpmin(1) = dtmin
+bufinpmin(2) = dble(myid_w)
+call MPIminfind
+
+dtmin = bufoutmin(1)
+theid = int(bufoutmin(2))
+dt = 0.05d0 * dtmin
+
+!$omp target update to(dt)
   
   return
 end subroutine TimestepControl
@@ -222,8 +221,7 @@ end subroutine TimestepControl
       implicit none
       integer::i,j,k
 
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)
+!$omp target teams distribute parallel do collapse(3) defaultmap(tofrom:scalar)
       do k=1,kn-1
       do j=1,jn-1
       do i=1,in-1
@@ -246,7 +244,7 @@ end subroutine TimestepControl
       enddo
       enddo
       enddo
-!$omp end target
+!$omp end target teams distribute parallel do
 
       return
       end subroutine StateVevtor
@@ -321,8 +319,7 @@ end subroutine TimestepControl
       real(8),dimension(mflx):: nflux
       real(8):: ptl,css,cts,etot
       
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(2)  private(i, Pleftc1, Pleftc2, Plefte,Prigtc1, Prigtc2, Prigte,dsv,dsvp,dsvm,etot,ptl,css,cts,leftco,rigtco,nflux)
+!$omp target teams distribute parallel do collapse(2)  private(i, Pleftc1, Pleftc2, Plefte,Prigtc1, Prigtc2, Prigte,dsv,dsvp,dsvm,etot,ptl,css,cts,leftco,rigtco,nflux) defaultmap(tofrom:scalar)
       do k=ks,ke
       do j=js,je
       do i=is,ie+1
@@ -496,7 +493,7 @@ end subroutine TimestepControl
       enddo
       enddo
       enddo
-!$omp end target
+!$omp end target teams distribute parallel do
 
       return
       end subroutine Numericalflux1
@@ -515,8 +512,7 @@ end subroutine TimestepControl
       real(8),dimension(mflx):: nflux
       real(8):: ptl,css,cts,etot
 
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(2)  private(j, Pleftc1, Pleftc2, Plefte,Prigtc1, Prigtc2, Prigte,dsv,dsvp,dsvm,etot,ptl,css,cts,leftco,rigtco,nflux)
+!$omp target teams distribute parallel do collapse(2)  private(j, Pleftc1, Pleftc2, Plefte,Prigtc1, Prigtc2, Prigte,dsv,dsvp,dsvm,etot,ptl,css,cts,leftco,rigtco,nflux) defaultmap(tofrom:scalar)
       do k=ks,ke
       do i=is,ie
       do j=js,je+1
@@ -683,7 +679,7 @@ end subroutine TimestepControl
       enddo
       enddo
       enddo
-!$omp end target
+!$omp end target teams distribute parallel do
       
       return
       end subroutine Numericalflux2
@@ -700,8 +696,7 @@ end subroutine TimestepControl
       real(8),dimension(mflx):: nflux
       real(8):: ptl,css,cts,etot
 
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(2)  private(k, Pleftc1, Pleftc2, Plefte,Prigtc1, Prigtc2, Prigte,dsv,dsvp,dsvm,etot,ptl,css,cts,leftco,rigtco,nflux)
+!$omp target teams distribute parallel do collapse(2)  private(k, Pleftc1, Pleftc2, Plefte,Prigtc1, Prigtc2, Prigte,dsv,dsvp,dsvm,etot,ptl,css,cts,leftco,rigtco,nflux) defaultmap(tofrom:scalar)
       do j=js,je
       do i=is,ie
       do k=ks,ke+1
@@ -868,7 +863,7 @@ end subroutine TimestepControl
       enddo
       enddo
       enddo
-!$omp end target
+!$omp end target teams distribute parallel do
 
       return
       end subroutine Numericalflux3
@@ -1467,8 +1462,7 @@ end subroutine TimestepControl
       implicit none
       integer :: i,j,k,n
 
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)
+!$omp target teams distribute parallel do collapse(3) defaultmap(tofrom:scalar)
       do k=ks,ke
       do j=js,je
       do i=is,ie+1
@@ -1483,10 +1477,9 @@ end subroutine TimestepControl
       enddo
       enddo
       enddo
-!$omp end target
+!$omp end target teams distribute parallel do
       
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)
+!$omp target teams distribute parallel do collapse(3) defaultmap(tofrom:scalar)
       do k=ks,ke
       do i=is,ie
       do j=js,je+1
@@ -1494,10 +1487,9 @@ end subroutine TimestepControl
       enddo
       enddo
       enddo
-!$omp end target
+!$omp end target teams distribute parallel do
       
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)
+!$omp target teams distribute parallel do collapse(3) defaultmap(tofrom:scalar)
       do j=js,je
       do i=is,ie
       do k=ks,ke+1
@@ -1505,7 +1497,7 @@ end subroutine TimestepControl
       enddo
       enddo
       enddo
-!$omp end target
+!$omp end target teams distribute parallel do
       return
       end subroutine  GravForce
     
@@ -1515,8 +1507,7 @@ end subroutine TimestepControl
       implicit none
       integer::i,j,k
 
-!$omp target defaultmap(tofrom:scalar)
-!$omp loop order(concurrent) collapse(3)
+!$omp target teams distribute parallel do collapse(3) defaultmap(tofrom:scalar)
       do k=ks,ke
       do j=js,je
       do i=is,ie
@@ -1626,7 +1617,7 @@ end subroutine TimestepControl
       enddo
       enddo
       enddo
-!$omp end target
+!$omp end target teams distribute parallel do
 
       return
     end subroutine UpdateConsv
@@ -1644,12 +1635,11 @@ subroutine EvaulateCh
   real(8),parameter:: huge=1.0d90
   integer::theid
 
-!$omp target defaultmap(tofrom:scalar)
   chd = 0.0d0
   ch1l = 0.0d0; ch2l = 0.0d0; ch3l = 0.0d0
   dhd = huge
   dh1l =  huge; dh2l =  huge; dh3l =  huge
-!$omp loop order(concurrent) collapse(3) reduction(max:chd)
+!$omp target teams distribute parallel do collapse(3) defaultmap(tofrom:scalar) reduction(max:chd)
   do k=ks,ke
   do j=js,je
   do i=is,ie
@@ -1678,15 +1668,15 @@ subroutine EvaulateCh
   enddo
   enddo
   enddo
+!$omp end target teams distribute parallel do
+
   bufinpmax(1) = chd
   bufinpmax(2) = dble(myid_w)
-!$omp end target
   call MPImaxfind
-!$omp target defaultmap(tofrom:scalar)
   chd = bufoutmax(1)
   theid = int(bufoutmax(2)) 
   chg      =      chd
-!$omp end target
+!$omp target update to(chg)
   
   return
 end subroutine  EvaulateCh
@@ -1701,11 +1691,10 @@ end subroutine  EvaulateCh
       real(8):: dhl,dh1l,dh2l,dh3l
       real(8),parameter:: huge=1.0d90 
 
-!$omp target defaultmap(tofrom:scalar)
       dh1l=huge
       dh2l=huge
       dh3l=huge
-!$omp loop order(concurrent) collapse(3)
+!$omp target teams distribute parallel do collapse(3) defaultmap(tofrom:scalar)
       do k=ks,ke
       do j=js,je
       do i=is,ie
@@ -1719,7 +1708,7 @@ end subroutine  EvaulateCh
       enddo
       enddo
       enddo
-!$omp end target
+!$omp end target teams distribute parallel do
 
       return
 end subroutine  DampPsi

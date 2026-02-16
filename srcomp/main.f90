@@ -13,6 +13,15 @@ program main
   if(myid_w == 0) print *, "setup grids and fields"
   if(myid_w == 0) print *, "grid size for x y z",ngrid1*ntiles(1),ngrid2*ntiles(2),ngrid3*ntiles(3)
   if(myid_w == 0 .and. nooutput ) print *, "Intermediate results are not outputed"
+!$omp target enter data map(alloc: x1b,x1a,x2b,x2a,x3b,x3a)
+!$omp target enter data map(alloc: d,et,mv1,mv2,mv3)
+!$omp target enter data map(alloc: p,ei,v1,v2,v3,cs)
+!$omp target enter data map(alloc: b1,b2,b3,bp)
+!$omp target enter data map(alloc: gp)
+!$omp target enter data map(alloc: DXcomp,Xcomp)
+!$omp target enter data map(alloc: BsXstt,BsXend,BsYstt,BsYend,BsZstt,BsZend)
+!$omp target enter data map(alloc: BrXstt,BrXend,BrYstt,BrYend,BrZstt,BrZend)
+
   call GenerateGrid
   call GenerateProblem
   call ConsvVariable
@@ -48,6 +57,15 @@ program main
   call Output(forceoutput)
 
   call FinalizeMPI
+!$omp target exit data map(delete: x1b,x1a,x2b,x2a,x3b,x3a)
+!$omp target exit data map(delete: d,et,mv1,mv2,mv3)
+!$omp target exit data map(delete: p,ei,v1,v2,v3,cs)
+!$omp target exit data map(delete: b1,b2,b3,bp)
+!$omp target exit data map(delete: gp)
+!$omp target exit data map(delete: DXcomp,Xcomp)
+!$omp target exit data map(delete: BsXstt,BsXend,BsYstt,BsYend,BsZstt,BsZend)
+!$omp target exit data map(delete: BrXstt,BrXend,BrYstt,BrYend,BrZstt,BrZend)
+
   if(myid_w == 0) print *, "program has been finished"
   
 end program main
@@ -188,15 +206,14 @@ subroutine GenerateProblem
   enddo
   enddo
   enddo
-      
-  if(myid_w ==0 )print *,"initial profile is set"
-  call BoundaryCondition
 
 !$omp target update to(d,v1,v2,v3)
 !$omp target update to(p,ei,cs)
 !$omp target update to(b1,b2,b3,bp)
 !$omp target update to(gp)
 !$omp target update to(Xcomp)
-      
+            
+  if(myid_w ==0 ) print *,"initial profile is set"
+
   return
 end subroutine GenerateProblem

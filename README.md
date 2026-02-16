@@ -1,7 +1,7 @@
-# MHDTurbulence:
+# MHDTurbulence
 
-This repository contains a 3D MHD solver (MPI + OpenACC/OpenMP/CPU versions) and example setups.
-The current default problem is [**Kelvin–Helmholtz instability**](./KH.md).
+This repository contains a 3D MHD solver (MPI + OpenACC/OpenMP target/OpenMP).
+The current default test problem is the [**Kelvin–Helmholtz instability**](./KH.md).
 
 ---
 
@@ -19,14 +19,14 @@ cd MHDTurbulence
 
 ### Compile
 
-To run the code, first compile the source codes in a GPU server. OpenACC version, `srcacc` is our defalut setup.
+To run the code, first compile source on a GPU server. The OpenACC version (`srcacc`) is the defalut and recommended setup.
 ```bash
 cd srcacc
 make
 ```
 
-Then `Simulation.x` is created in `../exe` directory.  
-If you want to use a different version, go to the relevant directory shown below.
+The executable `Simulation.x` is created in `../exe` directory.  
+If you prefer another implementation, use the appropriate directory and codes listed below.
 
 |directory|Language |GPU/CPU|Parallelization|
 |:---|:---:|:---|:---|
@@ -36,10 +36,11 @@ If you want to use a different version, go to the relevant directory shown below
 |`srccpu`    |Fortran|CPU|MPI OpenMP|
 
 The OpenMP version (`srcomp`) is currently not fully functional and may not run correctly.
-Please use the OpenACC (GPU) or CPU version instead.
+For stable simulations, please use the OpenACC (`srcacc`) or CPU
+(`srccpu`) versions.
 
-### Run
-Copy the batch script and run the code. The script for Slurm is prepared.
+### Execution
+Copy the batch script and submit the job. The script for Slurm is prepared.
 ```bash
 cd ../exe
 cp ../misc/sj_g00.sh .
@@ -55,6 +56,9 @@ Batch scripts depend on your parallelization scheme and environment.
 ---
 ## Data Output Specification
 
+The code supports multiple output modes depending on your purpose:
+benchmarking, quick inspection, visualization, or detailed analysis.
+
 ### 0. Performance Measurement Mode (No Intermediate Output)
 
 For performance benchmarking, the code provides an option in `config.f90` to suppress intermediate outputs. In this case the initial and final snapshots are only damped.
@@ -62,11 +66,46 @@ For performance benchmarking, the code provides an option in `config.f90` to sup
 logical,parameter:: benchmarkmode = .true. !! If true, only initial and final outputs are damped.
 ```
 
-The code supports three different output modes depending on the purpose of analysis
+When enabled:
+
+-   Intermediate snapshots are not written
+-   I/O overhead is minimized
+-   Only initial and final data are output
+
+This mode is recommended for:
+
+-   Strong/weak scaling tests
+-   GPU/CPU performance comparisons
+-   Pure solver benchmarking
+
+#### Performance Information
+During execution, the following performance information is printed to the standard output:
+```bash
+sim time [s]: 1.145357e+03
+time/count/cell : 2.262434e-09
+```
+- sim time [s] : total wall-clock time of the main loop of simulation
+- time/count/cell : wall-clock time per cell per time step
+These values are useful for benchmarking and performance comparison.
+
+#### Benchmark Results
+The typical performance in representative environments is shown below.
+- Grid size: number of cells in each direction
+- Physicsl time (t): physical end time of the simulation
+- Wall time: total elapsed wall-clock time
+- time/cell/step: wall-clock time per cell per time step
+
+|Code|Grid size x Physical time|Wall time [s]|time/cell/step [s]|Environment|
+|:---|:---:|---:|---:|:---|
+|`srcacc`    |150^3 x 15|408.18|8.06e-10|CfCA GPU server, A100 4 GPU|
+|`srcomp_cpp`|150^3 x 15|1145  |22.6e-10|CfCA GPU server, A100 4 GPU|
+|`srccpu`    |156^3 x 15|5599  |2359e-10|CfCA XD2000, Xeon Max 1 node|
+
 
 ### 1. Quick check: Text output (ASCII)
 
-If you want to quickly inspect the simulation results the code outputs text-format data. To employ this mode, edit `config.f90` as follows. 
+For quick inspection and debugging, ASCII output can be enabled in
+`config.f90`:
 ```Fortran,
 logical,parameter:: asciiout = .true. !! Ascii-files are additionaly damped.
 ```
@@ -83,7 +122,21 @@ You can compare your data with [the sample](./sampledata). Since we use random p
 
 
 ### 2. Full data visualization: XMF + binary (for VisIt / ParaView)
-If you want to visualize the full 3D data, the code outputs binary data + XMF metadata. The data is damped as `bindata/field?????.xmf`, `bindata/field?????.bin`, `bindata/grid1D.bin`, `bindata/grid2D.bin`, and `bindata/grid3D.bin`. Use `VisIt/ParaView` to check the data.
+For full 3D visualization, the code outputs binary data together with
+XMF metadata files.
+
+Generated files:
+
+    bindata/field?????.xmf
+    bindata/field?????.bin
+    bindata/grid1D.bin
+    bindata/grid2D.bin
+    bindata/grid3D.bin
+
+Open the `.xmf` file directly in:
+
+-   VisIt
+-   ParaView
 
 ### 3. Detailed analysis: Analysis program
 For more quantitative studies (spectra, statistics, etc.), use the analysis tools provided in the `analysis/` directory. The data is damped as `bindata/unf?????.dat`, `bindata/field?????.bin`, `bindata/grid1D.bin`, `bindata/grid2D.bin`, and `bindata/grid3D.bin`. 

@@ -91,11 +91,9 @@ subroutine MPIminfind
   implicit none
   integer :: err_len
   character(len=MPI_MAX_ERROR_STRING) :: err_string
-!$omp target update from(bufinpmin)
 call MPI_ALLREDUCE( bufinpmin(1), bufoutmin(1), 1 &
      &                   , MPI_2DOUBLE_PRECISION   &
      &                   , MPI_MINLOC, comm3d, ierr)
-!$omp target update to(bufoutmin)
 
        if (ierr /= MPI_SUCCESS) then
           call MPI_Error_string(ierr, err_string, err_len, ierr)
@@ -107,11 +105,9 @@ subroutine MPImaxfind
   implicit none
   integer :: err_len
   character(len=MPI_MAX_ERROR_STRING) :: err_string
-!$omp target update from(bufinpmax)
 call MPI_ALLREDUCE( bufinpmax(1), bufoutmax(1), 1 &
      &                   , MPI_2DOUBLE_PRECISION   &
      &                   , MPI_MAXLOC, comm3d, ierr)
-!$omp target update to(bufoutmax)
 
        if (ierr /= MPI_SUCCESS) then
           call MPI_Error_string(ierr, err_string, err_len, ierr)
