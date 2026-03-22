@@ -6,6 +6,7 @@
 #SBATCH --ntasks-per-node=96
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=100G
+#SBATCH --threads-per-core=1
 #SBATCH -o out%j.log
 #SBATCH -e err%j.log
 #SBATCH --time=1:00:00
