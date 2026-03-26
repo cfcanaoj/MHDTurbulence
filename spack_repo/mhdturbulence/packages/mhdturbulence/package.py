@@ -7,17 +7,25 @@ from spack.package import *
 
 
 class Mhdturbulence(MakefilePackage):
-    """3D magneto-hydrodynamic deacaying turbulence using MPI and Fortran."""
+    """3D magneto-hydrodynamic decaying turbulence using MPI and Fortran."""
 
-    # homepage = "???"
+    homepage = "https://github.com/cfcanaoj/MHDTurbulence"
     git = "https://github.com/cfcanaoj/MHDTurbulence.git"
+
+    license("GPL-3.0", checked_by="freifrauvonbleifrei")
 
     version("main", branch="main")
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("fortran", type=("build", "link"))
-    depends_on("mpi")
-    # depends_on('intel-oneapi-compilers', when='%oneapi')
+    depends_on("nvhpc+mpi", type=("build", "link"))
 
+    # OpenACC source requires the NVIDIA HPC SDK compiler
+    requires(
+        "%nvhpc",
+        msg="MHDTurbulence OpenACC code requires the NVIDIA HPC SDK compiler (nvhpc)",
+    )
     def edit(self, spec, prefix):
         """Edit Makefile to use Spack's compiler and flags."""
         makefile = join_path(self.stage.source_path, "srcacc", "Makefile")
