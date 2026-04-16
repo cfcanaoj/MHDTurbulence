@@ -1,0 +1,1847 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content=".">
+    <meta name="author" content="Tomoya Takiwaki" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>fluxmod &ndash; MHDTurbulence</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">MHDTurbulence </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/main.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>fluxmod
+      <small>Module</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 1.4% of total for modules and submodules.">13 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/mhd.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/mhd.f90.html'>mhd.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">fluxmod</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/fluxmod.html#variable-chg">chg</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-grvsrc1">grvsrc1</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-grvsrc2">grvsrc2</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-grvsrc3">grvsrc3</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-madd">madd</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mbm1">mbm1</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mbm2">mbm2</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mbm3">mbm3</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mbmu">mbmu</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mbmv">mbmv</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mbmw">mbmw</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mbps">mbps</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mcsp">mcsp</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mden">mden</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-med">med</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-meto">meto</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mfbp">mfbp</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mfbu">mfbu</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mfbv">mfbv</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mfbw">mfbw</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mfdn">mfdn</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mfed">mfed</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mfet">mfet</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mflx">mflx</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mfst">mfst</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mfvu">mfvu</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mfvv">mfvv</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mfvw">mfvw</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mpre">mpre</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mrv1">mrv1</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mrv2">mrv2</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mrv3">mrv3</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mrvu">mrvu</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mrvv">mrvv</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mrvw">mrvw</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mst">mst</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mubp">mubp</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mubu">mubu</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mubv">mubv</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mubw">mubw</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mudn">mudn</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mued">mued</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-muet">muet</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-must">must</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-muvu">muvu</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-muvv">muvv</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-muvw">muvw</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-mvel">mvel</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nbm1">nbm1</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nbm2">nbm2</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nbm3">nbm3</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nbps">nbps</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-ncsp">ncsp</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nden">nden</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-ned">ned</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nene">nene</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nflux1">nflux1</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nflux2">nflux2</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nflux3">nflux3</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nhyd">nhyd</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-npre">npre</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nst">nst</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nve1">nve1</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nve2">nve2</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-nve3">nve3</a>
+            <a class="list-group-item" href="../module/fluxmod.html#variable-svc">svc</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+
+    <div class="col-md-9" id='text'>
+      
+<br>          <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='basicmod.html'>basicmod</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~fluxmod~~UsesGraph Pages: 1 -->
+<svg id="modulefluxmodUsesGraph" width="254pt" height="32pt"
+ viewBox="0.00 0.00 254.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~fluxmod~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>module~~fluxmod~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 250,-28 250,4 -4,4"/>
+<!-- module~fluxmod -->
+<g id="module~~fluxmod~~UsesGraph_node1" class="node">
+<title>module~fluxmod</title>
+<polygon fill="none" stroke="black" points="246,-24 190,-24 190,0 246,0 246,-24"/>
+<text text-anchor="middle" x="218" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">fluxmod</text>
+</g>
+<!-- module~basicmod -->
+<g id="module~~fluxmod~~UsesGraph_node2" class="node">
+<title>module~basicmod</title>
+<g id="a_module~~fluxmod~~UsesGraph_node2"><a xlink:href="../module/basicmod.html" xlink:title="basicmod">
+<polygon fill="#337ab7" stroke="#337ab7" points="154,-24 90,-24 90,0 154,0 154,-24"/>
+<text text-anchor="middle" x="122" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basicmod</text>
+</a>
+</g>
+</g>
+<!-- module~fluxmod&#45;&gt;module~basicmod -->
+<g id="module~~fluxmod~~UsesGraph_edge1" class="edge">
+<title>module~fluxmod&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M189.81,-12C181.78,-12 172.81,-12 164.11,-12"/>
+<polygon fill="#000000" stroke="#000000" points="164.1,-8.5 154.1,-12 164.1,-15.5 164.1,-8.5"/>
+</g>
+<!-- module~config -->
+<g id="module~~fluxmod~~UsesGraph_node3" class="node">
+<title>module~config</title>
+<g id="a_module~~fluxmod~~UsesGraph_node3"><a xlink:href="../module/config.html" xlink:title="config">
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">config</text>
+</a>
+</g>
+</g>
+<!-- module~basicmod&#45;&gt;module~config -->
+<g id="module~~fluxmod~~UsesGraph_edge2" class="edge">
+<title>module~basicmod&#45;&gt;module~config</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M89.77,-12C81.52,-12 72.54,-12 64.06,-12"/>
+<polygon fill="#000000" stroke="#000000" points="64.03,-8.5 54.03,-12 64.03,-15.5 64.03,-8.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+          <div class="card">
+      <h3 class="card-header card-title bg-light">Used by</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~fluxmod~~UsedByGraph Pages: 1 -->
+<svg id="modulefluxmodUsedByGraph" width="196pt" height="578pt"
+ viewBox="0.00 0.00 196.00 578.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~fluxmod~~UsedByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 574)">
+<title>module~~fluxmod~~UsedByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-574 192,-574 192,4 -4,4"/>
+<!-- module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_node1" class="node">
+<title>module~fluxmod</title>
+<polygon fill="none" stroke="black" points="56,-297 0,-297 0,-273 56,-273 56,-297"/>
+<text text-anchor="middle" x="28" y="-282.6" font-family="Helvetica,sans-Serif" font-size="10.50">fluxmod</text>
+</g>
+<!-- proc~damppsi -->
+<g id="module~~fluxmod~~UsedByGraph_node2" class="node">
+<title>proc~damppsi</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node2"><a xlink:href="../proc/damppsi.html" xlink:title="DampPsi">
+<polygon fill="#d9534f" stroke="#d9534f" points="169.5,-570 110.5,-570 110.5,-546 169.5,-546 169.5,-570"/>
+<text text-anchor="middle" x="140" y="-555.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">DampPsi</text>
+</a>
+</g>
+</g>
+<!-- proc~damppsi&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge1" class="edge">
+<title>proc~damppsi&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M110.39,-550.09C103.54,-546.99 96.82,-542.75 92,-537 34.59,-468.54 28.31,-355.11 28.4,-307.32"/>
+<polygon fill="#000000" stroke="#000000" points="31.9,-307.19 28.52,-297.15 24.9,-307.11 31.9,-307.19"/>
+</g>
+<!-- proc~evaulatech -->
+<g id="module~~fluxmod~~UsedByGraph_node3" class="node">
+<title>proc~evaulatech</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node3"><a xlink:href="../proc/evaulatech.html" xlink:title="EvaulateCh">
+<polygon fill="#d9534f" stroke="#d9534f" points="176.5,-528 103.5,-528 103.5,-504 176.5,-504 176.5,-528"/>
+<text text-anchor="middle" x="140" y="-513.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">EvaulateCh</text>
+</a>
+</g>
+</g>
+<!-- proc~evaulatech&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge2" class="edge">
+<title>proc~evaulatech&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M103.34,-504.18C99.12,-501.66 95.19,-498.62 92,-495 43.66,-440 32.4,-349.08 29.78,-307.28"/>
+<polygon fill="#000000" stroke="#000000" points="33.27,-306.9 29.26,-297.09 26.28,-307.25 33.27,-306.9"/>
+</g>
+<!-- proc~gravforce -->
+<g id="module~~fluxmod~~UsedByGraph_node4" class="node">
+<title>proc~gravforce</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node4"><a xlink:href="../proc/gravforce.html" xlink:title="GravForce">
+<polygon fill="#d9534f" stroke="#d9534f" points="173.5,-486 106.5,-486 106.5,-462 173.5,-462 173.5,-486"/>
+<text text-anchor="middle" x="140" y="-471.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">GravForce</text>
+</a>
+</g>
+</g>
+<!-- proc~gravforce&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge3" class="edge">
+<title>proc~gravforce&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M106.44,-463.57C101.12,-460.77 96.04,-457.3 92,-453 52.72,-411.23 37.35,-342.67 31.82,-307.44"/>
+<polygon fill="#000000" stroke="#000000" points="35.24,-306.65 30.35,-297.25 28.32,-307.65 35.24,-306.65"/>
+</g>
+<!-- proc~hllc -->
+<g id="module~~fluxmod~~UsedByGraph_node5" class="node">
+<title>proc~hllc</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node5"><a xlink:href="../proc/hllc.html" xlink:title="HLLC">
+<polygon fill="#d9534f" stroke="#d9534f" points="167,-444 113,-444 113,-420 167,-420 167,-444"/>
+<text text-anchor="middle" x="140" y="-429.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">HLLC</text>
+</a>
+</g>
+</g>
+<!-- proc~hllc&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge4" class="edge">
+<title>proc~hllc&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M112.67,-423.98C105.34,-420.81 97.81,-416.56 92,-411 61.43,-381.73 43.41,-334.47 34.93,-306.9"/>
+<polygon fill="#000000" stroke="#000000" points="38.22,-305.67 32.05,-297.06 31.5,-307.64 38.22,-305.67"/>
+</g>
+<!-- proc~hlld -->
+<g id="module~~fluxmod~~UsedByGraph_node6" class="node">
+<title>proc~hlld</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node6"><a xlink:href="../proc/hlld.html" xlink:title="HLLD">
+<polygon fill="#d9534f" stroke="#d9534f" points="167,-402 113,-402 113,-378 167,-378 167,-402"/>
+<text text-anchor="middle" x="140" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">HLLD</text>
+</a>
+</g>
+</g>
+<!-- proc~hlld&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge5" class="edge">
+<title>proc~hlld&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M112.78,-381.08C105.62,-377.92 98.15,-373.91 92,-369 70.04,-351.47 51.69,-324.6 40.56,-305.99"/>
+<polygon fill="#000000" stroke="#000000" points="43.45,-304.01 35.41,-297.1 37.39,-307.51 43.45,-304.01"/>
+</g>
+<!-- proc~hlle -->
+<g id="module~~fluxmod~~UsedByGraph_node7" class="node">
+<title>proc~hlle</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node7"><a xlink:href="../proc/hlle.html" xlink:title="HLLE">
+<polygon fill="#d9534f" stroke="#d9534f" points="167,-360 113,-360 113,-336 167,-336 167,-360"/>
+<text text-anchor="middle" x="140" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">HLLE</text>
+</a>
+</g>
+</g>
+<!-- proc~hlle&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge6" class="edge">
+<title>proc~hlle&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M112.76,-337.21C105.89,-334.13 98.57,-330.63 92,-327 79.01,-319.84 65.23,-310.83 53.89,-302.99"/>
+<polygon fill="#000000" stroke="#000000" points="55.56,-299.89 45.37,-297.02 51.55,-305.63 55.56,-299.89"/>
+</g>
+<!-- proc~mclimiter -->
+<g id="module~~fluxmod~~UsedByGraph_node8" class="node">
+<title>proc~mclimiter</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node8"><a xlink:href="../proc/mclimiter.html" xlink:title="MClimiter">
+<polygon fill="#d9534f" stroke="#d9534f" points="172,-318 108,-318 108,-294 172,-294 172,-318"/>
+<text text-anchor="middle" x="140" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">MClimiter</text>
+</a>
+</g>
+</g>
+<!-- proc~mclimiter&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge7" class="edge">
+<title>proc~mclimiter&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M107.77,-300.04C94.82,-297.56 79.68,-294.67 66.15,-292.09"/>
+<polygon fill="#000000" stroke="#000000" points="66.67,-288.63 56.19,-290.19 65.36,-295.5 66.67,-288.63"/>
+</g>
+<!-- proc~minmod -->
+<g id="module~~fluxmod~~UsedByGraph_node9" class="node">
+<title>proc~minmod</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node9"><a xlink:href="../proc/minmod.html" xlink:title="minmod">
+<polygon fill="#d9534f" stroke="#d9534f" points="168.5,-276 111.5,-276 111.5,-252 168.5,-252 168.5,-276"/>
+<text text-anchor="middle" x="140" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">minmod</text>
+</a>
+</g>
+</g>
+<!-- proc~minmod&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge8" class="edge">
+<title>proc~minmod&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M111.24,-269.3C97.59,-271.91 80.94,-275.08 66.21,-277.9"/>
+<polygon fill="#000000" stroke="#000000" points="65.53,-274.46 56.37,-279.78 66.85,-281.34 65.53,-274.46"/>
+</g>
+<!-- proc~numericalflux1 -->
+<g id="module~~fluxmod~~UsedByGraph_node10" class="node">
+<title>proc~numericalflux1</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node10"><a xlink:href="../proc/numericalflux1.html" xlink:title="NumericalFlux1">
+<polygon fill="#d9534f" stroke="#d9534f" points="188,-234 92,-234 92,-210 188,-210 188,-234"/>
+<text text-anchor="middle" x="140" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">NumericalFlux1</text>
+</a>
+</g>
+</g>
+<!-- proc~numericalflux1&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge9" class="edge">
+<title>proc~numericalflux1&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M109.79,-234.13C103.82,-236.87 97.63,-239.89 92,-243 79.01,-250.16 65.23,-259.17 53.89,-267.01"/>
+<polygon fill="#000000" stroke="#000000" points="51.55,-264.37 45.37,-272.98 55.56,-270.11 51.55,-264.37"/>
+</g>
+<!-- proc~numericalflux2 -->
+<g id="module~~fluxmod~~UsedByGraph_node11" class="node">
+<title>proc~numericalflux2</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node11"><a xlink:href="../proc/numericalflux2.html" xlink:title="NumericalFlux2">
+<polygon fill="#d9534f" stroke="#d9534f" points="188,-192 92,-192 92,-168 188,-168 188,-192"/>
+<text text-anchor="middle" x="140" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">NumericalFlux2</text>
+</a>
+</g>
+</g>
+<!-- proc~numericalflux2&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge10" class="edge">
+<title>proc~numericalflux2&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M105.9,-192.2C101,-194.72 96.19,-197.65 92,-201 70.04,-218.53 51.69,-245.4 40.56,-264.01"/>
+<polygon fill="#000000" stroke="#000000" points="37.39,-262.49 35.41,-272.9 43.45,-265.99 37.39,-262.49"/>
+</g>
+<!-- proc~numericalflux3 -->
+<g id="module~~fluxmod~~UsedByGraph_node12" class="node">
+<title>proc~numericalflux3</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node12"><a xlink:href="../proc/numericalflux3.html" xlink:title="NumericalFlux3">
+<polygon fill="#d9534f" stroke="#d9534f" points="188,-150 92,-150 92,-126 188,-126 188,-150"/>
+<text text-anchor="middle" x="140" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">NumericalFlux3</text>
+</a>
+</g>
+</g>
+<!-- proc~numericalflux3&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge11" class="edge">
+<title>proc~numericalflux3&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M104.38,-150.09C99.9,-152.59 95.61,-155.54 92,-159 61.43,-188.27 43.41,-235.53 34.93,-263.1"/>
+<polygon fill="#000000" stroke="#000000" points="31.5,-262.36 32.05,-272.94 38.22,-264.33 31.5,-262.36"/>
+</g>
+<!-- proc~statevevtor -->
+<g id="module~~fluxmod~~UsedByGraph_node13" class="node">
+<title>proc~statevevtor</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node13"><a xlink:href="../proc/statevevtor.html" xlink:title="StateVevtor">
+<polygon fill="#d9534f" stroke="#d9534f" points="177,-108 103,-108 103,-84 177,-84 177,-108"/>
+<text text-anchor="middle" x="140" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">StateVevtor</text>
+</a>
+</g>
+</g>
+<!-- proc~statevevtor&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge12" class="edge">
+<title>proc~statevevtor&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M103.57,-108.02C99.31,-110.52 95.31,-113.48 92,-117 52.72,-158.77 37.35,-227.33 31.82,-262.56"/>
+<polygon fill="#000000" stroke="#000000" points="28.32,-262.35 30.35,-272.75 35.24,-263.35 28.32,-262.35"/>
+</g>
+<!-- proc~updateconsv -->
+<g id="module~~fluxmod~~UsedByGraph_node14" class="node">
+<title>proc~updateconsv</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node14"><a xlink:href="../proc/updateconsv.html" xlink:title="UpdateConsv">
+<polygon fill="#d9534f" stroke="#d9534f" points="181.5,-66 98.5,-66 98.5,-42 181.5,-42 181.5,-66"/>
+<text text-anchor="middle" x="140" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">UpdateConsv</text>
+</a>
+</g>
+</g>
+<!-- proc~updateconsv&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge13" class="edge">
+<title>proc~updateconsv&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M102.87,-66.1C98.83,-68.57 95.07,-71.51 92,-75 43.66,-130 32.4,-220.92 29.78,-262.72"/>
+<polygon fill="#000000" stroke="#000000" points="26.28,-262.75 29.26,-272.91 33.27,-263.1 26.28,-262.75"/>
+</g>
+<!-- proc~vanleer -->
+<g id="module~~fluxmod~~UsedByGraph_node15" class="node">
+<title>proc~vanleer</title>
+<g id="a_module~~fluxmod~~UsedByGraph_node15"><a xlink:href="../proc/vanleer.html" xlink:title="vanLeer">
+<polygon fill="#d9534f" stroke="#d9534f" points="168,-24 112,-24 112,0 168,0 168,-24"/>
+<text text-anchor="middle" x="140" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vanLeer</text>
+</a>
+</g>
+</g>
+<!-- proc~vanleer&#45;&gt;module~fluxmod -->
+<g id="module~~fluxmod~~UsedByGraph_edge14" class="edge">
+<title>proc~vanleer&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M111.86,-19.26C104.51,-22.41 97.17,-26.84 92,-33 34.59,-101.46 28.31,-214.89 28.4,-262.68"/>
+<polygon fill="#000000" stroke="#000000" points="24.9,-262.89 28.52,-272.85 31.9,-262.81 24.9,-262.89"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsedByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsedByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+      <br>
+
+
+        <section>
+          <h2>Variables</h2>
+            <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-chg"></span>
+              real(kind=8),
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>chg</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grvsrc1"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(in,jn,kn)
+            </td>
+            <td>::</td>
+            <td><strong>grvsrc1</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grvsrc2"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(in,jn,kn)
+            </td>
+            <td>::</td>
+            <td><strong>grvsrc2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-grvsrc3"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(in,jn,kn)
+            </td>
+            <td>::</td>
+            <td><strong>grvsrc3</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-madd"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>madd</strong></td>
+<td> =</td>
+                <td>3</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mbm1"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mbm1</strong></td>
+<td> =</td>
+                <td>6</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mbm2"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mbm2</strong></td>
+<td> =</td>
+                <td>7</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mbm3"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mbm3</strong></td>
+<td> =</td>
+                <td>8</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mbmu"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mbmu</strong></td>
+<td> =</td>
+                <td>mubu</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mbmv"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mbmv</strong></td>
+<td> =</td>
+                <td>mubv</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mbmw"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mbmw</strong></td>
+<td> =</td>
+                <td>mubw</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mbps"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mbps</strong></td>
+<td> =</td>
+                <td>9</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mcsp"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mcsp</strong></td>
+<td> =</td>
+                <td>2*mflx+1</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mden"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mden</strong></td>
+<td> =</td>
+                <td>1</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-med"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>med</strong></td>
+<td> =</td>
+                <td>mflx</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-meto"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>meto</strong></td>
+<td> =</td>
+                <td>5</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mfbp"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mfbp</strong></td>
+<td> =</td>
+                <td>mflx+9</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mfbu"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mfbu</strong></td>
+<td> =</td>
+                <td>mflx+6</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mfbv"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mfbv</strong></td>
+<td> =</td>
+                <td>mflx+7</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mfbw"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mfbw</strong></td>
+<td> =</td>
+                <td>mflx+8</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mfdn"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mfdn</strong></td>
+<td> =</td>
+                <td>mflx+1</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mfed"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mfed</strong></td>
+<td> =</td>
+                <td>2*mflx</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mfet"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mfet</strong></td>
+<td> =</td>
+                <td>mflx+5</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mflx"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mflx</strong></td>
+<td> =</td>
+                <td>9+ncomp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mfst"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mfst</strong></td>
+<td> =</td>
+                <td>2*mflx-ncomp+1</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mfvu"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mfvu</strong></td>
+<td> =</td>
+                <td>mflx+2</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mfvv"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mfvv</strong></td>
+<td> =</td>
+                <td>mflx+3</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mfvw"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mfvw</strong></td>
+<td> =</td>
+                <td>mflx+4</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mpre"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mpre</strong></td>
+<td> =</td>
+                <td>2*mflx+3</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mrv1"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mrv1</strong></td>
+<td> =</td>
+                <td>2</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mrv2"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mrv2</strong></td>
+<td> =</td>
+                <td>3</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mrv3"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mrv3</strong></td>
+<td> =</td>
+                <td>4</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mrvu"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mrvu</strong></td>
+<td> =</td>
+                <td>muvu</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mrvv"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mrvv</strong></td>
+<td> =</td>
+                <td>muvv</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mrvw"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mrvw</strong></td>
+<td> =</td>
+                <td>muvw</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mst"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mst</strong></td>
+<td> =</td>
+                <td>mflx-ncomp+1</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mubp"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mubp</strong></td>
+<td> =</td>
+                <td>9</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mubu"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mubu</strong></td>
+<td> =</td>
+                <td>6</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mubv"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mubv</strong></td>
+<td> =</td>
+                <td>7</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mubw"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mubw</strong></td>
+<td> =</td>
+                <td>8</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mudn"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mudn</strong></td>
+<td> =</td>
+                <td>1</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mued"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mued</strong></td>
+<td> =</td>
+                <td>mflx</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-muet"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>muet</strong></td>
+<td> =</td>
+                <td>5</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-must"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>must</strong></td>
+<td> =</td>
+                <td>mflx-ncomp+1</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-muvu"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>muvu</strong></td>
+<td> =</td>
+                <td>2</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-muvv"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>muvv</strong></td>
+<td> =</td>
+                <td>3</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-muvw"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>muvw</strong></td>
+<td> =</td>
+                <td>4</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mvel"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mvel</strong></td>
+<td> =</td>
+                <td>2*mflx+2</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nbm1"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nbm1</strong></td>
+<td> =</td>
+                <td>8</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nbm2"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nbm2</strong></td>
+<td> =</td>
+                <td>9</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nbm3"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nbm3</strong></td>
+<td> =</td>
+                <td>10</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nbps"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nbps</strong></td>
+<td> =</td>
+                <td>11</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ncsp"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>ncsp</strong></td>
+<td> =</td>
+                <td>7</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nden"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nden</strong></td>
+<td> =</td>
+                <td>1</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ned"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>ned</strong></td>
+<td> =</td>
+                <td>nhyd</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nene"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nene</strong></td>
+<td> =</td>
+                <td>5</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nflux1"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(mflx,in,jn,kn)
+            </td>
+            <td>::</td>
+            <td><strong>nflux1</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nflux2"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(mflx,in,jn,kn)
+            </td>
+            <td>::</td>
+            <td><strong>nflux2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nflux3"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(mflx,in,jn,kn)
+            </td>
+            <td>::</td>
+            <td><strong>nflux3</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nhyd"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nhyd</strong></td>
+<td> =</td>
+                <td>11+ncomp</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-npre"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>npre</strong></td>
+<td> =</td>
+                <td>6</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nst"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nst</strong></td>
+<td> =</td>
+                <td>nhyd-ncomp+1</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nve1"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nve1</strong></td>
+<td> =</td>
+                <td>2</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nve2"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nve2</strong></td>
+<td> =</td>
+                <td>3</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nve3"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nve3</strong></td>
+<td> =</td>
+                <td>4</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-svc"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(nhyd,in,jn,kn)
+            </td>
+            <td>::</td>
+            <td><strong>svc</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+        </section>
+        <br>
+
+
+
+
+
+
+
+
+
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              MHDTurbulence
+ was developed by Tomoya Takiwaki<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>
