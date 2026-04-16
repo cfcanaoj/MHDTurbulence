@@ -1,5 +1,5 @@
 ---
-title: README
+title: Introduction
 ---
 
 {!../README.md!}
