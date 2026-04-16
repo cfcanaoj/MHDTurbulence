@@ -1,5 +1,0 @@
----
-title: Problem
----
-
-{!../KH.md!}
