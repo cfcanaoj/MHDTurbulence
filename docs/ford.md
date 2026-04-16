@@ -1,5 +1,5 @@
 project: MHDTurbulence  
-summary: .  
+summary: High-performance 3D MHD solver (MPI + OpenACC) for large-scale turbulence simulations.  
 author: Tomoya Takiwaki  
 github: https://github.com/cfcanaoj/MHDTurbulence    
 src_dir: ../srcacc  
