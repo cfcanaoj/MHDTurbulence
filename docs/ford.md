@@ -12,8 +12,8 @@ search: true
 sort: permission-alpha  
 display: public  
 source: true  
-incl_src: true 
-proc_internals: false
+incl_src: true  
+proc_internals: false  
 exclude_dir: site  
 extensions: f90  
 extra_filetypes: md #  
