@@ -1,0 +1,45 @@
+name: Build FORD Docs
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install FORD
+        run: |
+          python -m pip install --upgrade pip
+          pip install ford graphviz
+
+      - name: Install Graphviz system package
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+
+      - name: Build documentation
+        working-directory: docs
+        run: |
+          ford ford.md
+
+      - name: Deploy to GitHub Pages
+        if: github.event_name != 'pull_request'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/site
