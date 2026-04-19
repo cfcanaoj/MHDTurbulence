@@ -40,7 +40,8 @@ program main
   enddo mloop
 
   time_end = omp_get_wtime()
-      
+  
+  if(myid_w == 0) print *, "total step, final dt, final time:", nhy,dt,time      
   if(myid_w == 0) print *, "sim time [s]:", time_end-time_begin
   if(myid_w == 0) print *, "time/count/cell", (time_end-time_begin)/(ngrid1*ntiles(1)*ngrid2*ntiles(2)*ngrid3*ntiles(3))/nhy
   
