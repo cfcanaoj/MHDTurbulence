@@ -18,6 +18,7 @@ exclude_dir: site
 extensions: f90  
 extra_filetypes: md #  
 page_dir: site  
+css: custom.css  
 creation_date: %Y-%m-%d  
   
 ---  
