@@ -1,7 +1,7 @@
       module config
       implicit none
       !> Control timescale
-      real(8),parameter:: timemax = 15.0d0
+      real(8),parameter:: timemax = 1.5d0
       real(8),parameter:: dtout = timemax/100
 
       !> Control step
@@ -20,7 +20,7 @@
       integer,parameter:: ncomp=1 ! kinds of composition
       
       !> Control MPI decomposion
-      integer,parameter:: ntiles(3) = [ 2,2,1 ]
+      integer,parameter:: ntiles(3) = [ 1,1,1 ]
       logical,parameter:: periodic(3) = [ .true., .false., .true. ]
       
       !> Control bounday condition

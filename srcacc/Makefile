@@ -11,7 +11,7 @@ all: ${exed}/${exe}
 # Fortran
 #################
 
-fc= mpif90
+fc= mpifort
 fopt = -g -traceback -O2
 foptopenacc = -Minfo=accel -acc -mcmodel=medium
 
