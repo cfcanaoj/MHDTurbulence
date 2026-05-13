@@ -120,5 +120,17 @@ subroutine MPImaxfind
        endif
 end subroutine MPImaxfind
 
+subroutine GetMPIsum(n,bufl,bufg)
+  implicit none
+  integer,intent(in) :: n
+  real(8),intent(in) :: bufl(n)
+  real(8),intent(out):: bufg(n)  
+!$acc host_data use_device(bufl,bufg)
+       call MPI_ALLREDUCE( bufl, bufg, n &
+     &                   , MPI_DOUBLE_PRECISION   &
+     &                   , MPI_SUM, comm3d, ierr)
+!$acc end host_data
+end subroutine GetMPIsum
+
 end module mpimod
 

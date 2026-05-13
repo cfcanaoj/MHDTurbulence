@@ -16,6 +16,7 @@ program main
   call GenerateGrid
   call GenerateProblem
   call ConsvVariable
+  call RealTimeAnalysis
   call Output(forceoutput)  
   if(myid_w == 0) print *, "entering main loop"
 ! main loop
@@ -35,6 +36,7 @@ program main
      call DampPsi
      call PrimVariable
      time=time+dt
+     if(.not. benchmarkmode ) call RealTimeAnalysis
      if(.not. benchmarkmode ) call Output(usualoutput)
      if(time > timemax) exit mloop
   enddo mloop
@@ -46,6 +48,7 @@ program main
   if(myid_w == 0) print *, "time/count/cell", (time_end-time_begin)/(ngrid1*ngrid2*ngrid3*ntiles(1)*ntiles(2)*ntiles(3))/nhy
   
   is_final = .true.
+  call RealTimeAnalysis
   call Output(forceoutput)
 
   call FinalizeMPI
@@ -213,3 +216,52 @@ subroutine GenerateProblem
       
   return
 end subroutine GenerateProblem
+
+subroutine RealTimeAnalysis
+  !! To mesure the growth rate of Kelvin–Helmholtz instability, compute the related variables.
+  !! (1) < v^y v^y>
+  !! (2) <C*(1-C)>
+  use basicmod
+  use eosmod
+  use mpimod
+  use boundarymod
+  implicit none
+  integer::i,j,k
+  real(8):: mix
+  real(8):: avevys
+  real(8):: dv,vol
+  integer,parameter:: vmax=3 
+  real(8),dimension(vmax):: local,global
+  
+!$acc kernels
+  mix = 0.0d0
+  avevys = 0.0d0
+  vol = 0.0d0
+!$acc loop collapse(3) reduction(sum:vol,mix,avevys) provate(dv)
+  do k=ks,ke
+  do j=js,je
+  do i=js,ie
+     dv     = (x1a(i+1)-x1a(i)) * (x2a(j+1)-x2a(j)) * (x3a(k+1)-x3a(k))
+     vol    = vol    + dv
+     mix    = mix    + Xcomp(1,i,j,k) * (1.0d0- Xcomp(1,i,j,k)) * dv
+     avevys = avevys + v2(i,j,k) * v2(i,j,k)                    * dv
+  enddo
+  enddo
+  enddo
+!$acc end kernels
+!$acc serial
+  local(1) = vol
+  local(2) = mix
+  local(3) = avevys
+!$acc end serial
+  call GetMPIsum(vmax,local,global)
+!$acc serial
+  vol    = global(1)
+  mix    = global(2)
+  avevys = global(3)
+  mix = mix/vol
+  avevys = avevys/vol
+!$acc end serial
+!$acc update host(mix,avevys)
+  if(myid_w ==0 ) print *," mix, v_y^2",mix,avevys   
+end subroutine RealTimeAnalysis
