@@ -164,10 +164,10 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
               <ul class="list-inline">
-                  <li class="list-inline-item"><a href='../module/boundarymod.html'>boundarymod</a></li>
-                  <li class="list-inline-item"><a href='../module/eosmod.html'>eosmod</a></li>
                   <li class="list-inline-item"><a href='../module/basicmod.html'>basicmod</a></li>
+                  <li class="list-inline-item"><a href='../module/boundarymod.html'>boundarymod</a></li>
                   <li class="list-inline-item"><a href='../module/mpimod.html'>mpimod</a></li>
+                  <li class="list-inline-item"><a href='../module/eosmod.html'>eosmod</a></li>
               </ul>
             </li>
             <li class="list-group-item">
@@ -596,7 +596,7 @@ implementation in a submodule of an interface in a parent module.
 <span class="w">        </span><span class="nb">Gamma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.49d0</span>
 <span class="w">        </span><span class="k">open</span><span class="p">(</span><span class="n">newunit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">unitevo</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="s2">&quot;t-prof.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;write&quot;</span><span class="p">)</span>
 <span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unitevo</span><span class="p">,</span><span class="s2">&quot;(A,(1x,ES24.16E3))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;# Gamma=&quot;</span><span class="p">,</span><span class="nb">Gamma</span>
-<span class="nb">        </span><span class="k">write</span><span class="p">(</span><span class="n">unitevo</span><span class="p">,</span><span class="s2">&quot;(A)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;# 1:time 2:mix 3:v_y 4:exp(2Gamma*t)&quot;</span>
+<span class="nb">        </span><span class="k">write</span><span class="p">(</span><span class="n">unitevo</span><span class="p">,</span><span class="s2">&quot;(A)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;# 1:time 2:mix 3:v_y 4:A*exp(Gamma*t)&quot;</span>
 <span class="w">        </span><span class="n">is_inited</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
 <span class="w">     </span><span class="k">endif</span>
 <span class="k">     write</span><span class="p">(</span><span class="n">unitevo</span><span class="p">,</span><span class="s2">&quot;(*(1x,ES24.16E3))&quot;</span><span class="p">)</span><span class="w"> </span><span class="nb">time</span><span class="p">,</span><span class="w"> </span><span class="n">mix</span><span class="p">,</span><span class="w"> </span><span class="n">avevy</span><span class="p">,</span><span class="w"> </span><span class="n">Amp</span><span class="o">*</span><span class="nb">exp</span><span class="p">(</span><span class="nb">Gamma</span><span class="o">*</span><span class="nb">time</span><span class="p">)</span>
