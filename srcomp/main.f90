@@ -143,7 +143,7 @@ subroutine GenerateProblem
  
   integer,dimension(2) :: seed
   real(8),dimension(1) :: rnum
-  real(8),parameter :: rrv =1.0d-2
+  real(8),parameter :: rrv =0.0d-2
   
   pi = dacos(-1.0d0)
   
