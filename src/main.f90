@@ -125,29 +125,31 @@ subroutine GenerateProblem
  
   integer,dimension(2) :: seed
   real(8),dimension(1) :: rnum
-  real(8),parameter :: rrv =1.0d-2
+  real(8),parameter :: rrv =0.0d-2
   real(8):: dv_harm
+  real(8):: kwn !! wave number
   
-  pi = dacos(-1.0d0)
+  pi = acos(-1.0d0)
   
   rho1 = 1.0d0
   rho2 = 1.0d0
   dv   = 2.00d0
   wid  = 0.05d0
   sig  = 0.2d0
-  B0  = dsqrt(2.0d0/3.0d0)
- 
+  B0  = dsqrt(2.0d0/3.0d0)*0.0d0
+  kwn = 2.0d0 * pi /(x1max-x1min) ! 1/L
+
   do k=ks-mgn,ke+mgn
   do j=js-mgn,je+mgn
   do i=is-mgn,ie+mgn
      d(i,j,k) = 1.0d0
      p(i,j,k) = 1.0d0
      v1(i,j,k) = 0.5d0 * dv *( dtanh( (x2b(j)+0.5d0)/wid ) - dtanh( (x2b(j) - 0.5d0)/wid ) - 1.0d0 )
-     v2(i,j,k) =  0.001d0*dsin(2.0d0*pi*x1b(i))* &
+     v2(i,j,k) =  0.01d0 * sin(kwn*x1b(i))* &
     &         ( dexp( - (x2b(j) + 0.5d0)**2/sig**2 ) +  &
     &           dexp( - (x2b(j) - 0.5d0)**2/sig**2 ) )
      v3(i,j,k) = 0.0d0
-     b1(i,j,k) = B0*0.0d0
+     b1(i,j,k) = B0
      b2(i,j,k) = 0.0d0
      b3(i,j,k) = 0.0d0
      bp(i,j,k) = 0.0d0
@@ -230,16 +232,21 @@ subroutine RealTimeAnalysis
   real(8):: mix
   real(8):: avevy
   real(8):: dv,vol
+  real(8),save:: Amp,Gamma
   integer,save:: unitevo 
   integer,parameter:: vmax=3 
   real(8),dimension(vmax):: local,global
   logical, save :: is_inited
   data is_inited / .false. /
-!$acc kernels
+
+!$acc data create (dv,vol,mix,avevy,local,global)
+!$acc serial
   mix   = 0.0d0
   avevy = 0.0d0
   vol   = 0.0d0
-!$acc loop collapse(3) reduction(+:vol,mix,avevy) private(dv)
+!$acc end serial
+!$acc kernels
+!$acc loop collapse(3) private(dv) reduction(+:vol,mix,avevy) 
   do k=ks,ke
   do j=js,je
   do i=js,ie
@@ -265,14 +272,21 @@ subroutine RealTimeAnalysis
   avevy = sqrt(avevy/vol)
 !$acc end serial
 !$acc update host(mix,avevy)
-
+!$acc end data
+  
   if(myid_w ==0 ) then 
      if(.not. is_inited)then
+        !> Note that simple analytic expression of the growth rate of KH is known only idealistic case. 
+        !> In the case of finte length transtion, it is not easy to estimte it.
+        !> In Berlok and Pformmer (2019), Gamma~1.6--1.8
+        Amp   = 1.0d-3
+        Gamma = 1.5d0
         open(newunit = unitevo,file="t-prof.csv", action="write")
-        write(unitevo,"(A)") "# 1:time, 2:mix, 3:v_y"
+        write(unitevo,"(A,(1x,ES24.16E3))") "# Gamma=",Gamma
+        write(unitevo,"(A)") "# 1:time 2:mix 3:v_y 4:exp(2Gamma*t)"
         is_inited = .true.
      endif
-     write(unitevo,"(*(1x,ES24.16E3))") time, mix, avevy
+     write(unitevo,"(*(1x,ES24.16E3))") time, mix, avevy, Amp*exp(Gamma*time)
   endif
   
 end subroutine RealTimeAnalysis

@@ -1,7 +1,7 @@
       module config
       implicit none
       !> Control timescale
-      real(8),parameter:: timemax = 1.5d0
+      real(8),parameter:: timemax = 3.0d0
       real(8),parameter:: dtout = timemax/100
 
       !> Control step
@@ -9,9 +9,9 @@
       integer,parameter:: nhydis = nhymax/100
       
       !> Control resolution
-      integer,parameter:: ngridtotal1 = 150
-      integer,parameter:: ngridtotal2 = 150
-      integer,parameter:: ngridtotal3 = 150
+      integer,parameter:: ngridtotal1 = 300
+      integer,parameter:: ngridtotal2 = 300
+      integer,parameter:: ngridtotal3 = 10
 
       !> Control computational region
       real(8),parameter:: x1min = -0.5d0, x1max = 0.5d0
@@ -31,6 +31,6 @@
 
       !> Control DATA-IO
       logical,parameter:: asciiout = .true. !! Ascii-files are additionaly damped.
-      logical,parameter:: benchmarkmode = .true. !! If true, only initial and final outputs are damped. 
+      logical,parameter:: benchmarkmode = .false. !! If true, only initial and final outputs are damped. 
       
       end module config

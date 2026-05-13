@@ -59,7 +59,7 @@ module basicmod
       module eosmod
       implicit none
 ! adiabatic
-      real(8),parameter::gam=1.4d0!! adiabatic index
+      real(8),parameter::gam=5.0d0/3.0d0 ! adiabatic index
 !$acc declare create(gam)
 ! isothermal
 !      real(8)::csiso  !! isothemal sound speed
