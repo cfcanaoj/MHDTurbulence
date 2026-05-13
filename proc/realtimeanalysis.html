@@ -164,10 +164,10 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
               <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/basicmod.html'>basicmod</a></li>
                   <li class="list-inline-item"><a href='../module/boundarymod.html'>boundarymod</a></li>
                   <li class="list-inline-item"><a href='../module/eosmod.html'>eosmod</a></li>
                   <li class="list-inline-item"><a href='../module/mpimod.html'>mpimod</a></li>
-                  <li class="list-inline-item"><a href='../module/basicmod.html'>basicmod</a></li>
               </ul>
             </li>
             <li class="list-group-item">
@@ -547,7 +547,7 @@ implementation in a submodule of an interface in a parent module.
 <span class="w">  </span><span class="n">mix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0d0</span>
 <span class="w">  </span><span class="n">avevys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0d0</span>
 <span class="w">  </span><span class="n">vol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0d0</span>
-<span class="c">!$acc loop collapse(3) reduction(sum:vol,mix,avevys) provate(dv)</span>
+<span class="c">!$acc loop collapse(3) reduction(+:vol,mix,avevys) private(dv)</span>
 <span class="w">  </span><span class="k">do </span><span class="n">k</span><span class="o">=</span><span class="n">ks</span><span class="p">,</span><span class="n">ke</span>
 <span class="w">  </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="n">js</span><span class="p">,</span><span class="n">je</span>
 <span class="w">  </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="n">js</span><span class="p">,</span><span class="n">ie</span>

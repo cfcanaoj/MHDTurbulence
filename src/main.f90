@@ -237,7 +237,7 @@ subroutine RealTimeAnalysis
   mix = 0.0d0
   avevys = 0.0d0
   vol = 0.0d0
-!$acc loop collapse(3) reduction(sum:vol,mix,avevys) provate(dv)
+!$acc loop collapse(3) reduction(+:vol,mix,avevys) private(dv)
   do k=ks,ke
   do j=js,je
   do i=js,ie

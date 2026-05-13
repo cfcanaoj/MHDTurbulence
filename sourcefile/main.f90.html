@@ -591,7 +591,7 @@ can be.
 <a id="ln-237" name="ln-237" href="#ln-237"></a><span class="w">  </span><span class="n">mix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0d0</span>
 <a id="ln-238" name="ln-238" href="#ln-238"></a><span class="w">  </span><span class="n">avevys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0d0</span>
 <a id="ln-239" name="ln-239" href="#ln-239"></a><span class="w">  </span><span class="n">vol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0d0</span>
-<a id="ln-240" name="ln-240" href="#ln-240"></a><span class="c">!$acc loop collapse(3) reduction(sum:vol,mix,avevys) provate(dv)</span>
+<a id="ln-240" name="ln-240" href="#ln-240"></a><span class="c">!$acc loop collapse(3) reduction(+:vol,mix,avevys) private(dv)</span>
 <a id="ln-241" name="ln-241" href="#ln-241"></a><span class="w">  </span><span class="k">do </span><span class="n">k</span><span class="o">=</span><span class="n">ks</span><span class="p">,</span><span class="n">ke</span>
 <a id="ln-242" name="ln-242" href="#ln-242"></a><span class="w">  </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="n">js</span><span class="p">,</span><span class="n">je</span>
 <a id="ln-243" name="ln-243" href="#ln-243"></a><span class="w">  </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="n">js</span><span class="p">,</span><span class="n">ie</span>
