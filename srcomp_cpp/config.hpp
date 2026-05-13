@@ -8,21 +8,21 @@
 #ifndef CONFIG_HPP_
 #define CONFIG_HPP_
 namespace config {
-  inline constexpr double time_max = 15.0e0;
+  inline constexpr double time_max = 3.0e0;
   inline constexpr double dtout = time_max/100;
 
   inline constexpr int stepmax{600000}; // max step 
   inline constexpr int stepsnap = stepmax/100;
 
-  inline constexpr int ngridtotal1{150}; // total resolution for x
-  inline constexpr int ngridtotal2{150}; // total resolution for y
-  inline constexpr int ngridtotal3{150}; // total resolution for z
+  inline constexpr int ngridtotal1{300}; // total resolution for x
+  inline constexpr int ngridtotal2{300}; // total resolution for y
+  inline constexpr int ngridtotal3{ 10}; // total resolution for z
   
   inline constexpr double x1min(-0.5),x1max(+0.5); // computing region for x
   inline constexpr double x2min(-1.0),x2max(+1.0); // computing region for y
   inline constexpr double x3min(-0.5),x3max(+0.5); // computing region for z
 
-  inline constexpr int ntiles[3]   = {2,2,1};
+  inline constexpr int ntiles[3]   = {1,1,1};
   inline constexpr int periodic[3] = {1,0,1}; //1:periodic
 
   // Boundary condition types
@@ -38,7 +38,7 @@ namespace config {
   inline constexpr int boundary_zout = periodicb;
   
   inline constexpr bool asciiout = true ;// Ascii-files are additionaly damped.
-  inline constexpr bool benchmarkmode = true ;// If true, only initial and final outputs are damped. 
+  inline constexpr bool benchmarkmode = false ;// If true, only initial and final outputs are damped. 
 };
 
 namespace resolution_mod {

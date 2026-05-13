@@ -34,8 +34,10 @@ namespace mpi_config_mod {
   extern int gpuid, ngpus;
 
 void InitializeMPI();  // init world, split, create Cartesian, select GPU
+void FinalizeMPI();
 
 void MPIminfind(const double& vin,const int& locin, double& vout, int& locout);
 void MPImaxfind(const double& vin,const int& locin, double& vout, int& locout);
+void GetMPIsum(int n, const double* bufl, double* bufg);
 }  
 #endif

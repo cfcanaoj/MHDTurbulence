@@ -73,8 +73,10 @@ void InitializeMPI() {
   if (gpuid >= 0) omp_set_default_device(gpuid);
 
   printf("init myid_w,gpuid=(%i,%i)\n",myid_w,gpuid);  
-    // If device-side use of myid_w is needed later, this updates it once.
-#pragma acc update device(myid_w)
+}
+
+void FinalizeMPI() {
+  MPI_Finalize();
 }
 
 void MPIminfind(const double& vin,const int& locin, double& vout, int& locout){
@@ -93,5 +95,13 @@ void MPImaxfind(const double& vin,const int& locin, double& vout, int& locout) {
   MPI_Allreduce(&in_,&out_, 1, MPI_DOUBLE_INT, MPI_MAXLOC, comm3d);
     vout  = out_.v;
   locout  = out_.loc;
+}
+
+void GetMPIsum(int n, const double* bufl, double* bufg) {
+  if (ntiles[dir1] * ntiles[dir2] * ntiles[dir3] != 1) {
+    MPI_Allreduce(bufl, bufg, n, MPI_DOUBLE, MPI_SUM, comm3d);
+  } else {
+    for (int i = 0; i < n; ++i) bufg[i] = bufl[i];
+  }
 }
 };

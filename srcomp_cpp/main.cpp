@@ -20,6 +20,54 @@
 #include "output.hpp"
 #include "main.hpp"
 
+static void RealTimeAnalysis() {
+  using namespace resolution_mod;
+  using namespace hydflux_mod;
+  using namespace mpi_config_mod;
+
+  double mix = 0.0;
+  double avevy = 0.0;
+  double vol = 0.0;
+
+#pragma omp target teams distribute parallel for collapse(3) reduction(+:vol,mix,avevy)
+  for (int k = ks; k <= ke; ++k) {
+    for (int j = js; j <= je; ++j) {
+      for (int i = is; i <= ie; ++i) {
+        const double dv = (G.x1a(i+1)-G.x1a(i)) * (G.x2a(j+1)-G.x2a(j)) * (G.x3a(k+1)-G.x3a(k));
+        vol += dv;
+        mix += P(nst,k,j,i) * (1.0 - P(nst,k,j,i)) * dv;
+        avevy += P(nve2,k,j,i) * P(nve2,k,j,i) * dv;
+      }
+    }
+  }
+
+  double local[3] = {vol, mix, avevy};
+  double global[3] = {0.0, 0.0, 0.0};
+  GetMPIsum(3, local, global);
+  vol = global[0];
+  mix = global[1] / vol;
+  avevy = std::sqrt(global[2] / vol);
+
+  if (myid_w == 0) {
+    static bool is_inited = false;
+    static FILE* fp = nullptr;
+    constexpr double Amp = 1.2e-3;
+    constexpr double Gamma = 1.49;
+    if (!is_inited) {
+      fp = std::fopen("t-prof.csv", "w");
+      if (fp != nullptr) {
+        std::fprintf(fp, "# Gamma= %24.16E\n", Gamma);
+        std::fprintf(fp, "# 1:time 2:mix 3:v_y 4:exp(2Gamma*t)\n");
+      }
+      is_inited = true;
+    }
+    if (fp != nullptr) {
+      std::fprintf(fp, " %24.16E %24.16E %24.16E %24.16E\n", time_sim, mix, avevy, Amp*std::exp(Gamma*time_sim));
+      std::fflush(fp);
+    }
+  }
+}
+
 
 static void GenerateGrid(hydflux_mod::GridArray<double>& G) {
   using namespace resolution_mod;
@@ -108,7 +156,7 @@ static void GenerateProblem(hydflux_mod::GridArray<double>& G,hydflux_mod::Field
         P(npre,k,j,i) = 1.0;
 
         P(nve1,k,j,i) = 0.5 * dv * (tanh_p - tanh_m - 1.0);
-        P(nve2,k,j,i) = 1.0e-3 * std::sin(2.0*pi*x) *
+        P(nve2,k,j,i) = 1.0e-2 * std::sin(2.0*pi*x) *
                         ( std::exp(- (y + 0.5)*(y + 0.5)/(sig*sig))
                         + std::exp(- (y - 0.5)*(y - 0.5)/(sig*sig)) );
         P(nve3,k,j,i) = 0.0;
@@ -138,22 +186,10 @@ static void GenerateProblem(hydflux_mod::GridArray<double>& G,hydflux_mod::Field
 
   for (int k = ks; k <= ke; k++)
     for (int j = js; j <= je; j++) {
-      //      const double r = uni(rng);
-      // const double dv_rand = dv * rrv * (r - 0.5);
+      const double r = uni(rng);
+      const double dv_rand = dv * rrv * (r - 0.5);
       for (int i = is; i <= ie; ++i) {
-        //P(nve1,k,j,i) += dv_rand;
-      }
-    }
-
-  namespace res = resolution_mod; 
-  for (int k = ks; k <= ke; k++)
-    for (int j = js; j <= je; j++) {
-      const double y = G.x2b(j);
-      const double z = G.x3b(k);
-      const double dv_harm = dv * rrv * std::cos(6*2*pi*(y - res::x2min)/(res::x2max - res::x2min))
-                                      * std::cos(6*2*pi*(z - res::x3min)/(res::x3max - res::x3min));
-      for (int i = is; i <= ie; i++) {
-        P(nve1,k,j,i) += dv_harm;
+        P(nve1,k,j,i) += dv_rand;
       }
     }
 
@@ -214,6 +250,7 @@ int main() {
   
   GenerateGrid(G);
   GenerateProblem(G,P,U);
+  RealTimeAnalysis();
   // Force output at the initial state (Fortran: call Output(forceoutput))
   Output(forceoutput);
 
@@ -223,7 +260,7 @@ int main() {
 
   for (step=0;step<stepmax;step++){
     ControlTimestep(G); 
-    if (myid_w==0 && step%300 ==0 && ! config::benchmarkmode) printf("step=%i time=%e dt=%e\n",step,time_sim,dt);
+    if (myid_w==0 && step%stepsnap ==0 && ! config::benchmarkmode) printf("step=%i time=%e dt=%e\n",step,time_sim,dt);
     //printf("step=%i time=%e dt=%e\n",step,time_sim,dt);
     SetBoundaryCondition(P,Bs,Br);
     EvaluateCh();
@@ -236,6 +273,7 @@ int main() {
 
     time_sim += dt;
     //printf("dt=%e\n",dt);
+    if (! config::benchmarkmode) RealTimeAnalysis();
     if (! config::benchmarkmode) Output(usualoutput);
     //if (!nooutput) Output1D(usualoutput);
 
@@ -250,12 +288,14 @@ int main() {
   std::chrono::duration<double> elapsed = time_end - time_beg;
   if (myid_w == 0) printf("exiting main loop time=%e, step=%i\n",time_sim,step);
   if (myid_w == 0) printf("sim time [s]: %e\n", elapsed.count());
-  if (myid_w == 0) printf("time/count/cell : %e\n", elapsed.count()/(ngrid1*ngrid2*ngrid3)/stepmax);
+  if (myid_w == 0) printf("time/count/cell : %e\n", elapsed.count()/(ngrid1*ngrid2*ngrid3*ntiles[dir1]*ntiles[dir2]*ntiles[dir3])/step);
 
   // Force final output (Fortran: is_final=.true.; call Output(forceoutput))
+  RealTimeAnalysis();
   Output(forceoutput);
   //if (!nooutput) Output1D(forceoutput);
   
   if (myid_w == 0) printf("program has been finished\n");
+  FinalizeMPI();
   return 0;
 }

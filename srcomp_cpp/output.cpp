@@ -70,8 +70,9 @@ namespace mpi_dataio_mod {
     names.push_back("b3");
     names.push_back("bp");
     names.push_back("p");
+    names.push_back("gp");
     for(int n=(int)names.size(); n<nvars_; ++n){
-      const int idx = n - 8; // => X1, X2, ...
+      const int idx = n - 9; // => X1, X2, ...
       names.push_back("X" + std::to_string(idx));
     }
     if((int)names.size() > nvars_) names.resize((size_t)nvars_);
@@ -91,7 +92,7 @@ namespace mpi_dataio_mod {
       std::fprintf(stderr, "open failed: %s : %s\n", fname, std::strerror(errno));
       return;
     }
-    std::fprintf(fp, "# %.17g %.17g\n", time, dt);
+    std::fprintf(fp, "# %.17g %.17g\n", time_sim, dt);
     std::fprintf(fp, "# %d \n", ntotal[dir1]);
     std::fprintf(fp, "# %d \n", ntotal[dir2]);
     std::fprintf(fp, "# %d \n", ntotal[dir3]);
@@ -224,10 +225,7 @@ namespace mpi_dataio_mod {
       npart[dir2]  = ngrid2;
       npart[dir3]  = ngrid3;
     
-      // Fortran: nvars = 10 + ncomp (includes gp).
-      // C++ version does not have gp in the primitive set, so we output:
-      //   9 base vars (d,v1,v2,v3,b1,b2,b3,bp,p) + ncomp compositions (X1..)
-      nvars = 9 + ncomp;
+      nvars = 10 + ncomp;
       nvarg = 2;
       int ngrid1mod = ngrid1;
       int ngrid2mod = ngrid2;
@@ -273,9 +271,10 @@ namespace mpi_dataio_mod {
       Fieldout(6,k,j,i) = P(nbm3,k+ks,j+js,i+is);
       Fieldout(7,k,j,i) = P(nbps,k+ks,j+js,i+is);
       Fieldout(8,k,j,i) = P(npre,k+ks,j+js,i+is);
+      Fieldout(9,k,j,i) = 0.0;
       // compositions (passive scalars)
       for(int n=0; n<ncomp; ++n){
-        Fieldout(9+n,k,j,i) = P(nst+n,k+ks,j+js,i+is);
+        Fieldout(10+n,k,j,i) = P(nst+n,k+ks,j+js,i+is);
       }
   };
 
@@ -386,9 +385,7 @@ namespace mpi_dataio_mod {
     f << "# " << (je-js+1) << "\n";
     f << "# " << k << " " << std::setprecision(6) << std::scientific << G.x3b(k) << "\n";
 
-    // Fortran header: "# x y d vx vy p phi" + Xcomp...
-    // C++ does not have gp(phi) in the primitive set; we output (x,y,d,vx,vy,p) + Xcomp.
-    f << "# x y d vx vy p";
+    f << "# x y d vx vy p phi";
     for(int n=0; n<ncomp; ++n) f << " X" << (n+1);
     f << "\n";
 
@@ -396,7 +393,7 @@ namespace mpi_dataio_mod {
       for(int i=is; i<=ie; i++){
         f << std::setprecision(6) << std::scientific
           << G.x1b(i) << ' ' << G.x2b(j) << ' '
-          << P(nden,k,j,i) << ' ' << P(nve1,k,j,i) << ' ' << P(nve2,k,j,i) << ' ' << P(npre,k,j,i);
+          << P(nden,k,j,i) << ' ' << P(nve1,k,j,i) << ' ' << P(nve2,k,j,i) << ' ' << P(npre,k,j,i) << ' ' << 0.0;
         for(int n=0; n<ncomp; ++n){
           f << ' ' << P(nst+n,k,j,i);
         }
