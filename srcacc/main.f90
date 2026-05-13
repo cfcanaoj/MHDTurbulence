@@ -228,23 +228,25 @@ subroutine RealTimeAnalysis
   implicit none
   integer::i,j,k
   real(8):: mix
-  real(8):: avevys
+  real(8):: avevy
   real(8):: dv,vol
+  integer,save:: unitevo 
   integer,parameter:: vmax=3 
   real(8),dimension(vmax):: local,global
-  
+  logical, save :: is_inited
+  data is_inited / .false. /
 !$acc kernels
-  mix = 0.0d0
-  avevys = 0.0d0
-  vol = 0.0d0
-!$acc loop collapse(3) reduction(+:vol,mix,avevys) private(dv)
+  mix   = 0.0d0
+  avevy = 0.0d0
+  vol   = 0.0d0
+!$acc loop collapse(3) reduction(+:vol,mix,avevy) private(dv)
   do k=ks,ke
   do j=js,je
   do i=js,ie
      dv     = (x1a(i+1)-x1a(i)) * (x2a(j+1)-x2a(j)) * (x3a(k+1)-x3a(k))
      vol    = vol    + dv
      mix    = mix    + Xcomp(1,i,j,k) * (1.0d0- Xcomp(1,i,j,k)) * dv
-     avevys = avevys + v2(i,j,k) * v2(i,j,k)                    * dv
+     avevy  = avevy + v2(i,j,k) * v2(i,j,k)                     * dv
   enddo
   enddo
   enddo
@@ -252,16 +254,25 @@ subroutine RealTimeAnalysis
 !$acc serial
   local(1) = vol
   local(2) = mix
-  local(3) = avevys
+  local(3) = avevy
 !$acc end serial
   call GetMPIsum(vmax,local,global)
 !$acc serial
   vol    = global(1)
   mix    = global(2)
-  avevys = global(3)
+  avevy  = global(3)
   mix = mix/vol
-  avevys = avevys/vol
+  avevy = sqrt(avevy/vol)
 !$acc end serial
-!$acc update host(mix,avevys)
-  if(myid_w ==0 ) print *," mix, v_y^2",mix,avevys   
+!$acc update host(mix,avevy)
+
+  if(myid_w ==0 ) then 
+     if(.not. is_inited)then
+        open(newunit = unitevo,file="t-prof.csv", action="write")
+        write(unitevo,"(A)") "# 1:time, 2:mix, 3:v_y"
+        is_inited = .true.
+     endif
+     write(unitevo,"(*(1x,ES24.16E3))") time, mix, avevy
+  endif
+  
 end subroutine RealTimeAnalysis
