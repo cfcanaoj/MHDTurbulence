@@ -15,14 +15,6 @@ module boundarymod
   real(8),dimension(mgn,jn,kn,nbc):: BrXstt,BrXend
   real(8),dimension(in,mgn,kn,nbc):: BrYstt,BrYend
   real(8),dimension(in,jn,mgn,nbc):: BrZstt,BrZend
-    
-!$omp declare target (BsXtt,BsXend)
-!$omp declare target (BsYtt,BsYend)
-!$omp declare target (BsZtt,BsZend)
-!$omp declare target (BrXtt,BrXend)
-!$omp declare target (BrYtt,BrYend)
-!$omp declare target (BrZtt,BrZend)
-
 contains
 
   subroutine BoundaryCondition

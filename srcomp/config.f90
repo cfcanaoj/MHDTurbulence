@@ -32,6 +32,4 @@
       !> Control DATA-IO
       logical,parameter:: asciiout = .true. !! Ascii-files are additionaly damped.
       logical,parameter:: benchmarkmode = .false. !! If true, only initial and final outputs are damped. 
-
-!$omp declare target (ncomp)      
       end module config

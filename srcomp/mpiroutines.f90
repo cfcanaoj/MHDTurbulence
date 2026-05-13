@@ -14,12 +14,8 @@ module mpimod
   integer :: n1m, n1p, n2m, n2p, n3m, n3p
   integer :: nreq, nsub
   integer ::   gpuid, ngpus
-!$omp declare target (myid_w)
-  
   real(8),dimension(2):: bufinpmin, bufoutmin
-!$omp declare target (bufinpmin,bufoutmin)
   real(8),dimension(2):: bufinpmax, bufoutmax
-!$omp declare target (bufinpmax,bufoutmax)
 
 contains
 subroutine InitializeMPI

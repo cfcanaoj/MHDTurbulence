@@ -35,24 +35,6 @@ module basicmod
   real(8),dimension(ncomp,in,jn,kn):: DXcomp
   real(8),dimension(ncomp,in,jn,kn)::  Xcomp
           
-!$omp declare target (ngrid1,ngrid2,ngrid3)
-!$omp declare target (mgn)
-!$omp declare target (in,jn,kn)
-!$omp declare target (is,js,ks)
-!$omp declare target (ie,je,ke)
-      
-!$omp declare target (dt)
-!$omp declare target (x1a,x1b)
-!$omp declare target (x2a,x2b)
-!$omp declare target (x3a,x3b)
-      
-!$omp declare target (d,et,mv1,mv2,mv3)
-!$omp declare target (p,ei,v1,v2,v3,cs)
-!$omp declare target (b1,b2,b3,bp)
-!$omp declare target (gp,gp1a,gp2a,gp3a)
-
-!$omp declare target (Dxcomp,Xcomp)
-      
 end module basicmod
       
       module eosmod
@@ -61,7 +43,6 @@ end module basicmod
       real(8),parameter::gam=1.4d0!! adiabatic index
 ! isothermal
 !      real(8)::csiso  !! isothemal sound speed
-!!$omp declare target (csiso)
       end module eosmod
     
       module fluxmod
