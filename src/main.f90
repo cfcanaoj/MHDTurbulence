@@ -278,9 +278,10 @@ subroutine RealTimeAnalysis
      if(.not. is_inited)then
         !> Note that simple analytic expression of the growth rate of KH is known only idealistic case. 
         !> In the case of finte length transtion, it is not easy to estimte it.
-        !> In Berlok and Pformmer (2019), Gamma~1.6--1.8
-        Amp   = 1.0d-3
-        Gamma = 1.5d0
+        !> In Berlok and Pformmer (2019), Gamma~1.6--1.8, in my setup Gamma~1.49.
+        !> We take this value for evaluation metric.
+        Amp   = 1.2d-3
+        Gamma = 1.49d0
         open(newunit = unitevo,file="t-prof.csv", action="write")
         write(unitevo,"(A,(1x,ES24.16E3))") "# Gamma=",Gamma
         write(unitevo,"(A)") "# 1:time 2:mix 3:v_y 4:exp(2Gamma*t)"

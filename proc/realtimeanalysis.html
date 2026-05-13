@@ -164,10 +164,10 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
               <ul class="list-inline">
-                  <li class="list-inline-item"><a href='../module/basicmod.html'>basicmod</a></li>
-                  <li class="list-inline-item"><a href='../module/eosmod.html'>eosmod</a></li>
-                  <li class="list-inline-item"><a href='../module/mpimod.html'>mpimod</a></li>
                   <li class="list-inline-item"><a href='../module/boundarymod.html'>boundarymod</a></li>
+                  <li class="list-inline-item"><a href='../module/eosmod.html'>eosmod</a></li>
+                  <li class="list-inline-item"><a href='../module/basicmod.html'>basicmod</a></li>
+                  <li class="list-inline-item"><a href='../module/mpimod.html'>mpimod</a></li>
               </ul>
             </li>
             <li class="list-group-item">
@@ -379,7 +379,8 @@ modules which it uses.
 (2) <C*(1-C)>
 Note that simple analytic expression of the growth rate of KH is known only idealistic case. 
 In the case of finte length transtion, it is not easy to estimte it.
-In Berlok and Pformmer (2019), Gamma~1.6--1.8</p>
+In Berlok and Pformmer (2019), Gamma~1.6--1.8, in my setup Gamma~1.49.
+We take this value for evaluation metric.</p>
 
 
     <h3>Arguments</h3>
@@ -589,9 +590,10 @@ implementation in a submodule of an interface in a parent module.
 <span class="k">     if</span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">is_inited</span><span class="p">)</span><span class="k">then</span>
 <span class="w">        </span><span class="c">!&gt; Note that simple analytic expression of the growth rate of KH is known only idealistic case. </span>
 <span class="w">        </span><span class="c">!&gt; In the case of finte length transtion, it is not easy to estimte it.</span>
-<span class="w">        </span><span class="c">!&gt; In Berlok and Pformmer (2019), Gamma~1.6--1.8</span>
-<span class="w">        </span><span class="n">Amp</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0d-3</span>
-<span class="w">        </span><span class="nb">Gamma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.5d0</span>
+<span class="w">        </span><span class="c">!&gt; In Berlok and Pformmer (2019), Gamma~1.6--1.8, in my setup Gamma~1.49.</span>
+<span class="w">        </span><span class="c">!&gt; We take this value for evaluation metric.</span>
+<span class="w">        </span><span class="n">Amp</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mf">1.2d-3</span>
+<span class="w">        </span><span class="nb">Gamma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.49d0</span>
 <span class="w">        </span><span class="k">open</span><span class="p">(</span><span class="n">newunit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">unitevo</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="s2">&quot;t-prof.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;write&quot;</span><span class="p">)</span>
 <span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unitevo</span><span class="p">,</span><span class="s2">&quot;(A,(1x,ES24.16E3))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;# Gamma=&quot;</span><span class="p">,</span><span class="nb">Gamma</span>
 <span class="nb">        </span><span class="k">write</span><span class="p">(</span><span class="n">unitevo</span><span class="p">,</span><span class="s2">&quot;(A)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;# 1:time 2:mix 3:v_y 4:exp(2Gamma*t)&quot;</span>
