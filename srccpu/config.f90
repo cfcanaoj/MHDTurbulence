@@ -1,7 +1,7 @@
       module config
       implicit none
       !> Control timescale
-      real(8),parameter:: timemax = 15.0d0
+      real(8),parameter:: timemax = 3.0d0
       real(8),parameter:: dtout = timemax/100
 
       !> Control step
@@ -9,9 +9,9 @@
       integer,parameter:: nhydis = nhymax/100
       
       !> Control resolution
-      integer,parameter:: ngridtotal1 = 156
-      integer,parameter:: ngridtotal2 = 156
-      integer,parameter:: ngridtotal3 = 156
+      integer,parameter:: ngridtotal1 = 300
+      integer,parameter:: ngridtotal2 = 300
+      integer,parameter:: ngridtotal3 = 10
 
       !> Control computational region
       real(8),parameter:: x1min = -0.5d0, x1max = 0.5d0
@@ -20,7 +20,7 @@
       integer,parameter:: ncomp=1 ! kinds of composition
       
       !> Control MPI decomposion
-      integer,parameter:: ntiles(3) = [ 4,4, 6 ]
+      integer,parameter:: ntiles(3) = [ 4, 12, 2 ]
       logical,parameter:: periodic(3) = [ .true., .false., .true. ]
       
       !> Control bounday condition

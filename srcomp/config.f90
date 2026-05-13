@@ -9,9 +9,9 @@
       integer,parameter:: nhydis = nhymax/100
       
       !> Control resolution
-      integer,parameter:: ngridtotal1 = 150
-      integer,parameter:: ngridtotal2 = 150
-      integer,parameter:: ngridtotal3 = 150
+      integer,parameter:: ngridtotal1 = 300
+      integer,parameter:: ngridtotal2 = 300
+      integer,parameter:: ngridtotal3 = 10
 
       !> Control computational region
       real(8),parameter:: x1min = -0.5d0, x1max = 0.5d0

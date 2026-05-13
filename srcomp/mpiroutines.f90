@@ -115,5 +115,18 @@ call MPI_ALLREDUCE( bufinpmax(1), bufoutmax(1), 1 &
        endif
 end subroutine MPImaxfind
 
-end module mpimod
+subroutine GetMPIsum(n,bufl,bufg)
+  implicit none
+  integer,intent(in) :: n
+  real(8),intent(in) :: bufl(n)
+  real(8),intent(out):: bufg(n)
+  if(ntiles(1)*ntiles(2)*ntiles(3) /= 1)then
+     call MPI_ALLREDUCE( bufl, bufg, n &
+    &                   , MPI_DOUBLE_PRECISION   &
+    &                   , MPI_SUM, comm3d, ierr)
+  else
+     bufg(:) = bufl(:)
+  endif
+end subroutine GetMPIsum
 
+end module mpimod
