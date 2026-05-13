@@ -1,6 +1,6 @@
 
 
-dir="./"
+dir="./ascdata/"
 
 # mpi process
 snap_start = 0
@@ -8,7 +8,7 @@ snap_end   = 3
 
 # 
 step_init  = 1    
-step_final = 101
+step_final = 2
 
 print "dir=".dir
 print "mpi process=".snap_start."-".snap_end
