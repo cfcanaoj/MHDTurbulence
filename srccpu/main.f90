@@ -124,30 +124,30 @@ subroutine GenerateProblem
   real(8),dimension(1) :: rnum
   real(8),parameter :: rrv =0.0d-2
   
-  pi = dacos(-1.0d0)
+  pi = acos(-1.0d0)
   
   rho1 = 1.0d0
   rho2 = 1.0d0
   dv   = 2.00d0
   wid  = 0.05d0
   sig  = 0.2d0
-  B0  = dsqrt(2.0d0/3.0d0)*0.0d0
+  B0  = sqrt(2.0d0/3.0d0)*0.0d0
  
   do k=ks-mgn,ke+mgn
   do j=js-mgn,je+mgn
   do i=is-mgn,ie+mgn
      d(i,j,k) = 1.0d0
      p(i,j,k) = 1.0d0
-     v1(i,j,k) = 0.5d0 * dv *( dtanh( (x2b(j)+0.5d0)/wid ) - dtanh( (x2b(j) - 0.5d0)/wid ) - 1.0d0 )
-     v2(i,j,k) =  0.01d0*dsin(2.0d0*pi*x1b(i))* &
-    &         ( dexp( - (x2b(j) + 0.5d0)**2/sig**2 ) +  &
-    &           dexp( - (x2b(j) - 0.5d0)**2/sig**2 ) )
+     v1(i,j,k) = 0.5d0 * dv *( tanh( (x2b(j)+0.5d0)/wid ) - dtanh( (x2b(j) - 0.5d0)/wid ) - 1.0d0 )
+     v2(i,j,k) =  0.01d0 * sin(2.0d0*pi*x1b(i))* &
+    &         ( exp( - (x2b(j) + 0.5d0)**2/sig**2 ) +  &
+    &           exp( - (x2b(j) - 0.5d0)**2/sig**2 ) )
      v3(i,j,k) = 0.0d0
      b1(i,j,k) = B0
      b2(i,j,k) = 0.0d0
      b3(i,j,k) = 0.0d0
      bp(i,j,k) = 0.0d0
-     Xcomp(1,i,j,k) =  0.5d0*( dtanh( (x2b(j)+0.5d0)/wid ) - tanh( (x2b(j)-0.5d0)/wid) )
+     Xcomp(1,i,j,k) =  0.5d0*( tanh( (x2b(j)+0.5d0)/wid ) - tanh( (x2b(j)-0.5d0)/wid) )
   enddo
   enddo
   enddo
