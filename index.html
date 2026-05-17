@@ -1,169 +1,192 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-      <meta name="description" content="High-performance 3D MHD solver (MPI + OpenACC) for large-scale turbulence simulations.">
-    <meta name="author" content="Tomoya Takiwaki" >
-    <link rel="icon" href="./favicon.png">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MHDTurbulence Documentation</title>
 
-    <title> MHDTurbulence </title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fa;
+      color: #222;
+      line-height: 1.6;
+    }
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <!-- Font Awesome -->
-    <link href="./css/fontawesome.min.css" rel="stylesheet">
-    <link href="./css/brands.min.css" rel="stylesheet">
-    <link href="./css/regular.min.css" rel="stylesheet">
-    <link href="./css/solid.min.css" rel="stylesheet">
-    <link href="./css/v4-font-face.min.css" rel="stylesheet">
-    <link href="./css/v4-shims.min.css" rel="stylesheet">
-    <!-- MathJax -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { equationNumbers: { autoNumber: "AMS" } }
-      });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
-            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
-    <!-- Other scripts and stylesheets -->
-    <link href="./css/local.css" rel="stylesheet">
-    <link href="./css/pygments.css" rel="stylesheet">
-      <link href="./css/user.css" rel="stylesheet">
-    <script src="./js/svg-pan-zoom.min.js"></script>
-  </head>
+    header {
+      background: #1e293b;
+      color: white;
+      padding: 2rem;
+    }
 
-  <body>
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
 
-    <!-- Fixed navbar -->
-    <div class="container-fluid mb-sm-4 mb-xl-2">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container">
-          <a class="navbar-brand" href="./index.html">MHDTurbulence </a>
-          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
-                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon">
-          </button>
+    header p {
+      margin-top: 0.5rem;
+      opacity: 0.9;
+    }
 
-          <div id="navbar" class="navbar-collapse collapse">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="page/index.html">Introduction</a></li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="./lists/files.html">Source Files</a>
-                  </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="./lists/modules.html">Modules</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="./lists/procedures.html">Procedures</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="./program/main.html">Program</a>
-                </li>
-            </ul>
-              <div class="d-flex align-items-end flex-grow-1">
-                <form action="./search.html" role="search" class="ms-auto">
-                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
-                </form>
-              </div>
-          </div><!--/.nav-collapse -->
-        </div>
-      </nav>
-    </div>
+    main {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
 
-    <div class="container">
-  <!-- Main component for a primary marketing message or call to action -->
-    <div class="p-5 mb-4 bg-light border rounded-3" id="jumbotron">
-      <p>High-performance 3D MHD solver (MPI + OpenACC) for large-scale turbulence simulations.</p>
-      </p>
-    </div>
+    .section-title {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      border-left: 5px solid #2563eb;
+      padding-left: 0.75rem;
+    }
 
-      <div class="row" id='text'>
-        <div class=col-md-8>
-          <h1>MHDTurbulence</h1>
-          <hr>
-<p>This site contains the automatically generated API documentation for MHDTurbulence. </p>
-        </div>
-          <div class="col-md-4">
-            <div class="card card-body bg-light">
-              <h2 class="card-title">Developer Info</h2>
-              <h4 class="card-text">Tomoya Takiwaki</h4>
-              <p class="card-text"></p>
-                <div class="text-center"><div class="btn-group" role="group">
-                    
-                    <a class="btn btn-lg btn-primary" href="https://github.com/cfcanaoj/MHDTurbulence"><i class="fa fa-github fa-lg"></i></a>
-                    
-                    
-                    
-                    
-                    
-                    
-                </div></div>
-            </div>
-          </div>
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: transform 0.15s ease,
+                  box-shadow 0.15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      margin-bottom: 1rem;
+      color: #444;
+    }
+
+    .card a {
+      display: inline-block;
+      text-decoration: none;
+      background: #2563eb;
+      color: white;
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .card a:hover {
+      background: #1d4ed8;
+    }
+
+    footer {
+      margin-top: 4rem;
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    code {
+      background: #e5e7eb;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>MHDTurbulence Documentation</h1>
+  <p>
+    Multi-implementation documentation portal for the MHDTurbulence project.
+  </p>
+</header>
+
+<main>
+
+  <section>
+    <h2 class="section-title">Implementations</h2>
+
+    <div class="cards">
+
+      <div class="card">
+        <h3>f90acc</h3>
+        <p>
+          OpenACC-based Fortran implementation targeting GPU acceleration.
+        </p>
+        <a href="./f90acc/index.html">
+          Open Documentation
+        </a>
       </div>
-        <div class="row">
-          <hr>
-          <div class="col-xs-6 col-sm-4">
-            <div>
-              <h3>Source Files</h3>
-              <ul><li><a href='sourcefile/boundary.f90.html'>boundary.f90</a></li><li><a href='sourcefile/config.f90.html'>config.f90</a></li><li><a href='sourcefile/main.f90.html'>main.f90</a></li><li><a href='sourcefile/mhd.f90.html'>mhd.f90</a></li><li><a href='sourcefile/mpiroutines.f90.html'>mpiroutines.f90</a></li><li><a href='sourcefile/output.f90.html'>output.f90</a></li></ul>
-            </div>
-            <div>
-              <ul>
-                <li><a href="./lists/files.html"><em>All source files&hellip;</em></a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-xs-6 col-sm-4">
-            <div>
-              <h3>Modules</h3>
-              <ul><li><a href='module/basicmod.html'>basicmod</a></li><li><a href='module/boundarymod.html'>boundarymod</a></li><li><a href='module/config.html'>config</a></li><li><a href='module/eosmod.html'>eosmod</a></li><li><a href='module/fluxmod.html'>fluxmod</a></li><li><a href='module/mpiiomod.html'>mpiiomod</a></li><li><a href='module/mpimod.html'>mpimod</a></li></ul>
-            </div>
-            <div>
-              <ul>
-                <li><a href="./lists/modules.html"><em>All modules&hellip;</em></a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-xs-6 col-sm-4">
-            <div>
-              <h3>Procedures</h3>
-              <ul><li><a href='proc/asc_write.html'>ASC_WRITE</a></li><li><a href='proc/boundarycondition.html'>BoundaryCondition</a></li><li><a href='proc/consvvariable.html'>ConsvVariable</a></li><li><a href='proc/damppsi.html'>DampPsi</a></li><li><a href='proc/evaulatech.html'>EvaulateCh</a></li><li><a href='proc/finalizempi.html'>FinalizeMPI</a></li><li><a href='proc/generategrid.html'>GenerateGrid</a></li><li><a href='proc/generateproblem.html'>GenerateProblem</a></li><li><a href='proc/getmpisum.html'>GetMPIsum</a></li><li><a href='proc/gravforce.html'>GravForce</a></li></ul>
-            </div>
-            <div>
-              <ul>
-                <li><a href="./lists/procedures.html"><em>All procedures&hellip;</em></a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      <hr>
-    </div> <!-- /container -->
-    <footer>
-      <div class="container">
-        <div class="row justify-content-between">
-          <div class="col">
-            <p>
-              MHDTurbulence
- was developed by Tomoya Takiwaki<br>              &copy; 2026 
-</p>
-          </div>
-          <div class="col">
-            <p class="text-end">
-              Documentation generated by
-              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-            </p>
-          </div>
-        </div>
-        <br>
-      </div> <!-- /container -->
-    </footer>
-  </body>
+
+      <div class="card">
+        <h3>f90omp</h3>
+        <p>
+          OpenMP / OpenMP Target implementation for multicore CPUs and accelerators.
+        </p>
+        <a href="./f90omp/index.html">
+          Open Documentation
+        </a>
+      </div>
+
+      <div class="card">
+        <h3>f90cpu</h3>
+        <p>
+          Reference CPU-oriented Fortran implementation.
+        </p>
+        <a href="./f90cpu/index.html">
+          Open Documentation
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Project Repository</h2>
+
+    <p>
+      GitHub Repository:
+      <a href="https://github.com/cfcanaoj/MHDTurbulence">
+        cfcanaoj/MHDTurbulence
+      </a>
+    </p>
+
+  </section>
+
+  <section>
+    <h2 class="section-title">Build Notes</h2>
+
+    <p>
+      Each implementation is documented independently using
+      <code>FORD</code>.
+    </p>
+
+    <p>
+      Documentation is generated from source comments and module structures.
+    </p>
+
+  </section>
+
+</main>
+
+<footer>
+  Generated for the MHDTurbulence project.
+</footer>
+
+</body>
 </html>
+
