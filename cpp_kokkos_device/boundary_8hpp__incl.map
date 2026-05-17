@@ -1,0 +1,21 @@
+<map id="src_cpp_kokkos_device/boundary.hpp" name="src_cpp_kokkos_device/boundary.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="134,5,307,45"/>
+<area shape="rect" id="Node000002" href="$config_8hpp.html" title=" " alt="" coords="68,93,157,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="196,48,142,87,139,83,193,43"/>
+<area shape="rect" id="Node000003" href="$mhd_8hpp.html" title=" " alt="" coords="181,93,260,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="223,46,223,79,218,79,218,46"/>
+<area shape="rect" id="Node000008" href="$mpi__config_8hpp.html" title=" " alt="" coords="413,93,535,119"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="282,43,425,87,423,92,281,48"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,167,68,192"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="192,121,81,164,79,159,190,116"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="93,167,154,192"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="207,121,152,160,149,156,203,117"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="178,167,263,192"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="223,119,223,153,218,153,218,119"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="287,167,421,192"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="243,116,321,158,319,162,241,121"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="445,167,503,192"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="477,119,477,153,471,153,471,119"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="528,167,599,192"/>
+<area shape="poly" id="edge9_Node000008_Node000010" title=" " alt="" coords="490,117,540,156,536,160,487,121"/>
+</map>

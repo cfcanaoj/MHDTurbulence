@@ -1,0 +1,21 @@
+<map id="src_cpp_kokkos_device/mpi_config.hpp" name="src_cpp_kokkos_device/mpi_config.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="352,5,525,45"/>
+<area shape="rect" id="Node000002" href="$boundary_8cpp.html" title=" " alt="" coords="5,181,179,221"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="338,35,266,42,193,54,132,72,109,83,94,95,84,115,81,138,88,181,83,181,76,138,79,113,90,92,106,78,130,67,192,49,265,37,338,29"/>
+<area shape="rect" id="Node000003" href="$boundary_8hpp.html" title=" " alt="" coords="104,93,277,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="372,52,246,96,244,91,370,47"/>
+<area shape="rect" id="Node000004" href="$main_8cpp.html" title=" " alt="" coords="228,181,401,221"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="387,55,363,73,342,95,331,116,324,139,318,181,312,181,319,138,326,114,338,92,359,69,384,50"/>
+<area shape="rect" id="Node000005" href="$mhd_8cpp.html" title=" " alt="" coords="352,93,525,133"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="441,59,441,93,436,93,436,59"/>
+<area shape="rect" id="Node000006" href="$mpi__config_8cpp.html" title=" " alt="" coords="549,93,723,133"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="495,48,594,91,592,96,493,53"/>
+<area shape="rect" id="Node000007" href="$output_8cpp.html" title=" " alt="" coords="808,181,981,221"/>
+<area shape="poly" id="edge8_Node000001_Node000007" title=" " alt="" coords="539,31,777,53,880,70,914,80,934,91,941,102,943,114,939,139,928,163,913,183,909,180,923,160,934,137,938,115,936,104,930,95,912,85,878,76,777,59,538,36"/>
+<area shape="rect" id="Node000008" href="$output_8hpp.html" title=" " alt="" coords="747,93,920,133"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="539,46,747,91,746,96,538,51"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="160,144,116,183,112,179,157,140"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="231,139,289,179,286,183,228,143"/>
+<area shape="poly" id="edge10_Node000008_Node000004" title=" " alt="" coords="733,136,402,190,401,184,732,131"/>
+<area shape="poly" id="edge11_Node000008_Node000007" title=" " alt="" coords="857,143,883,180,879,183,853,146"/>
+</map>
