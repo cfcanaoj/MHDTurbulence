@@ -66,7 +66,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#problem-setup-kelvinhelmholtz-instability" class="md-skip">
+        <a href="#problem-setup-kelvin-helmholtz-instability" class="md-skip">
           Skip to content
         </a>
       
@@ -281,15 +281,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem-setup-kelvinhelmholtz-instability" class="md-nav__link">
+  <a href="#problem-setup-kelvin-helmholtz-instability" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem setup: Kelvin–Helmholtz instability
+        Problem setup: Kelvin-Helmholtz instability
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Problem setup: Kelvin–Helmholtz instability">
+    <nav class="md-nav" aria-label="Problem setup: Kelvin-Helmholtz instability">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -385,15 +385,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#problem-setup-kelvinhelmholtz-instability" class="md-nav__link">
+  <a href="#problem-setup-kelvin-helmholtz-instability" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problem setup: Kelvin–Helmholtz instability
+        Problem setup: Kelvin-Helmholtz instability
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Problem setup: Kelvin–Helmholtz instability">
+    <nav class="md-nav" aria-label="Problem setup: Kelvin-Helmholtz instability">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -475,53 +475,73 @@
 
   <h1>Kelvin-Helmholtz Setup</h1>
 
-<h2 id="problem-setup-kelvinhelmholtz-instability">Problem setup: Kelvin–Helmholtz instability</h2>
+<h2 id="problem-setup-kelvin-helmholtz-instability">Problem setup: Kelvin-Helmholtz instability</h2>
 <p>The initial condition is defined in <code>GenerateProblem</code> in <code>main.f90</code>.</p>
 <h3 id="hydrodynamic-variables">Hydrodynamic variables</h3>
-<p>Uniform density and pressure with <span class="arithmatex">\(\rho = 1\)</span> and <span class="arithmatex">\(p = 1\)</span>.
-A shear flow in the <strong>x-direction</strong> with two shear layers centered at <span class="arithmatex">\(y=\pm 0.5\)</span>:</p>
+<p>Uniform density and pressure are set as</p>
+<div class="arithmatex">\[
+\rho = 1,
+\qquad
+p = 1.
+\]</div>
+<p>A shear flow is imposed in the <span class="arithmatex">\(x\)</span>-direction with two shear layers centered at <span class="arithmatex">\(y=\pm 0.5\)</span>.
+The main parameters are:</p>
 <ul>
 <li><span class="arithmatex">\(\Delta v = 2.0\)</span></li>
 <li>shear-layer width <span class="arithmatex">\(w = 0.05\)</span></li>
 </ul>
+<p>The initial <span class="arithmatex">\(x\)</span>-velocity is</p>
 <div class="arithmatex">\[
-v_x(y)=\frac{\Delta v}{2}\left[\tanh\left(\frac{y+0.5}{w}\right)-\tanh\left(\frac{y-0.5}{w}\right)-1\right]
+v_x(y)=\frac{\Delta v}{2}\left[
+\tanh\left(\frac{y+0.5}{w}\right)
+-\tanh\left(\frac{y-0.5}{w}\right)
+-1
+\right].
 \]</div>
-<p>A small perturbation in the <strong>y-direction</strong> to seed KH roll-up (sinusoidal in x, localized around the layers):</p>
+<p>A small perturbation is added in the <span class="arithmatex">\(y\)</span>-direction to seed KH roll-up.
+It is sinusoidal in <span class="arithmatex">\(x\)</span> and localized around the two shear layers.
+The parameters are:</p>
 <ul>
 <li>amplitude <span class="arithmatex">\(10^{-2}\)</span></li>
 <li>localization width <span class="arithmatex">\(\sigma = 0.2\)</span></li>
 </ul>
-<p>[
-v_y(x,y)=10^{-2}\sin(2\pi x)\left[e^{-(y+0.5)^2/\sigma^2}+e^{-(y-0.5)^2/\sigma^2}\right]
-]
-[
-v_z = 0
-]</p>
+<p>The perturbation is</p>
+<div class="arithmatex">\[
+v_y(x,y)=10^{-2}\sin(2\pi x)\left[
+e^{-(y+0.5)^2/\sigma^2}
++
+e^{-(y-0.5)^2/\sigma^2}
+\right].
+\]</div>
+<p>The <span class="arithmatex">\(z\)</span>-velocity is initially</p>
+<div class="arithmatex">\[
+v_z = 0.
+\]</div>
 <p>Additionally, the code contains a random perturbation term for <span class="arithmatex">\(v_x\)</span>, but in the current setup it is disabled:</p>
 <ul>
 <li><span class="arithmatex">\(\mathrm{rrv}=0.0\times 10^{-2}\)</span></li>
-<li>if enabled, the perturbation is</li>
 </ul>
+<p>If enabled, the perturbation is</p>
 <div class="arithmatex">\[
 v_x \leftarrow v_x + \Delta v\,\mathrm{rrv}\,(r-0.5),
-\qquad r\in[0,1)
+\qquad r\in[0,1).
 \]</div>
 <h3 id="magnetic-field">Magnetic field</h3>
 <p>In the current KH setup, the magnetic field is initialized to zero:</p>
 <div class="arithmatex">\[
-\mathbf{B} = (0,0,0)
+\mathbf{B} = (0,0,0).
 \]</div>
 <h3 id="tracer-composition-field">Tracer / composition field</h3>
-<p><code>Xcomp(1,...)</code> is initialized as a smooth step-like tracer associated with the two layers, useful for visualizing mixing.</p>
+<p><code>Xcomp(1,...)</code> is initialized as a smooth step-like tracer associated with the two layers, useful for visualizing mixing:</p>
 <div class="arithmatex">\[
-X_{\mathrm{comp}} = \frac{1}{2}\left[
+X_{\mathrm{comp}} =
+\frac{1}{2}\left[
 \tanh\left(\frac{y+0.5}{w}\right)
 - \tanh\left(\frac{y-0.5}{w}\right)
-\right]
+\right].
 \]</div>
 <h3 id="boundary-conditions">Boundary conditions</h3>
-<p>Boundary conditions are applied in <code>config.f90</code>. In the default, reflection boundary is taken for y-direction and periodic boundart is taken for other directions.</p>
+<p>Boundary conditions are applied in <code>config.f90</code>. In the default setup, reflection boundary conditions are used in the <span class="arithmatex">\(y\)</span>-direction and periodic boundary conditions are used in the other directions.</p>
 <pre><code class="language-Fortran">  integer,parameter:: periodicb=1,reflection=2,outflow=3
   integer,parameter:: boundary_xin=periodicb , boundary_xout=periodicb
   integer,parameter:: boundary_yin=reflection, boundary_yout=reflection
@@ -529,14 +549,14 @@ X_{\mathrm{comp}} = \frac{1}{2}\left[
 </code></pre>
 <h3 id="real-time-analysis">Real-time analysis</h3>
 <p><code>RealTimeAnalysis</code> in <code>src_f90_acc_device/main.f90</code> evaluates bulk diagnostics during the run and writes them to <code>t-prof.csv</code>.</p>
-<p>The routine computes the cell-volume integral over the local MPI domain,</p>
+<p>For each cell, the cell volume is computed as</p>
 <div class="arithmatex">\[
 \Delta V_{ijk} =
 \left(x1a_{i+1}-x1a_i\right)
 \left(x2a_{j+1}-x2a_j\right)
-\left(x3a_{k+1}-x3a_k\right),
+\left(x3a_{k+1}-x3a_k\right).
 \]</div>
-<p>then reduces the following quantities over all MPI ranks:</p>
+<p>The routine then performs MPI reductions for</p>
 <div class="arithmatex">\[
 V = \sum_{ijk}\Delta V_{ijk},
 \]</div>
@@ -550,27 +570,29 @@ S_{v_y} = \sum_{ijk} v_{y,ijk}^2\,\Delta V_{ijk}.
 <div class="arithmatex">\[
 \mathrm{mix} = \frac{M}{V},
 \]</div>
+<p>and</p>
 <div class="arithmatex">\[
-\langle v_y^2 \rangle^{1/2} = \sqrt{\frac{S_{v_y}}{V}}.
+\left&lt; v_y^2 \right&gt;^{1/2} = \sqrt{\frac{S_{v_y}}{V}}.
 \]</div>
-<p>Here, <code>mix</code> is a simple mixing indicator based on the tracer field. It is near zero in unmixed regions where <span class="arithmatex">\(X_{\mathrm{comp}}\)</span> is close to 0 or 1, and becomes larger where the two layers are mixed.</p>
+<p>Here, <code>mix</code> is a simple mixing indicator based on the tracer field. It is close to zero in unmixed regions where <span class="arithmatex">\(X_{\mathrm{comp}}\)</span> is near 0 or 1, and becomes larger as the two layers mix.</p>
 <p>The file <code>t-prof.csv</code> contains four columns:</p>
 <ol>
 <li><code>time</code></li>
 <li><code>mix</code></li>
 <li><code>sqrt(&lt;v_y^2&gt;)</code></li>
-<li><code>A exp(\Gamma t)</code></li>
+<li><code>A*exp(Gamma*time)</code></li>
 </ol>
-<p>The fourth column is a reference exponential growth curve,</p>
+<p>The fourth column is a reference exponential growth curve:</p>
+<p>The growth rate is <span class="arithmatex">\(\Gamma\)</span>.</p>
 <div class="arithmatex">\[
-A\exp(\Gamma t),
+A\exp(\Gamma t)
 \]</div>
 <p>with the hard-coded parameters</p>
 <ul>
 <li><span class="arithmatex">\(A = 1.2\times 10^{-3}\)</span></li>
 <li><span class="arithmatex">\(\Gamma = 1.49\)</span></li>
 </ul>
-<p>These values are used as a practical comparison metric for KH growth in this setup. The source comment notes that this is not a general analytic growth rate for finite-width shear layers, but an empirical reference value used for this problem.</p>
+<p>These values are used as a practical comparison metric for KH growth in this setup. The source comment notes that this is not a general analytic growth rate for finite-width shear layers, but an empirical reference value for this problem.</p>
 
 
 
