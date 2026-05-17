@@ -39,6 +39,8 @@ jobs:
           ford ford-f90omp.md
           ford ford-f90cpu.md
           doxygen Doxyfile-cpp_omp
+          doxygen Doxyfile-cpp_kokkos_device
+          doxygen Doxyfile-cpp_kokkos_host
 
       - name: Deploy to GitHub Pages
         if: github.event_name != 'pull_request'
