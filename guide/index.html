@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="User-facing documentation for MHDTurbulence">
+        
+        <link rel="canonical" href="https://cfcanaoj.github.io/MHDTurbulence/guide/index.html">
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>MHDTurbulence Guides</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/fontawesome.min.css" rel="stylesheet">
+        <link href="css/brands.min.css" rel="stylesheet">
+        <link href="css/solid.min.css" rel="stylesheet">
+        <link href="css/v4-font-face.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body class="homepage">
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">MHDTurbulence Guides</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="index.html" class="nav-link active" aria-current="page">Project Overview</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="KH.html" class="nav-link">Kelvin-Helmholtz Setup</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" class="nav-link disabled">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="KH.html" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#mhdturbulence" class="nav-link">MHDTurbulence</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#how-to-copy-the-source-code" class="nav-link">How to copy the source code</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#how-to-run" class="nav-link">How to run</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="mhdturbulence">MHDTurbulence</h1>
+<p>This repository contains a 3D MHD solver (MPI + OpenACC/OpenMP target/OpenMP).
+The current default test problem is the <a href="KH.html"><strong>Kelvin–Helmholtz instability</strong></a>.</p>
+<p><img width="320" height="240" alt="initial" src="https://github.com/user-attachments/assets/90d21b9e-e3f7-4606-b425-8d4d8715aab3" />
+<img width="320" height="240" alt="final" src="https://github.com/user-attachments/assets/01ecbb59-c21b-4e38-8e6a-78d9e7433791" /></p>
+<hr />
+<h2 id="how-to-copy-the-source-code">How to copy the source code</h2>
+<p>After you login the server, copy the programs.</p>
+<pre><code class="language-bash">git clone git@github.com:cfcanaoj/MHDTurbulence MHDTurbulence
+cd MHDTurbulence
+</code></pre>
+<hr />
+<h2 id="how-to-run">How to run</h2>
+<h3 id="compile">Compile</h3>
+<p>To run the code, first compile source on a GPU server. The OpenACC version (<code>src_f90_acc_device</code>) is the default and recommended setup.</p>
+<pre><code class="language-bash">cd src_f90_acc_device
+make
+</code></pre>
+<p>The executable <code>Simulation.x</code> is created in <code>../exe</code> directory.<br />
+If you prefer another implementation, use the appropriate directory and codes listed below.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">directory</th>
+<th style="text-align: center;">Language</th>
+<th style="text-align: left;">GPU/CPU</th>
+<th style="text-align: left;">Parallelization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>src_f90_acc_device</code></td>
+<td style="text-align: center;">Fortran</td>
+<td style="text-align: left;">GPU</td>
+<td style="text-align: left;">MPI OpenACC</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>src_f90_omp_device</code></td>
+<td style="text-align: center;">Fortran</td>
+<td style="text-align: left;">GPU</td>
+<td style="text-align: left;">MPI OpenMP Target</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>src_f90_omp_host</code></td>
+<td style="text-align: center;">Fortran</td>
+<td style="text-align: left;">CPU</td>
+<td style="text-align: left;">MPI OpenMP</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>src_cpp_omp_device</code></td>
+<td style="text-align: center;">C++</td>
+<td style="text-align: left;">GPU</td>
+<td style="text-align: left;">MPI OpenMP</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>src_cpp_kokkos_device</code></td>
+<td style="text-align: center;">C++</td>
+<td style="text-align: left;">GPU</td>
+<td style="text-align: left;">MPI Kokkos</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>src_cpp_kokkos_host</code></td>
+<td style="text-align: center;">C++</td>
+<td style="text-align: left;">CPU</td>
+<td style="text-align: left;">MPI Kokkos</td>
+</tr>
+</tbody>
+</table>
+<p>For stable simulations, please use the OpenACC (<code>src_f90_acc_device</code>) or CPU (<code>src_f90_omp_host</code>) versions.</p>
+<h3 id="execution">Execution</h3>
+<p>Copy the batch script and submit the job. The script for Slurm is prepared.</p>
+<pre><code class="language-bash">cd ../exe
+cp ../misc/sj_g00.sh .
+sbatch sj_g00.sh
+</code></pre>
+<p>Batch scripts depend on your parallelization scheme and environment.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">script</th>
+<th style="text-align: center;">GPU/CPU</th>
+<th style="text-align: left;">directory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>sj_g00.sh</code></td>
+<td style="text-align: center;">GPU</td>
+<td style="text-align: left;"><code>src_f90_acc_device</code>, <code>src_f90_omp_device</code>, <code>src_cpp_omp_device</code>, <code>src_cpp_kokkos_device</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sj_xd.sh</code></td>
+<td style="text-align: center;">CPU</td>
+<td style="text-align: left;"><code>src_f90_omp_host</code>, <code>src_cpp_kokkos_host</code></td>
+</tr>
+</tbody>
+</table></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js"></script>
+        <script src="search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-05-17 04:16:33.527916+00:00
+-->

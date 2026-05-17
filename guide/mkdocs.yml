@@ -1,0 +1,21 @@
+site_name: MHDTurbulence Guides
+site_description: User-facing documentation for MHDTurbulence
+site_url: https://cfcanaoj.github.io/MHDTurbulence/guide/
+docs_dir: .
+site_dir: ../.mkdocs-site/guide
+use_directory_urls: false
+
+theme:
+  name: mkdocs
+
+nav:
+  - Project Overview: README.md
+  - Kelvin-Helmholtz Setup: KH.md
+
+exclude_docs: |
+  *.md~
+  custom.css
+  Doxyfile-*
+  doxygen-*
+  ford-*
+  site/
