@@ -1,7 +1,7 @@
 # MHDTurbulence
 
 This repository contains a 3D MHD solver (MPI + OpenACC/OpenMP target/OpenMP).
-The current default test problem is the [**Kelvin–Helmholtz instability**](./KH.md).
+The current default test problem is the [**Kelvin–Helmholtz instability**](./docs/KH.md).
 
 ---
 
