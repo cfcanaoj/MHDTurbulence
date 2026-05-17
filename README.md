@@ -19,9 +19,9 @@ cd MHDTurbulence
 
 ### Compile
 
-To run the code, first compile source on a GPU server. The OpenACC version (`srcacc`) is the defalut and recommended setup.
+To run the code, first compile source on a GPU server. The OpenACC version (`src_f90_acc_device`) is the default and recommended setup.
 ```bash
-cd srcacc
+cd src_f90_acc_device
 make
 ```
 
@@ -30,12 +30,14 @@ If you prefer another implementation, use the appropriate directory and codes li
 
 |directory|Language |GPU/CPU|Parallelization|
 |:---|:---:|:---|:---|
-|`srcacc`    |Fortran|GPU|MPI OpenACC|
-|`srcomp`    |Fortan |GPU|MPI OpenMP|
-|`srcomp_cpp`|C++    |GPU|MPI OpenMP|
-|`srccpu`    |Fortran|CPU|MPI OpenMP|
+|`src_f90_acc_device`    |Fortran|GPU|MPI OpenACC|
+|`src_f90_omp_device`    |Fortran|GPU|MPI OpenMP Target|
+|`src_f90_omp_host`      |Fortran|CPU|MPI OpenMP|
+|`src_cpp_omp_device`    |C++    |GPU|MPI OpenMP|
+|`src_cpp_kokkos_device` |C++    |GPU|MPI Kokkos|
+|`src_cpp_kokkos_host`   |C++    |CPU|MPI Kokkos|
 
-For stable simulations, please use the OpenACC (`srcacc`) or CPU (`srccpu`) versions.
+For stable simulations, please use the OpenACC (`src_f90_acc_device`) or CPU (`src_f90_omp_host`) versions.
 
 ### Execution
 Copy the batch script and submit the job. The script for Slurm is prepared.
@@ -48,8 +50,8 @@ Batch scripts depend on your parallelization scheme and environment.
 
 |script|GPU/CPU|directory|
 |:---|:---:|:---|
-|`sj_g00.sh`|GPU|`srcacc`, `srcomp`, `srcomp_cpp`|
-|`sj_xd.sh`|CPU|`srccpu`|
+|`sj_g00.sh`|GPU|`src_f90_acc_device`, `src_f90_omp_device`, `src_cpp_omp_device`, `src_cpp_kokkos_device`|
+|`sj_xd.sh`|CPU|`src_f90_omp_host`, `src_cpp_kokkos_host`|
 
 ---
 ## Data Output Specification
@@ -90,11 +92,11 @@ These values are useful for benchmarking and performance comparison.
 The typical performance in representative environments is shown below.
 |Code|Grid size x Physical time|Wall time [s]|time/cell/step [s]|Environment|
 |:---|:---:|---:|---:|:---|
-|`srcacc`    |150^3 x 15|421   |1.14e-9|CfCA GPU server, A100 4 GPU|
-|`srcomp`    |150^3 x 15|1299  |3.52e-9|CfCA GPU server, A100 4 GPU|
-|`srcomp_cpp`|150^3 x 15|1151  |3.18e-9|CfCA GPU server, A100 4 GPU|
-|`srccpu`    |156^3 x 15|3293  |7.5e-9|CfCA XD2000, Xeon Max 1 node|
-|`srccpu`    |156^3 x 15|3239  |7.5e-9|Miyabi-C, Xeon Max 1 node|
+|`src_f90_acc_device` |150^3 x 15|421   |1.14e-9|CfCA GPU server, A100 4 GPU|
+|`src_f90_omp_device` |150^3 x 15|1299  |3.52e-9|CfCA GPU server, A100 4 GPU|
+|`src_cpp_omp_device` |150^3 x 15|1151  |3.18e-9|CfCA GPU server, A100 4 GPU|
+|`src_f90_omp_host`   |156^3 x 15|3293  |7.5e-9|CfCA XD2000, Xeon Max 1 node|
+|`src_f90_omp_host`   |156^3 x 15|3239  |7.5e-9|Miyabi-C, Xeon Max 1 node|
 - Grid size: number of cells in each direction
 - Physicsl time (t): physical end time of the simulation
 - Wall time: total elapsed wall-clock time
