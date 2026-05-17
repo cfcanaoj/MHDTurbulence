@@ -1,7 +1,7 @@
 /**
  * @file mhd.cpp
  * @brief 
- * @author Tomoya Takiwaki
+ * @author Keigo Nitadori
  * @date 2025-08-21
 */
 #ifndef MHD_HPP_

@@ -1,7 +1,7 @@
 /**
  * @file output.hpp
  * @brief 
- * @author Tomoya Takiwaki
+ * @author Keigo Nitadori
  * @date 2026-02-14
 */
 #ifndef OUTPUT_HPP_
