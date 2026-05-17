@@ -1,0 +1,1435 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="High-performance 3D MHD solver (MPI + OpenMP) for large-scale turbulence simulations.">
+    <meta name="author" content="Tomoya Takiwaki" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>config &ndash; MHDTurbulence</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+      <link href="../css/user.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">MHDTurbulence </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/main.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>config
+      <small>Module</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 2.4% of total for modules and submodules.">22 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/config.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/config.f90.html'>config.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">config</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/config.html#variable-asciiout">asciiout</a>
+            <a class="list-group-item" href="../module/config.html#variable-benchmarkmode">benchmarkmode</a>
+            <a class="list-group-item" href="../module/config.html#variable-boundary_xin">boundary_xin</a>
+            <a class="list-group-item" href="../module/config.html#variable-boundary_xout">boundary_xout</a>
+            <a class="list-group-item" href="../module/config.html#variable-boundary_yin">boundary_yin</a>
+            <a class="list-group-item" href="../module/config.html#variable-boundary_yout">boundary_yout</a>
+            <a class="list-group-item" href="../module/config.html#variable-boundary_zin">boundary_zin</a>
+            <a class="list-group-item" href="../module/config.html#variable-boundary_zout">boundary_zout</a>
+            <a class="list-group-item" href="../module/config.html#variable-dtout">dtout</a>
+            <a class="list-group-item" href="../module/config.html#variable-ncomp">ncomp</a>
+            <a class="list-group-item" href="../module/config.html#variable-ngridtotal1">ngridtotal1</a>
+            <a class="list-group-item" href="../module/config.html#variable-ngridtotal2">ngridtotal2</a>
+            <a class="list-group-item" href="../module/config.html#variable-ngridtotal3">ngridtotal3</a>
+            <a class="list-group-item" href="../module/config.html#variable-nhydis">nhydis</a>
+            <a class="list-group-item" href="../module/config.html#variable-nhymax">nhymax</a>
+            <a class="list-group-item" href="../module/config.html#variable-ntiles">ntiles</a>
+            <a class="list-group-item" href="../module/config.html#variable-outflow">outflow</a>
+            <a class="list-group-item" href="../module/config.html#variable-periodic">periodic</a>
+            <a class="list-group-item" href="../module/config.html#variable-periodicb">periodicb</a>
+            <a class="list-group-item" href="../module/config.html#variable-reflection">reflection</a>
+            <a class="list-group-item" href="../module/config.html#variable-timemax">timemax</a>
+            <a class="list-group-item" href="../module/config.html#variable-x1max">x1max</a>
+            <a class="list-group-item" href="../module/config.html#variable-x1min">x1min</a>
+            <a class="list-group-item" href="../module/config.html#variable-x2max">x2max</a>
+            <a class="list-group-item" href="../module/config.html#variable-x2min">x2min</a>
+            <a class="list-group-item" href="../module/config.html#variable-x3max">x3max</a>
+            <a class="list-group-item" href="../module/config.html#variable-x3min">x3min</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+
+    <div class="col-md-9" id='text'>
+      
+<br>      
+          <div class="card">
+      <h3 class="card-header card-title bg-light">Used by</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~config~~UsedByGraph Pages: 1 -->
+<svg id="moduleconfigUsedByGraph" width="428pt" height="1082pt"
+ viewBox="0.00 0.00 428.00 1082.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~config~~UsedByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 1078)">
+<title>module~~config~~UsedByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-1078 424,-1078 424,4 -4,4"/>
+<!-- module~config -->
+<g id="module~~config~~UsedByGraph_node1" class="node">
+<title>module~config</title>
+<polygon fill="none" stroke="black" points="54,-777 0,-777 0,-753 54,-753 54,-777"/>
+<text text-anchor="middle" x="27" y="-762.6" font-family="Helvetica,sans-Serif" font-size="10.50">config</text>
+</g>
+<!-- module~basicmod -->
+<g id="module~~config~~UsedByGraph_node2" class="node">
+<title>module~basicmod</title>
+<g id="a_module~~config~~UsedByGraph_node2"><a xlink:href="../module/basicmod.html" xlink:title="basicmod">
+<polygon fill="#337ab7" stroke="#337ab7" points="154,-654 90,-654 90,-630 154,-630 154,-654"/>
+<text text-anchor="middle" x="122" y="-639.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basicmod</text>
+</a>
+</g>
+</g>
+<!-- module~basicmod&#45;&gt;module~config -->
+<g id="module~~config~~UsedByGraph_edge1" class="edge">
+<title>module~basicmod&#45;&gt;module~config</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M111.74,-654.24C95.73,-675.43 62.7,-719.11 43.25,-744.83"/>
+<polygon fill="#000000" stroke="#000000" points="40.46,-742.72 37.22,-752.81 46.04,-746.94 40.46,-742.72"/>
+</g>
+<!-- module~boundarymod -->
+<g id="module~~config~~UsedByGraph_node3" class="node">
+<title>module~boundarymod</title>
+<g id="a_module~~config~~UsedByGraph_node3"><a xlink:href="../module/boundarymod.html" xlink:title="boundarymod">
+<polygon fill="#337ab7" stroke="#337ab7" points="278,-901 190,-901 190,-877 278,-877 278,-901"/>
+<text text-anchor="middle" x="234" y="-886.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">boundarymod</text>
+</a>
+</g>
+</g>
+<!-- module~boundarymod&#45;&gt;module~config -->
+<g id="module~~config~~UsedByGraph_edge2" class="edge">
+<title>module~boundarymod&#45;&gt;module~config</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M189.81,-893.89C169.28,-894.99 144.56,-894.49 123,-889"/>
+</g>
+<!-- module~boundarymod&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge6" class="edge">
+<title>module~boundarymod&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M206.05,-876.84C200.09,-873.12 194.28,-868.51 190,-863 142.46,-801.83 128.51,-707.09 124.53,-664.31"/>
+<polygon fill="#000000" stroke="#000000" points="128.01,-663.82 123.69,-654.15 121.03,-664.4 128.01,-663.82"/>
+</g>
+<!-- module~mpimod -->
+<g id="module~~config~~UsedByGraph_node4" class="node">
+<title>module~mpimod</title>
+<g id="a_module~~config~~UsedByGraph_node4"><a xlink:href="../module/mpimod.html" xlink:title="mpimod">
+<polygon fill="#337ab7" stroke="#337ab7" points="262.5,-821 205.5,-821 205.5,-797 262.5,-797 262.5,-821"/>
+<text text-anchor="middle" x="234" y="-806.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mpimod</text>
+</a>
+</g>
+</g>
+<!-- module~mpimod&#45;&gt;module~config -->
+<g id="module~~config~~UsedByGraph_edge3" class="edge">
+<title>module~mpimod&#45;&gt;module~config</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M225.6,-821.24C209.33,-846.38 168.31,-900.55 123,-889"/>
+</g>
+<!-- proc~output -->
+<g id="module~~config~~UsedByGraph_node5" class="node">
+<title>proc~output</title>
+<g id="a_module~~config~~UsedByGraph_node5"><a xlink:href="../proc/output.html" xlink:title="Output">
+<polygon fill="#d9534f" stroke="#d9534f" points="394,-654 340,-654 340,-630 394,-630 394,-654"/>
+<text text-anchor="middle" x="367" y="-639.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Output</text>
+</a>
+</g>
+</g>
+<!-- proc~output&#45;&gt;module~config -->
+<g id="module~~config~~UsedByGraph_edge4" class="edge">
+<title>proc~output&#45;&gt;module~config</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M339.84,-650.19C331.24,-653.49 321.87,-657.77 314,-663 248.83,-706.32 239.42,-727.33 190,-788 155.98,-829.77 175.2,-902.3 123,-889"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M121,-889C73.78,-876.54 46.77,-819.43 35.05,-787.24"/>
+<polygon fill="#000000" stroke="#000000" points="38.22,-785.69 31.65,-777.37 31.6,-787.97 38.22,-785.69"/>
+</g>
+<!-- proc~output&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge20" class="edge">
+<title>proc~output&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M339.91,-633.17C331.4,-629.84 322.07,-625.71 314,-621 275.22,-598.36 276.36,-540.51 235,-558"/>
+</g>
+<!-- proc~output&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge36" class="edge">
+<title>proc~output&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M340,-647.51C330.69,-650.66 320.83,-655.53 314,-663 276.73,-703.79 311.53,-738.08 278,-782 275.54,-785.22 272.58,-788.15 269.38,-790.8"/>
+<polygon fill="#000000" stroke="#000000" points="267.14,-788.1 261.07,-796.78 271.23,-793.78 267.14,-788.1"/>
+</g>
+<!-- module~mpiiomod -->
+<g id="module~~config~~UsedByGraph_node8" class="node">
+<title>module~mpiiomod</title>
+<g id="a_module~~config~~UsedByGraph_node8"><a xlink:href="../module/mpiiomod.html" xlink:title="mpiiomod">
+<polygon fill="#337ab7" stroke="#337ab7" points="267.5,-654 200.5,-654 200.5,-630 267.5,-630 267.5,-654"/>
+<text text-anchor="middle" x="234" y="-639.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mpiiomod</text>
+</a>
+</g>
+</g>
+<!-- proc~output&#45;&gt;module~mpiiomod -->
+<g id="module~~config~~UsedByGraph_edge57" class="edge">
+<title>proc~output&#45;&gt;module~mpiiomod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M339.81,-642C322.05,-642 298.17,-642 277.7,-642"/>
+<polygon fill="#000000" stroke="#000000" points="277.66,-638.5 267.66,-642 277.66,-645.5 277.66,-638.5"/>
+</g>
+<!-- program~main -->
+<g id="module~~config~~UsedByGraph_node6" class="node">
+<title>program~main</title>
+<g id="a_module~~config~~UsedByGraph_node6"><a xlink:href="../program/main.html" xlink:title="main">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="394,-1074 340,-1074 340,-1050 394,-1050 394,-1074"/>
+<text text-anchor="middle" x="367" y="-1059.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">main</text>
+</a>
+</g>
+</g>
+<!-- program~main&#45;&gt;module~config -->
+<g id="module~~config~~UsedByGraph_edge5" class="edge">
+<title>program~main&#45;&gt;module~config</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M233,-929C224.69,-918.99 135.57,-892.32 123,-889"/>
+</g>
+<!-- program~main&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge26" class="edge">
+<title>program~main&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M339.84,-1054.75C331.04,-1051.48 321.55,-1046.99 314,-1041 266.26,-1003.17 273.92,-975.86 235,-929"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M233,-929C219.65,-912.93 203.46,-925.98 190,-910 128.11,-836.5 122.06,-713.9 122.35,-664.07"/>
+<polygon fill="#000000" stroke="#000000" points="125.85,-664.12 122.5,-654.06 118.85,-664.01 125.85,-664.12"/>
+</g>
+<!-- program~main&#45;&gt;module~boundarymod -->
+<g id="module~~config~~UsedByGraph_edge29" class="edge">
+<title>program~main&#45;&gt;module~boundarymod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M339.94,-1056.54C330.62,-1053.4 320.77,-1048.53 314,-1041 275.05,-997.7 313.37,-961.27 278,-915 275.75,-912.05 273.06,-909.37 270.14,-906.94"/>
+<polygon fill="#000000" stroke="#000000" points="272.18,-904.1 262.02,-901.11 268.1,-909.78 272.18,-904.1"/>
+</g>
+<!-- program~main&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge42" class="edge">
+<title>program~main&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M339.78,-1057C330.33,-1053.91 320.43,-1048.95 314,-1041 255.56,-968.73 330.48,-911.71 278,-835 276.08,-832.19 273.75,-829.64 271.17,-827.32"/>
+<polygon fill="#000000" stroke="#000000" points="272.98,-824.3 262.88,-821.08 268.77,-829.89 272.98,-824.3"/>
+</g>
+<!-- module~fluxmod -->
+<g id="module~~config~~UsedByGraph_node7" class="node">
+<title>module~fluxmod</title>
+<g id="a_module~~config~~UsedByGraph_node7"><a xlink:href="../module/fluxmod.html" xlink:title="fluxmod">
+<polygon fill="#337ab7" stroke="#337ab7" points="262,-339 206,-339 206,-315 262,-315 262,-339"/>
+<text text-anchor="middle" x="234" y="-324.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fluxmod</text>
+</a>
+</g>
+</g>
+<!-- module~fluxmod&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge7" class="edge">
+<title>module~fluxmod&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M228.69,-339.35C212.05,-386.98 151.93,-559.17 130.58,-620.29"/>
+<polygon fill="#000000" stroke="#000000" points="127.27,-619.14 127.28,-629.74 133.88,-621.45 127.27,-619.14"/>
+</g>
+<!-- module~mpiiomod&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge8" class="edge">
+<title>module~mpiiomod&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M200.29,-642C189.03,-642 176.26,-642 164.39,-642"/>
+<polygon fill="#000000" stroke="#000000" points="164.26,-638.5 154.26,-642 164.26,-645.5 164.26,-638.5"/>
+</g>
+<!-- proc~asc_write -->
+<g id="module~~config~~UsedByGraph_node9" class="node">
+<title>proc~asc_write</title>
+<g id="a_module~~config~~UsedByGraph_node9"><a xlink:href="../proc/asc_write.html" xlink:title="ASC_WRITE">
+<polygon fill="#d9534f" stroke="#d9534f" points="404,-696 330,-696 330,-672 404,-672 404,-696"/>
+<text text-anchor="middle" x="367" y="-681.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ASC_WRITE</text>
+</a>
+</g>
+</g>
+<!-- proc~asc_write&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge9" class="edge">
+<title>proc~asc_write&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M329.96,-696.11C324.4,-698.66 318.89,-701.62 314,-705 277.05,-730.53 278.29,-779.94 235,-768"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M233,-768C181.98,-753.93 147.85,-696.02 132.42,-663.83"/>
+<polygon fill="#000000" stroke="#000000" points="135.43,-662 128.07,-654.37 129.07,-664.92 135.43,-662"/>
+</g>
+<!-- proc~asc_write&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge30" class="edge">
+<title>proc~asc_write&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M329.76,-694.49C324.03,-697.26 318.52,-700.71 314,-705 286.58,-730.99 303.02,-753.69 278,-782 275.11,-785.27 271.73,-788.28 268.16,-791.02"/>
+<polygon fill="#000000" stroke="#000000" points="265.88,-788.34 259.61,-796.89 269.84,-794.11 265.88,-788.34"/>
+</g>
+<!-- proc~consvvariable -->
+<g id="module~~config~~UsedByGraph_node10" class="node">
+<title>proc~consvvariable</title>
+<g id="a_module~~config~~UsedByGraph_node10"><a xlink:href="../proc/consvvariable.html" xlink:title="ConsvVariable">
+<polygon fill="#d9534f" stroke="#d9534f" points="278,-530 190,-530 190,-506 278,-506 278,-530"/>
+<text text-anchor="middle" x="234" y="-515.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ConsvVariable</text>
+</a>
+</g>
+</g>
+<!-- proc~consvvariable&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge10" class="edge">
+<title>proc~consvvariable&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M208.96,-530.08C202.4,-534 195.58,-538.73 190,-544 165.85,-566.84 145.53,-599.8 133.81,-621.07"/>
+<polygon fill="#000000" stroke="#000000" points="130.69,-619.47 129.04,-629.93 136.86,-622.78 130.69,-619.47"/>
+</g>
+<!-- proc~damppsi -->
+<g id="module~~config~~UsedByGraph_node11" class="node">
+<title>proc~damppsi</title>
+<g id="a_module~~config~~UsedByGraph_node11"><a xlink:href="../proc/damppsi.html" xlink:title="DampPsi">
+<polygon fill="#d9534f" stroke="#d9534f" points="396.5,-66 337.5,-66 337.5,-42 396.5,-42 396.5,-66"/>
+<text text-anchor="middle" x="367" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">DampPsi</text>
+</a>
+</g>
+</g>
+<!-- proc~damppsi&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge11" class="edge">
+<title>proc~damppsi&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M337.3,-56.02C308,-59.55 262.98,-69.27 235,-96"/>
+</g>
+<!-- proc~damppsi&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge43" class="edge">
+<title>proc~damppsi&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M337.26,-59.78C328.57,-62.89 319.81,-67.68 314,-75 249.41,-156.39 339.68,-222.38 278,-306 276.03,-308.67 273.62,-311.03 270.97,-313.09"/>
+<polygon fill="#000000" stroke="#000000" points="269.04,-310.17 262.43,-318.45 272.76,-316.09 269.04,-310.17"/>
+</g>
+<!-- proc~evaulatech -->
+<g id="module~~config~~UsedByGraph_node12" class="node">
+<title>proc~evaulatech</title>
+<g id="a_module~~config~~UsedByGraph_node12"><a xlink:href="../proc/evaulatech.html" xlink:title="EvaulateCh">
+<polygon fill="#d9534f" stroke="#d9534f" points="403.5,-570 330.5,-570 330.5,-546 403.5,-546 403.5,-570"/>
+<text text-anchor="middle" x="367" y="-555.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">EvaulateCh</text>
+</a>
+</g>
+</g>
+<!-- proc~evaulatech&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge12" class="edge">
+<title>proc~evaulatech&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M330.32,-550.72C303.1,-546.85 265.27,-545.2 235,-558"/>
+</g>
+<!-- proc~evaulatech&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge31" class="edge">
+<title>proc~evaulatech&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M330.33,-566.76C324.12,-569.74 318.29,-573.71 314,-579 256.29,-650.18 329.19,-706 278,-782 275.85,-785.18 273.19,-788.07 270.26,-790.66"/>
+<polygon fill="#000000" stroke="#000000" points="267.9,-788.05 261.99,-796.84 272.1,-793.65 267.9,-788.05"/>
+</g>
+<!-- proc~evaulatech&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge44" class="edge">
+<title>proc~evaulatech&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M330.27,-548.19C324.29,-545.33 318.56,-541.67 314,-537 261.54,-483.27 243.29,-391.38 237.48,-349.27"/>
+<polygon fill="#000000" stroke="#000000" points="240.93,-348.71 236.2,-339.23 233.99,-349.6 240.93,-348.71"/>
+</g>
+<!-- proc~generategrid -->
+<g id="module~~config~~UsedByGraph_node13" class="node">
+<title>proc~generategrid</title>
+<g id="a_module~~config~~UsedByGraph_node13"><a xlink:href="../proc/generategrid.html" xlink:title="GenerateGrid">
+<polygon fill="#d9534f" stroke="#d9534f" points="409.5,-612 324.5,-612 324.5,-588 409.5,-588 409.5,-612"/>
+<text text-anchor="middle" x="367" y="-597.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">GenerateGrid</text>
+</a>
+</g>
+</g>
+<!-- proc~generategrid&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge13" class="edge">
+<title>proc~generategrid&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M335.69,-587.99C300.02,-574.22 244.43,-554.01 235,-558"/>
+</g>
+<!-- proc~generategrid&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge32" class="edge">
+<title>proc~generategrid&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M324.79,-612C320.74,-614.47 317.02,-617.44 314,-621 266.57,-676.92 320.31,-722.11 278,-782 275.78,-785.14 273.08,-787.99 270.11,-790.56"/>
+<polygon fill="#000000" stroke="#000000" points="267.76,-787.95 261.81,-796.72 271.93,-793.57 267.76,-787.95"/>
+</g>
+<!-- proc~generateproblem -->
+<g id="module~~config~~UsedByGraph_node14" class="node">
+<title>proc~generateproblem</title>
+<g id="a_module~~config~~UsedByGraph_node14"><a xlink:href="../proc/generateproblem.html" xlink:title="GenerateProblem">
+<polygon fill="#d9534f" stroke="#d9534f" points="420,-1032 314,-1032 314,-1008 420,-1008 420,-1032"/>
+<text text-anchor="middle" x="367" y="-1017.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">GenerateProblem</text>
+</a>
+</g>
+</g>
+<!-- proc~generateproblem&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge14" class="edge">
+<title>proc~generateproblem&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M324.95,-1007.85C320.88,-1005.41 317.11,-1002.49 314,-999 273.84,-953.91 317.42,-913.73 278,-868 264.36,-852.17 246.98,-866.12 235,-849"/>
+</g>
+<!-- proc~generateproblem&#45;&gt;module~boundarymod -->
+<g id="module~~config~~UsedByGraph_edge27" class="edge">
+<title>proc~generateproblem&#45;&gt;module~boundarymod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M326.46,-1008C321.91,-1005.51 317.62,-1002.54 314,-999 284.98,-970.58 304.66,-945.65 278,-915 275.51,-912.13 272.62,-909.49 269.54,-907.07"/>
+<polygon fill="#000000" stroke="#000000" points="271.3,-904.04 261.08,-901.23 267.32,-909.79 271.3,-904.04"/>
+</g>
+<!-- proc~generateproblem&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge33" class="edge">
+<title>proc~generateproblem&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M324.52,-1007.85C320.57,-1005.42 316.95,-1002.5 314,-999 265.84,-942 321.45,-895.67 278,-835 276.02,-832.23 273.64,-829.71 271.04,-827.41"/>
+<polygon fill="#000000" stroke="#000000" points="272.82,-824.37 262.71,-821.21 268.64,-829.99 272.82,-824.37"/>
+</g>
+<!-- proc~gravforce -->
+<g id="module~~config~~UsedByGraph_node15" class="node">
+<title>proc~gravforce</title>
+<g id="a_module~~config~~UsedByGraph_node15"><a xlink:href="../proc/gravforce.html" xlink:title="GravForce">
+<polygon fill="#d9534f" stroke="#d9534f" points="400.5,-24 333.5,-24 333.5,0 400.5,0 400.5,-24"/>
+<text text-anchor="middle" x="367" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">GravForce</text>
+</a>
+</g>
+</g>
+<!-- proc~gravforce&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge15" class="edge">
+<title>proc~gravforce&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M333.41,-23.47C326.82,-26.26 320.05,-29.47 314,-33 275.22,-55.64 267.47,-64.98 235,-96"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M233,-96C155.4,-170.13 129.67,-526.22 124.2,-619.56"/>
+<polygon fill="#000000" stroke="#000000" points="120.7,-619.42 123.63,-629.6 127.69,-619.82 120.7,-619.42"/>
+</g>
+<!-- proc~gravforce&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge45" class="edge">
+<title>proc~gravforce&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M333.36,-19.17C325.98,-22.27 318.89,-26.69 314,-33 239.06,-129.75 349.49,-206.67 278,-306 276.01,-308.76 273.55,-311.18 270.83,-313.29"/>
+<polygon fill="#000000" stroke="#000000" points="268.71,-310.49 262.08,-318.75 272.41,-316.43 268.71,-310.49"/>
+</g>
+<!-- proc~mpi_io_pack -->
+<g id="module~~config~~UsedByGraph_node16" class="node">
+<title>proc~mpi_io_pack</title>
+<g id="a_module~~config~~UsedByGraph_node16"><a xlink:href="../proc/mpi_io_pack.html" xlink:title="MPI_IO_Pack">
+<polygon fill="#d9534f" stroke="#d9534f" points="405.5,-780 328.5,-780 328.5,-756 405.5,-756 405.5,-780"/>
+<text text-anchor="middle" x="367" y="-765.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">MPI_IO_Pack</text>
+</a>
+</g>
+</g>
+<!-- proc~mpi_io_pack&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge16" class="edge">
+<title>proc~mpi_io_pack&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M328.31,-773.24C301.74,-775.68 265.58,-776.44 235,-768"/>
+</g>
+<!-- proc~mpi_io_pack&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge34" class="edge">
+<title>proc~mpi_io_pack&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M328.46,-779.75C310.89,-785.25 290.02,-791.78 272.46,-797.28"/>
+<polygon fill="#000000" stroke="#000000" points="271.05,-794.05 262.55,-800.38 273.14,-800.73 271.05,-794.05"/>
+</g>
+<!-- proc~mpi_io_write -->
+<g id="module~~config~~UsedByGraph_node17" class="node">
+<title>proc~mpi_io_write</title>
+<g id="a_module~~config~~UsedByGraph_node17"><a xlink:href="../proc/mpi_io_write.html" xlink:title="MPI_IO_Write">
+<polygon fill="#d9534f" stroke="#d9534f" points="407,-864 327,-864 327,-840 407,-840 407,-864"/>
+<text text-anchor="middle" x="367" y="-849.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">MPI_IO_Write</text>
+</a>
+</g>
+</g>
+<!-- proc~mpi_io_write&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge35" class="edge">
+<title>proc~mpi_io_write&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M329.16,-839.91C311.57,-834.13 290.55,-827.24 272.84,-821.42"/>
+<polygon fill="#000000" stroke="#000000" points="273.44,-817.93 262.84,-818.14 271.25,-824.58 273.44,-817.93"/>
+</g>
+<!-- proc~numericalflux1 -->
+<g id="module~~config~~UsedByGraph_node18" class="node">
+<title>proc~numericalflux1</title>
+<g id="a_module~~config~~UsedByGraph_node18"><a xlink:href="../proc/numericalflux1.html" xlink:title="NumericalFlux1">
+<polygon fill="#d9534f" stroke="#d9534f" points="415,-528 319,-528 319,-504 415,-504 415,-528"/>
+<text text-anchor="middle" x="367" y="-513.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">NumericalFlux1</text>
+</a>
+</g>
+</g>
+<!-- proc~numericalflux1&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge17" class="edge">
+<title>proc~numericalflux1&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M321.62,-528.07C295.91,-535.59 263.16,-546.09 235,-558"/>
+</g>
+<!-- proc~numericalflux1&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge51" class="edge">
+<title>proc~numericalflux1&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M326.57,-503.87C322.01,-501.41 317.68,-498.48 314,-495 270.71,-454.06 248.74,-384.63 239.88,-349.22"/>
+<polygon fill="#000000" stroke="#000000" points="243.26,-348.3 237.54,-339.39 236.45,-349.93 243.26,-348.3"/>
+</g>
+<!-- proc~numericalflux2 -->
+<g id="module~~config~~UsedByGraph_node19" class="node">
+<title>proc~numericalflux2</title>
+<g id="a_module~~config~~UsedByGraph_node19"><a xlink:href="../proc/numericalflux2.html" xlink:title="NumericalFlux2">
+<polygon fill="#d9534f" stroke="#d9534f" points="415,-486 319,-486 319,-462 415,-462 415,-486"/>
+<text text-anchor="middle" x="367" y="-471.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">NumericalFlux2</text>
+</a>
+</g>
+</g>
+<!-- proc~numericalflux2&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge18" class="edge">
+<title>proc~numericalflux2&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M329.23,-486.12C323.88,-488.64 318.63,-491.6 314,-495 293.65,-509.98 298.11,-523.7 278,-539 261.37,-551.65 254.24,-549.86 235,-558"/>
+</g>
+<!-- proc~numericalflux2&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge52" class="edge">
+<title>proc~numericalflux2&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M328.03,-461.99C323.02,-459.48 318.18,-456.5 314,-453 279.6,-424.19 255.5,-376.42 243.57,-348.72"/>
+<polygon fill="#000000" stroke="#000000" points="246.66,-347.05 239.59,-339.16 240.2,-349.74 246.66,-347.05"/>
+</g>
+<!-- proc~numericalflux3 -->
+<g id="module~~config~~UsedByGraph_node20" class="node">
+<title>proc~numericalflux3</title>
+<g id="a_module~~config~~UsedByGraph_node20"><a xlink:href="../proc/numericalflux3.html" xlink:title="NumericalFlux3">
+<polygon fill="#d9534f" stroke="#d9534f" points="415,-444 319,-444 319,-420 415,-420 415,-444"/>
+<text text-anchor="middle" x="367" y="-429.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">NumericalFlux3</text>
+</a>
+</g>
+</g>
+<!-- proc~numericalflux3&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge19" class="edge">
+<title>proc~numericalflux3&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M326.17,-444.12C321.72,-446.58 317.53,-449.51 314,-453 284.52,-482.11 307.01,-509.41 278,-539 263.37,-553.92 254.24,-549.86 235,-558"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M233,-558C197.05,-573.2 162.43,-602.93 141.93,-622.63"/>
+<polygon fill="#000000" stroke="#000000" points="139.23,-620.39 134.55,-629.89 144.13,-625.38 139.23,-620.39"/>
+</g>
+<!-- proc~numericalflux3&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge53" class="edge">
+<title>proc~numericalflux3&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M330.26,-419.97C324.6,-417.4 318.98,-414.41 314,-411 288.18,-393.34 264.45,-365.94 249.88,-347.28"/>
+<polygon fill="#000000" stroke="#000000" points="252.52,-344.97 243.67,-339.14 246.95,-349.21 252.52,-344.97"/>
+</g>
+<!-- proc~primvariable -->
+<g id="module~~config~~UsedByGraph_node21" class="node">
+<title>proc~primvariable</title>
+<g id="a_module~~config~~UsedByGraph_node21"><a xlink:href="../proc/primvariable.html" xlink:title="PrimVariable">
+<polygon fill="#d9534f" stroke="#d9534f" points="274,-297 194,-297 194,-273 274,-273 274,-297"/>
+<text text-anchor="middle" x="234" y="-282.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">PrimVariable</text>
+</a>
+</g>
+</g>
+<!-- proc~primvariable&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge21" class="edge">
+<title>proc~primvariable&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M199.63,-297.23C195.98,-299.68 192.64,-302.58 190,-306 151.64,-355.77 130.96,-552.25 124.91,-619.38"/>
+<polygon fill="#000000" stroke="#000000" points="121.39,-619.41 124,-629.67 128.36,-620.02 121.39,-619.41"/>
+</g>
+<!-- proc~realtimeanalysis -->
+<g id="module~~config~~UsedByGraph_node22" class="node">
+<title>proc~realtimeanalysis</title>
+<g id="a_module~~config~~UsedByGraph_node22"><a xlink:href="../proc/realtimeanalysis.html" xlink:title="RealTimeAnalysis">
+<polygon fill="#d9534f" stroke="#d9534f" points="420,-990 314,-990 314,-966 420,-966 420,-990"/>
+<text text-anchor="middle" x="367" y="-975.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">RealTimeAnalysis</text>
+</a>
+</g>
+</g>
+<!-- proc~realtimeanalysis&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge22" class="edge">
+<title>proc~realtimeanalysis&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M326.13,-965.92C321.69,-963.46 317.51,-960.51 314,-957 283.82,-926.84 307.69,-898.65 278,-868 263.46,-852.99 246.98,-866.12 235,-849"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M233,-849C221.02,-831.88 204.22,-845.31 190,-830 145.57,-782.17 130.25,-702.92 125.25,-664.4"/>
+<polygon fill="#000000" stroke="#000000" points="128.71,-663.77 124.06,-654.25 121.75,-664.59 128.71,-663.77"/>
+</g>
+<!-- proc~realtimeanalysis&#45;&gt;module~boundarymod -->
+<g id="module~~config~~UsedByGraph_edge28" class="edge">
+<title>proc~realtimeanalysis&#45;&gt;module~boundarymod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M329.57,-965.91C324.12,-963.37 318.74,-960.41 314,-957 294.03,-942.66 296.76,-930.89 278,-915 274.54,-912.07 270.71,-909.25 266.8,-906.63"/>
+<polygon fill="#000000" stroke="#000000" points="268.56,-903.6 258.24,-901.22 264.82,-909.52 268.56,-903.6"/>
+</g>
+<!-- proc~realtimeanalysis&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge37" class="edge">
+<title>proc~realtimeanalysis&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M325.27,-965.94C321.09,-963.48 317.21,-960.53 314,-957 276.01,-915.14 312.53,-879.77 278,-835 275.74,-832.06 273.04,-829.39 270.11,-826.96"/>
+<polygon fill="#000000" stroke="#000000" points="272.15,-824.12 261.98,-821.13 268.07,-829.8 272.15,-824.12"/>
+</g>
+<!-- proc~statevevtor -->
+<g id="module~~config~~UsedByGraph_node23" class="node">
+<title>proc~statevevtor</title>
+<g id="a_module~~config~~UsedByGraph_node23"><a xlink:href="../proc/statevevtor.html" xlink:title="StateVevtor">
+<polygon fill="#d9534f" stroke="#d9534f" points="404,-150 330,-150 330,-126 404,-126 404,-150"/>
+<text text-anchor="middle" x="367" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">StateVevtor</text>
+</a>
+</g>
+</g>
+<!-- proc~statevevtor&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge23" class="edge">
+<title>proc~statevevtor&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M333.15,-125.9C295.57,-112.28 238.68,-92.48 235,-96"/>
+</g>
+<!-- proc~statevevtor&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge54" class="edge">
+<title>proc~statevevtor&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M329.8,-147.37C323.87,-150.28 318.27,-154.07 314,-159 269.97,-209.85 320.21,-253.63 278,-306 275.91,-308.59 273.43,-310.88 270.73,-312.9"/>
+<polygon fill="#000000" stroke="#000000" points="268.79,-309.98 262.11,-318.21 272.46,-315.94 268.79,-309.98"/>
+</g>
+<!-- proc~timestepcontrol -->
+<g id="module~~config~~UsedByGraph_node24" class="node">
+<title>proc~timestepcontrol</title>
+<g id="a_module~~config~~UsedByGraph_node24"><a xlink:href="../proc/timestepcontrol.html" xlink:title="TimestepControl">
+<polygon fill="#d9534f" stroke="#d9534f" points="417,-738 317,-738 317,-714 417,-714 417,-738"/>
+<text text-anchor="middle" x="367" y="-723.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">TimestepControl</text>
+</a>
+</g>
+</g>
+<!-- proc~timestepcontrol&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge24" class="edge">
+<title>proc~timestepcontrol&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M334.58,-738.07C299.02,-751.41 244.76,-770.69 235,-768"/>
+</g>
+<!-- proc~timestepcontrol&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge38" class="edge">
+<title>proc~timestepcontrol&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M330.66,-738.1C324.9,-740.68 319.14,-743.65 314,-747 295.3,-759.18 295.55,-768.21 278,-782 273.86,-785.25 269.31,-788.46 264.77,-791.46"/>
+<polygon fill="#000000" stroke="#000000" points="262.72,-788.62 256.16,-796.94 266.47,-794.52 262.72,-788.62"/>
+</g>
+<!-- proc~updateconsv -->
+<g id="module~~config~~UsedByGraph_node25" class="node">
+<title>proc~updateconsv</title>
+<g id="a_module~~config~~UsedByGraph_node25"><a xlink:href="../proc/updateconsv.html" xlink:title="UpdateConsv">
+<polygon fill="#d9534f" stroke="#d9534f" points="408.5,-108 325.5,-108 325.5,-84 408.5,-84 408.5,-108"/>
+<text text-anchor="middle" x="367" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">UpdateConsv</text>
+</a>
+</g>
+</g>
+<!-- proc~updateconsv&#45;&gt;module~basicmod -->
+<g id="module~~config~~UsedByGraph_edge25" class="edge">
+<title>proc~updateconsv&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M330.2,-83.95C300.68,-76.51 259.75,-72.36 235,-96"/>
+</g>
+<!-- proc~updateconsv&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge55" class="edge">
+<title>proc~updateconsv&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M325.43,-107.45C321.11,-110.02 317.15,-113.16 314,-117 259.73,-183.08 329.91,-238.05 278,-306 275.98,-308.64 273.55,-310.97 270.87,-313.02"/>
+<polygon fill="#000000" stroke="#000000" points="268.94,-310.1 262.31,-318.36 272.64,-316.04 268.94,-310.1"/>
+</g>
+<!-- proc~xbcsendrecv -->
+<g id="module~~config~~UsedByGraph_node26" class="node">
+<title>proc~xbcsendrecv</title>
+<g id="a_module~~config~~UsedByGraph_node26"><a xlink:href="../proc/xbcsendrecv.html" xlink:title="XbcSendRecv">
+<polygon fill="#d9534f" stroke="#d9534f" points="409.5,-822 324.5,-822 324.5,-798 409.5,-798 409.5,-822"/>
+<text text-anchor="middle" x="367" y="-807.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">XbcSendRecv</text>
+</a>
+</g>
+</g>
+<!-- proc~xbcsendrecv&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge39" class="edge">
+<title>proc~xbcsendrecv&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M324.19,-809.68C307.73,-809.56 288.96,-809.41 272.9,-809.29"/>
+<polygon fill="#000000" stroke="#000000" points="272.82,-805.79 262.79,-809.21 272.76,-812.79 272.82,-805.79"/>
+</g>
+<!-- proc~ybcsendrecv -->
+<g id="module~~config~~UsedByGraph_node27" class="node">
+<title>proc~ybcsendrecv</title>
+<g id="a_module~~config~~UsedByGraph_node27"><a xlink:href="../proc/ybcsendrecv.html" xlink:title="YbcSendRecv">
+<polygon fill="#d9534f" stroke="#d9534f" points="409.5,-948 324.5,-948 324.5,-924 409.5,-924 409.5,-948"/>
+<text text-anchor="middle" x="367" y="-933.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">YbcSendRecv</text>
+</a>
+</g>
+</g>
+<!-- proc~ybcsendrecv&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge40" class="edge">
+<title>proc~ybcsendrecv&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M326.52,-923.93C321.96,-921.46 317.65,-918.51 314,-915 285.9,-887.97 303.85,-864.19 278,-835 275.34,-832 272.25,-829.24 268.98,-826.73"/>
+<polygon fill="#000000" stroke="#000000" points="270.81,-823.74 260.57,-821.01 266.87,-829.53 270.81,-823.74"/>
+</g>
+<!-- proc~zbcsendrecv -->
+<g id="module~~config~~UsedByGraph_node28" class="node">
+<title>proc~zbcsendrecv</title>
+<g id="a_module~~config~~UsedByGraph_node28"><a xlink:href="../proc/zbcsendrecv.html" xlink:title="ZbcSendRecv">
+<polygon fill="#d9534f" stroke="#d9534f" points="409.5,-906 324.5,-906 324.5,-882 409.5,-882 409.5,-906"/>
+<text text-anchor="middle" x="367" y="-891.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ZbcSendRecv</text>
+</a>
+</g>
+</g>
+<!-- proc~zbcsendrecv&#45;&gt;module~mpimod -->
+<g id="module~~config~~UsedByGraph_edge41" class="edge">
+<title>proc~zbcsendrecv&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M330.27,-881.95C324.61,-879.38 318.99,-876.4 314,-873 294.77,-859.9 296.12,-849.59 278,-835 274.39,-832.09 270.42,-829.27 266.4,-826.62"/>
+<polygon fill="#000000" stroke="#000000" points="267.97,-823.47 257.64,-821.14 264.26,-829.41 267.97,-823.47"/>
+</g>
+<!-- proc~hllc -->
+<g id="module~~config~~UsedByGraph_node29" class="node">
+<title>proc~hllc</title>
+<g id="a_module~~config~~UsedByGraph_node29"><a xlink:href="../proc/hllc.html" xlink:title="HLLC">
+<polygon fill="#d9534f" stroke="#d9534f" points="394,-192 340,-192 340,-168 394,-168 394,-192"/>
+<text text-anchor="middle" x="367" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">HLLC</text>
+</a>
+</g>
+</g>
+<!-- proc~hllc&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge46" class="edge">
+<title>proc~hllc&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M339.87,-185.74C330.66,-188.9 320.9,-193.72 314,-201 280.06,-236.8 310.66,-269.02 278,-306 275.99,-308.28 273.68,-310.33 271.19,-312.18"/>
+<polygon fill="#000000" stroke="#000000" points="268.91,-309.48 262.24,-317.71 272.58,-315.43 268.91,-309.48"/>
+</g>
+<!-- proc~hlld -->
+<g id="module~~config~~UsedByGraph_node30" class="node">
+<title>proc~hlld</title>
+<g id="a_module~~config~~UsedByGraph_node30"><a xlink:href="../proc/hlld.html" xlink:title="HLLD">
+<polygon fill="#d9534f" stroke="#d9534f" points="394,-402 340,-402 340,-378 394,-378 394,-402"/>
+<text text-anchor="middle" x="367" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">HLLD</text>
+</a>
+</g>
+</g>
+<!-- proc~hlld&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge47" class="edge">
+<title>proc~hlld&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M339.85,-380.06C331.51,-376.73 322.29,-372.87 314,-369 297.6,-361.35 279.77,-351.97 265.2,-344.01"/>
+<polygon fill="#000000" stroke="#000000" points="266.6,-340.79 256.15,-339.02 263.22,-346.92 266.6,-340.79"/>
+</g>
+<!-- proc~hlle -->
+<g id="module~~config~~UsedByGraph_node31" class="node">
+<title>proc~hlle</title>
+<g id="a_module~~config~~UsedByGraph_node31"><a xlink:href="../proc/hlle.html" xlink:title="HLLE">
+<polygon fill="#d9534f" stroke="#d9534f" points="394,-360 340,-360 340,-336 394,-336 394,-360"/>
+<text text-anchor="middle" x="367" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">HLLE</text>
+</a>
+</g>
+</g>
+<!-- proc~hlle&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge48" class="edge">
+<title>proc~hlle&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M339.81,-343.8C320.43,-340.69 293.77,-336.42 272.18,-332.96"/>
+<polygon fill="#000000" stroke="#000000" points="272.48,-329.46 262.05,-331.34 271.37,-336.38 272.48,-329.46"/>
+</g>
+<!-- proc~mclimiter -->
+<g id="module~~config~~UsedByGraph_node32" class="node">
+<title>proc~mclimiter</title>
+<g id="a_module~~config~~UsedByGraph_node32"><a xlink:href="../proc/mclimiter.html" xlink:title="MClimiter">
+<polygon fill="#d9534f" stroke="#d9534f" points="399,-318 335,-318 335,-294 399,-294 399,-318"/>
+<text text-anchor="middle" x="367" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">MClimiter</text>
+</a>
+</g>
+</g>
+<!-- proc~mclimiter&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge49" class="edge">
+<title>proc~mclimiter&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M334.95,-310.98C316.14,-313.99 292.03,-317.86 272.2,-321.04"/>
+<polygon fill="#000000" stroke="#000000" points="271.59,-317.59 262.27,-322.63 272.7,-324.5 271.59,-317.59"/>
+</g>
+<!-- proc~minmod -->
+<g id="module~~config~~UsedByGraph_node33" class="node">
+<title>proc~minmod</title>
+<g id="a_module~~config~~UsedByGraph_node33"><a xlink:href="../proc/minmod.html" xlink:title="minmod">
+<polygon fill="#d9534f" stroke="#d9534f" points="395.5,-276 338.5,-276 338.5,-252 395.5,-252 395.5,-276"/>
+<text text-anchor="middle" x="367" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">minmod</text>
+</a>
+</g>
+</g>
+<!-- proc~minmod&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge50" class="edge">
+<title>proc~minmod&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M338.42,-274.28C330.44,-277.48 321.78,-281.18 314,-285 297.37,-293.16 294.33,-297.26 278,-306 275.3,-307.44 272.49,-308.9 269.66,-310.35"/>
+<polygon fill="#000000" stroke="#000000" points="268,-307.27 260.62,-314.87 271.13,-313.53 268,-307.27"/>
+</g>
+<!-- proc~vanleer -->
+<g id="module~~config~~UsedByGraph_node34" class="node">
+<title>proc~vanleer</title>
+<g id="a_module~~config~~UsedByGraph_node34"><a xlink:href="../proc/vanleer.html" xlink:title="vanLeer">
+<polygon fill="#d9534f" stroke="#d9534f" points="395,-234 339,-234 339,-210 395,-210 395,-234"/>
+<text text-anchor="middle" x="367" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vanLeer</text>
+</a>
+</g>
+</g>
+<!-- proc~vanleer&#45;&gt;module~fluxmod -->
+<g id="module~~config~~UsedByGraph_edge56" class="edge">
+<title>proc~vanleer&#45;&gt;module~fluxmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M338.97,-229.05C330.3,-232.27 321.11,-236.79 314,-243 289.71,-264.21 301.53,-283.95 278,-306 275.77,-308.09 273.29,-310.02 270.68,-311.78"/>
+<polygon fill="#000000" stroke="#000000" points="268.89,-308.77 262.05,-316.86 272.44,-314.8 268.89,-308.77"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsedByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsedByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+      <br>
+
+
+        <section>
+          <h2>Variables</h2>
+            <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-asciiout"></span>
+              logical,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>asciiout</strong></td>
+<td> =</td>
+                <td>.true.</td>
+            <td>
+                <p>Control DATA-IO
+Ascii-files are additionaly damped.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-benchmarkmode"></span>
+              logical,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>benchmarkmode</strong></td>
+<td> =</td>
+                <td>.false.</td>
+            <td>
+                <p>If true, only initial and final outputs are damped. </p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-boundary_xin"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>boundary_xin</strong></td>
+<td> =</td>
+                <td>periodicb</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-boundary_xout"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>boundary_xout</strong></td>
+<td> =</td>
+                <td>periodicb</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-boundary_yin"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>boundary_yin</strong></td>
+<td> =</td>
+                <td>reflection</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-boundary_yout"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>boundary_yout</strong></td>
+<td> =</td>
+                <td>reflection</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-boundary_zin"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>boundary_zin</strong></td>
+<td> =</td>
+                <td>periodicb</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-boundary_zout"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>boundary_zout</strong></td>
+<td> =</td>
+                <td>periodicb</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dtout"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>dtout</strong></td>
+<td> =</td>
+                <td>timemax/100</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ncomp"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>ncomp</strong></td>
+<td> =</td>
+                <td>1</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ngridtotal1"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>ngridtotal1</strong></td>
+<td> =</td>
+                <td>300</td>
+            <td>
+                <p>Control resolution</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ngridtotal2"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>ngridtotal2</strong></td>
+<td> =</td>
+                <td>300</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ngridtotal3"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>ngridtotal3</strong></td>
+<td> =</td>
+                <td>10</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nhydis"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nhydis</strong></td>
+<td> =</td>
+                <td>nhymax/100</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nhymax"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>nhymax</strong></td>
+<td> =</td>
+                <td>600000</td>
+            <td>
+                <p>Control step</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ntiles"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>ntiles</strong>(3)</td>
+<td> =</td>
+                <td>[1, 1, 1]</td>
+            <td>
+                <p>Control MPI decomposion</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-outflow"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>outflow</strong></td>
+<td> =</td>
+                <td>3</td>
+            <td>
+                <p>Control bounday condition</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-periodic"></span>
+              logical,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>periodic</strong>(3)</td>
+<td> =</td>
+                <td>[.true., .false., .true.]</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-periodicb"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>periodicb</strong></td>
+<td> =</td>
+                <td>1</td>
+            <td>
+                <p>Control bounday condition</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-reflection"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>reflection</strong></td>
+<td> =</td>
+                <td>2</td>
+            <td>
+                <p>Control bounday condition</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-timemax"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>timemax</strong></td>
+<td> =</td>
+                <td>3.0d0</td>
+            <td>
+                <p>Control timescale</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x1max"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>x1max</strong></td>
+<td> =</td>
+                <td>0.5d0</td>
+            <td>
+                <p>Control computational region</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x1min"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>x1min</strong></td>
+<td> =</td>
+                <td>-0.5d0</td>
+            <td>
+                <p>Control computational region</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x2max"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>x2max</strong></td>
+<td> =</td>
+                <td>1.0d0</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x2min"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>x2min</strong></td>
+<td> =</td>
+                <td>-1.0d0</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x3max"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>x3max</strong></td>
+<td> =</td>
+                <td>0.5d0</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x3min"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>x3min</strong></td>
+<td> =</td>
+                <td>-0.5d0</td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+        </section>
+        <br>
+
+
+
+
+
+
+
+
+
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              MHDTurbulence
+ was developed by Tomoya Takiwaki<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

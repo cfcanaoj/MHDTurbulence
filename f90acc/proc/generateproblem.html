@@ -1,0 +1,710 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="High-performance 3D MHD solver (MPI + OpenACC) for large-scale turbulence simulations.">
+    <meta name="author" content="Tomoya Takiwaki" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>GenerateProblem &ndash; MHDTurbulence</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+      <link href="../css/user.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">MHDTurbulence </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/main.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>GenerateProblem
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 4.5% of total for procedures.">75 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/main.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/main.f90.html'>main.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">GenerateProblem</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/generateproblem.html#src">GenerateProblem</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2> subroutine GenerateProblem()  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/basicmod.html'>basicmod</a></li>
+                  <li class="list-inline-item"><a href='../module/mpimod.html'>mpimod</a></li>
+                  <li class="list-inline-item"><a href='../module/boundarymod.html'>boundarymod</a></li>
+                  <li class="list-inline-item"><a href='../module/eosmod.html'>eosmod</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~generateproblem~~UsesGraph Pages: 1 -->
+<svg id="procgenerateproblemUsesGraph" width="428pt" height="156pt"
+ viewBox="0.00 0.00 428.00 156.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~generateproblem~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 152)">
+<title>proc~~generateproblem~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-152 424,-152 424,4 -4,4"/>
+<!-- proc~generateproblem -->
+<g id="proc~~generateproblem~~UsesGraph_node1" class="node">
+<title>proc~generateproblem</title>
+<polygon fill="none" stroke="black" points="420,-87 314,-87 314,-63 420,-63 420,-87"/>
+<text text-anchor="middle" x="367" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50">GenerateProblem</text>
+</g>
+<!-- module~basicmod -->
+<g id="proc~~generateproblem~~UsesGraph_node2" class="node">
+<title>module~basicmod</title>
+<g id="a_proc~~generateproblem~~UsesGraph_node2"><a xlink:href="../module/basicmod.html" xlink:title="basicmod">
+<polygon fill="#337ab7" stroke="#337ab7" points="154,-148 90,-148 90,-124 154,-124 154,-148"/>
+<text text-anchor="middle" x="122" y="-133.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basicmod</text>
+</a>
+</g>
+</g>
+<!-- proc~generateproblem&#45;&gt;module~basicmod -->
+<g id="proc~~generateproblem~~UsesGraph_edge1" class="edge">
+<title>proc~generateproblem&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M345.42,-87.18C328.05,-96.87 302.22,-109.94 278,-117 240.47,-127.94 196.04,-132.58 164.39,-134.55"/>
+<polygon fill="#000000" stroke="#000000" points="163.97,-131.07 154.18,-135.12 164.36,-138.06 163.97,-131.07"/>
+</g>
+<!-- module~boundarymod -->
+<g id="proc~~generateproblem~~UsesGraph_node3" class="node">
+<title>module~boundarymod</title>
+<g id="a_proc~~generateproblem~~UsesGraph_node3"><a xlink:href="../module/boundarymod.html" xlink:title="boundarymod">
+<polygon fill="#337ab7" stroke="#337ab7" points="278,-108 190,-108 190,-84 278,-84 278,-108"/>
+<text text-anchor="middle" x="234" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">boundarymod</text>
+</a>
+</g>
+</g>
+<!-- proc~generateproblem&#45;&gt;module~boundarymod -->
+<g id="proc~~generateproblem~~UsesGraph_edge2" class="edge">
+<title>proc~generateproblem&#45;&gt;module~boundarymod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M313.85,-83.36C305.43,-84.71 296.7,-86.11 288.25,-87.46"/>
+<polygon fill="#000000" stroke="#000000" points="287.45,-84.05 278.13,-89.09 288.56,-90.96 287.45,-84.05"/>
+</g>
+<!-- module~eosmod -->
+<g id="proc~~generateproblem~~UsesGraph_node4" class="node">
+<title>module~eosmod</title>
+<g id="a_proc~~generateproblem~~UsesGraph_node4"><a xlink:href="../module/eosmod.html" xlink:title="eosmod">
+<polygon fill="#337ab7" stroke="#337ab7" points="261.5,-66 206.5,-66 206.5,-42 261.5,-42 261.5,-66"/>
+<text text-anchor="middle" x="234" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">eosmod</text>
+</a>
+</g>
+</g>
+<!-- proc~generateproblem&#45;&gt;module~eosmod -->
+<g id="proc~~generateproblem~~UsesGraph_edge3" class="edge">
+<title>proc~generateproblem&#45;&gt;module~eosmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M313.85,-66.64C299.77,-64.38 284.84,-61.99 271.8,-59.9"/>
+<polygon fill="#000000" stroke="#000000" points="272.23,-56.42 261.8,-58.3 271.12,-63.33 272.23,-56.42"/>
+</g>
+<!-- module~mpimod -->
+<g id="proc~~generateproblem~~UsesGraph_node5" class="node">
+<title>module~mpimod</title>
+<g id="a_proc~~generateproblem~~UsesGraph_node5"><a xlink:href="../module/mpimod.html" xlink:title="mpimod">
+<polygon fill="#337ab7" stroke="#337ab7" points="262.5,-24 205.5,-24 205.5,0 262.5,0 262.5,-24"/>
+<text text-anchor="middle" x="234" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mpimod</text>
+</a>
+</g>
+</g>
+<!-- proc~generateproblem&#45;&gt;module~mpimod -->
+<g id="proc~~generateproblem~~UsesGraph_edge4" class="edge">
+<title>proc~generateproblem&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M340.74,-62.85C320.44,-53.09 291.73,-39.28 269.34,-28.52"/>
+<polygon fill="#000000" stroke="#000000" points="270.71,-25.29 260.18,-24.11 267.68,-31.6 270.71,-25.29"/>
+</g>
+<!-- module~config -->
+<g id="proc~~generateproblem~~UsesGraph_node6" class="node">
+<title>module~config</title>
+<g id="a_proc~~generateproblem~~UsesGraph_node6"><a xlink:href="../module/config.html" xlink:title="config">
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-128 0,-128 0,-104 54,-104 54,-128"/>
+<text text-anchor="middle" x="27" y="-113.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">config</text>
+</a>
+</g>
+</g>
+<!-- module~basicmod&#45;&gt;module~config -->
+<g id="proc~~generateproblem~~UsesGraph_edge5" class="edge">
+<title>module~basicmod&#45;&gt;module~config</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M89.77,-129.28C81.52,-127.51 72.54,-125.58 64.06,-123.75"/>
+<polygon fill="#000000" stroke="#000000" points="64.54,-120.28 54.03,-121.6 63.07,-127.12 64.54,-120.28"/>
+</g>
+<!-- module~boundarymod&#45;&gt;module~basicmod -->
+<g id="proc~~generateproblem~~UsesGraph_edge6" class="edge">
+<title>module~boundarymod&#45;&gt;module~basicmod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M200,-108C188.63,-112.14 175.75,-116.82 163.83,-121.15"/>
+<polygon fill="#000000" stroke="#000000" points="162.3,-117.99 154.1,-124.69 164.69,-124.56 162.3,-117.99"/>
+</g>
+<!-- module~boundarymod&#45;&gt;module~config -->
+<g id="proc~~generateproblem~~UsesGraph_edge7" class="edge">
+<title>module~boundarymod&#45;&gt;module~config</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M189.9,-90.48C169.27,-89.22 144.45,-89.76 123,-96"/>
+</g>
+<!-- module~mpimod&#45;&gt;module~config -->
+<g id="proc~~generateproblem~~UsesGraph_edge8" class="edge">
+<title>module~mpimod&#45;&gt;module~config</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M205.46,-23.91C200.17,-26.63 194.79,-29.69 190,-33 156.37,-56.23 162.25,-84.58 123,-96"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M121,-96C102.62,-101.35 81.81,-105.96 64.54,-109.39"/>
+<polygon fill="#000000" stroke="#000000" points="63.46,-106.04 54.31,-111.38 64.79,-112.91 63.46,-106.04"/>
+</g>
+<!-- mpi -->
+<g id="proc~~generateproblem~~UsesGraph_node7" class="node">
+<title>mpi</title>
+<g id="a_proc~~generateproblem~~UsesGraph_node7"><a xlink:href="http://www.mpi-forum.org/docs/mpi-3.1/mpi31-report/node410.htm" xlink:title="mpi">
+<polygon fill="#337ab7" stroke="#337ab7" points="149,-24 95,-24 95,0 149,0 149,-24"/>
+<text text-anchor="middle" x="122" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mpi</text>
+</a>
+</g>
+</g>
+<!-- module~mpimod&#45;&gt;mpi -->
+<g id="proc~~generateproblem~~UsesGraph_edge9" class="edge">
+<title>module~mpimod&#45;&gt;mpi</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M205.24,-12C191.41,-12 174.51,-12 159.64,-12"/>
+<polygon fill="#000000" stroke="#000000" points="159.23,-8.5 149.23,-12 159.23,-15.5 159.23,-8.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
+    <h3>Arguments</h3>
+    <em>None</em>
+    <br>
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~generateproblem~~CallsGraph Pages: 1 -->
+<svg id="procgenerateproblemCallsGraph" width="374pt" height="158pt"
+ viewBox="0.00 0.00 374.00 158.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~generateproblem~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 154)">
+<title>proc~~generateproblem~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-154 370,-154 370,4 -4,4"/>
+<!-- proc~generateproblem -->
+<g id="proc~~generateproblem~~CallsGraph_node1" class="node">
+<title>proc~generateproblem</title>
+<polygon fill="none" stroke="black" points="106,-108 0,-108 0,-84 106,-84 106,-108"/>
+<text text-anchor="middle" x="53" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50">GenerateProblem</text>
+</g>
+<!-- dexp -->
+<g id="proc~~generateproblem~~CallsGraph_node2" class="node">
+<title>dexp</title>
+<polygon fill="#777777" stroke="#777777" points="226.5,-150 172.5,-150 172.5,-126 226.5,-126 226.5,-150"/>
+<text text-anchor="middle" x="199.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">dexp</text>
+</g>
+<!-- proc~generateproblem&#45;&gt;dexp -->
+<g id="proc~~generateproblem~~CallsGraph_edge1" class="edge">
+<title>proc~generateproblem&#45;&gt;dexp</title>
+<path fill="none" stroke="#000000" d="M95.41,-108.04C116.53,-114.17 141.97,-121.57 162.3,-127.48"/>
+<polygon fill="#000000" stroke="#000000" points="161.54,-130.9 172.12,-130.33 163.49,-124.18 161.54,-130.9"/>
+</g>
+<!-- dtanh -->
+<g id="proc~~generateproblem~~CallsGraph_node3" class="node">
+<title>dtanh</title>
+<polygon fill="#777777" stroke="#777777" points="226.5,-108 172.5,-108 172.5,-84 226.5,-84 226.5,-108"/>
+<text text-anchor="middle" x="199.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">dtanh</text>
+</g>
+<!-- proc~generateproblem&#45;&gt;dtanh -->
+<g id="proc~~generateproblem~~CallsGraph_edge2" class="edge">
+<title>proc~generateproblem&#45;&gt;dtanh</title>
+<path fill="none" stroke="#000000" d="M106.17,-96C124.78,-96 145.32,-96 162.29,-96"/>
+<polygon fill="#000000" stroke="#000000" points="162.35,-99.5 172.35,-96 162.35,-92.5 162.35,-99.5"/>
+</g>
+<!-- proc~boundarycondition -->
+<g id="proc~~generateproblem~~CallsGraph_node4" class="node">
+<title>proc~boundarycondition</title>
+<g id="a_proc~~generateproblem~~CallsGraph_node4"><a xlink:href="../proc/boundarycondition.html" xlink:title="BoundaryCondition">
+<polygon fill="#d9534f" stroke="#d9534f" points="257,-66 142,-66 142,-42 257,-42 257,-66"/>
+<text text-anchor="middle" x="199.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">BoundaryCondition</text>
+</a>
+</g>
+</g>
+<!-- proc~generateproblem&#45;&gt;proc~boundarycondition -->
+<g id="proc~~generateproblem~~CallsGraph_edge3" class="edge">
+<title>proc~generateproblem&#45;&gt;proc~boundarycondition</title>
+<path fill="none" stroke="#000000" d="M95.41,-83.96C111.58,-79.26 130.29,-73.82 147.3,-68.88"/>
+<polygon fill="#000000" stroke="#000000" points="148.46,-72.19 157.09,-66.04 146.51,-65.47 148.46,-72.19"/>
+</g>
+<!-- mpi_irecv -->
+<g id="proc~~generateproblem~~CallsGraph_node5" class="node">
+<title>mpi_irecv</title>
+<polygon fill="#777777" stroke="#777777" points="361.5,-108 297.5,-108 297.5,-84 361.5,-84 361.5,-108"/>
+<text text-anchor="middle" x="329.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mpi_irecv</text>
+</g>
+<!-- proc~boundarycondition&#45;&gt;mpi_irecv -->
+<g id="proc~~generateproblem~~CallsGraph_edge4" class="edge">
+<title>proc~boundarycondition&#45;&gt;mpi_irecv</title>
+<path fill="none" stroke="#000000" d="M237.18,-66.04C252.96,-71.21 271.48,-77.29 287.69,-82.61"/>
+<polygon fill="#000000" stroke="#000000" points="286.85,-86.02 297.45,-85.81 289.04,-79.37 286.85,-86.02"/>
+</g>
+<!-- mpi_isend -->
+<g id="proc~~generateproblem~~CallsGraph_node6" class="node">
+<title>mpi_isend</title>
+<polygon fill="#777777" stroke="#777777" points="363,-66 296,-66 296,-42 363,-42 363,-66"/>
+<text text-anchor="middle" x="329.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mpi_isend</text>
+</g>
+<!-- proc~boundarycondition&#45;&gt;mpi_isend -->
+<g id="proc~~generateproblem~~CallsGraph_edge5" class="edge">
+<title>proc~boundarycondition&#45;&gt;mpi_isend</title>
+<path fill="none" stroke="#000000" d="M257.02,-54C266.65,-54 276.51,-54 285.72,-54"/>
+<polygon fill="#000000" stroke="#000000" points="285.78,-57.5 295.78,-54 285.78,-50.5 285.78,-57.5"/>
+</g>
+<!-- mpi_waitall -->
+<g id="proc~~generateproblem~~CallsGraph_node7" class="node">
+<title>mpi_waitall</title>
+<polygon fill="#777777" stroke="#777777" points="366,-24 293,-24 293,0 366,0 366,-24"/>
+<text text-anchor="middle" x="329.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mpi_waitall</text>
+</g>
+<!-- proc~boundarycondition&#45;&gt;mpi_waitall -->
+<g id="proc~~generateproblem~~CallsGraph_edge6" class="edge">
+<title>proc~boundarycondition&#45;&gt;mpi_waitall</title>
+<path fill="none" stroke="#000000" d="M237.18,-41.96C251.48,-37.27 268.02,-31.84 283.07,-26.91"/>
+<polygon fill="#000000" stroke="#000000" points="284.29,-30.19 292.7,-23.75 282.11,-23.54 284.29,-30.19"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="k">subroutine </span><span class="n">GenerateProblem</span>
+<span class="w">  </span><span class="k">use </span><span class="n">basicmod</span>
+<span class="w">  </span><span class="k">use </span><span class="n">eosmod</span>
+<span class="w">  </span><span class="k">use </span><span class="n">mpimod</span>
+<span class="w">  </span><span class="k">use </span><span class="n">boundarymod</span>
+<span class="w">  </span><span class="k">implicit none</span>
+<span class="k">  </span><span class="kt">integer</span><span class="kd">::</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span>
+
+<span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="kd">::</span><span class="w"> </span><span class="n">pi</span>
+<span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="kd">::</span><span class="w"> </span><span class="n">den</span><span class="p">,</span><span class="w"> </span><span class="n">B0</span><span class="p">,</span><span class="w"> </span><span class="n">rho1</span><span class="p">,</span><span class="w"> </span><span class="n">rho2</span><span class="p">,</span><span class="w"> </span><span class="n">dv</span><span class="p">,</span><span class="w"> </span><span class="n">wid</span><span class="p">,</span><span class="w"> </span><span class="n">sig</span>
+<span class="w"> </span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">,</span><span class="k">dimension</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">seed</span>
+<span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span><span class="k">dimension</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rnum</span>
+<span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rrv</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0d-2</span>
+<span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="kd">::</span><span class="w"> </span><span class="n">dv_harm</span>
+<span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="kd">::</span><span class="w"> </span><span class="n">kwn</span><span class="w"> </span><span class="c">!! wave number</span>
+<span class="w">  </span>
+<span class="w">  </span><span class="n">pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">acos</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0d0</span><span class="p">)</span>
+<span class="w">  </span>
+<span class="w">  </span><span class="n">rho1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0d0</span>
+<span class="w">  </span><span class="n">rho2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0d0</span>
+<span class="w">  </span><span class="n">dv</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mf">2.00d0</span>
+<span class="w">  </span><span class="n">wid</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mf">0.05d0</span>
+<span class="w">  </span><span class="n">sig</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mf">0.2d0</span>
+<span class="w">  </span><span class="n">B0</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="nb">dsqrt</span><span class="p">(</span><span class="mf">2.0d0</span><span class="o">/</span><span class="mf">3.0d0</span><span class="p">)</span><span class="o">*</span><span class="mf">0.0d0</span>
+<span class="w">  </span><span class="n">kwn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.0d0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pi</span><span class="w"> </span><span class="o">/</span><span class="p">(</span><span class="n">x1max</span><span class="o">-</span><span class="n">x1min</span><span class="p">)</span><span class="w"> </span><span class="c">! 1/L</span>
+
+<span class="w">  </span><span class="k">do </span><span class="n">k</span><span class="o">=</span><span class="n">ks</span><span class="o">-</span><span class="n">mgn</span><span class="p">,</span><span class="n">ke</span><span class="o">+</span><span class="n">mgn</span>
+<span class="w">  </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="n">js</span><span class="o">-</span><span class="n">mgn</span><span class="p">,</span><span class="n">je</span><span class="o">+</span><span class="n">mgn</span>
+<span class="w">  </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="k">is</span><span class="o">-</span><span class="n">mgn</span><span class="p">,</span><span class="n">ie</span><span class="o">+</span><span class="n">mgn</span>
+<span class="w">     </span><span class="n">d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0d0</span>
+<span class="w">     </span><span class="n">p</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0d0</span>
+<span class="w">     </span><span class="n">v1</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5d0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dv</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="w"> </span><span class="nb">dtanh</span><span class="p">(</span><span class="w"> </span><span class="p">(</span><span class="n">x2b</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">+</span><span class="mf">0.5d0</span><span class="p">)</span><span class="o">/</span><span class="n">wid</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">dtanh</span><span class="p">(</span><span class="w"> </span><span class="p">(</span><span class="n">x2b</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5d0</span><span class="p">)</span><span class="o">/</span><span class="n">wid</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1.0d0</span><span class="w"> </span><span class="p">)</span>
+<span class="w">     </span><span class="n">v2</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">0.01d0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">sin</span><span class="p">(</span><span class="n">kwn</span><span class="o">*</span><span class="n">x1b</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="o">*</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">    </span><span class="p">&amp;</span><span class="w">         </span><span class="p">(</span><span class="w"> </span><span class="nb">dexp</span><span class="p">(</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">x2b</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5d0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">sig</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">  </span><span class="p">&amp;</span>
+<span class="w">    </span><span class="p">&amp;</span><span class="w">           </span><span class="nb">dexp</span><span class="p">(</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">x2b</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5d0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">sig</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">     </span><span class="n">v3</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0d0</span>
+<span class="w">     </span><span class="n">b1</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">B0</span>
+<span class="w">     </span><span class="n">b2</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0d0</span>
+<span class="w">     </span><span class="n">b3</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0d0</span>
+<span class="w">     </span><span class="n">bp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0d0</span>
+<span class="w">     </span><span class="n">Xcomp</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mf">0.5d0</span><span class="o">*</span><span class="p">(</span><span class="w"> </span><span class="nb">dtanh</span><span class="p">(</span><span class="w"> </span><span class="p">(</span><span class="n">x2b</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">+</span><span class="mf">0.5d0</span><span class="p">)</span><span class="o">/</span><span class="n">wid</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">tanh</span><span class="p">(</span><span class="w"> </span><span class="p">(</span><span class="n">x2b</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">-</span><span class="mf">0.5d0</span><span class="p">)</span><span class="o">/</span><span class="n">wid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">  </span><span class="k">enddo</span>
+<span class="k">  enddo</span>
+<span class="k">  enddo</span>
+
+<span class="k">  do </span><span class="n">k</span><span class="o">=</span><span class="n">ks</span><span class="o">-</span><span class="n">mgn</span><span class="p">,</span><span class="n">ke</span><span class="o">+</span><span class="n">mgn</span>
+<span class="w">  </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="n">js</span><span class="o">-</span><span class="n">mgn</span><span class="p">,</span><span class="n">je</span><span class="o">+</span><span class="n">mgn</span>
+<span class="w">  </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="k">is</span><span class="o">-</span><span class="n">mgn</span><span class="p">,</span><span class="n">ie</span><span class="o">+</span><span class="n">mgn</span>
+<span class="w">     </span><span class="n">gp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0d0</span>
+<span class="w">  </span><span class="k">enddo</span>
+<span class="k">  enddo</span>
+<span class="k">  enddo</span>
+
+
+<span class="k">  if</span><span class="p">(</span><span class="n">myid_w</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">write</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">rrv</span><span class="o">*</span><span class="mi">10</span><span class="mf">0.0d0</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">       </span><span class="p">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;% of Randam Perturbation imposed on velocity&quot;</span>
+<span class="w">  </span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="n">seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">myid_w</span><span class="o">*</span><span class="n">in</span><span class="o">*</span><span class="n">jn</span><span class="o">*</span><span class="n">kn</span>
+<span class="w">  </span><span class="k">call </span><span class="nb">random_seed</span><span class="p">(</span><span class="n">PUT</span><span class="o">=</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">  </span>
+<span class="c">! pert     </span>
+<span class="w">  </span><span class="k">do </span><span class="n">k</span><span class="o">=</span><span class="n">ks</span><span class="p">,</span><span class="n">ke</span><span class="w"> </span>
+<span class="w">  </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="n">js</span><span class="p">,</span><span class="n">je</span>
+<span class="w">     </span><span class="k">call </span><span class="nb">random_number</span><span class="p">(</span><span class="n">rnum</span><span class="p">)</span>
+<span class="w">  </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="k">is</span><span class="p">,</span><span class="n">ie</span>
+<span class="w">          </span><span class="n">v1</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">=</span><span class="w"> </span><span class="n">v1</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dv</span><span class="o">*</span><span class="n">rrv</span><span class="o">*</span><span class="p">(</span><span class="n">rnum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mf">0.5d0</span><span class="p">)</span><span class="w"> </span>
+<span class="w">  </span><span class="k">enddo</span>
+<span class="k">  enddo</span>
+<span class="k">  enddo</span>
+
+<span class="w">  </span><span class="c">! pert     </span>
+<span class="w">  </span><span class="k">do </span><span class="n">k</span><span class="o">=</span><span class="n">ks</span><span class="p">,</span><span class="n">ke</span><span class="w"> </span>
+<span class="w">  </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="n">js</span><span class="p">,</span><span class="n">je</span>
+<span class="w">     </span><span class="c">!dv_harm = dv * rrv * cos(6*2*pi*(x2b(j)-x2min)/(x2max-x2min)) &amp;</span>
+<span class="w">     </span><span class="c">!                &amp;  * cos(6*2*pi*(x3b(k)-x3min)/(x3max-x3min))</span>
+<span class="w">     </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="k">is</span><span class="p">,</span><span class="n">ie</span>
+<span class="w">     </span><span class="c">!   v1(i,j,k)= v1(i,j,k) + dv_harm</span>
+<span class="w">     </span><span class="k">enddo</span>
+<span class="k">  enddo</span>
+<span class="k">  enddo</span>
+
+<span class="k">  do </span><span class="n">k</span><span class="o">=</span><span class="n">ks</span><span class="p">,</span><span class="n">ke</span>
+<span class="w">  </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="n">js</span><span class="p">,</span><span class="n">je</span>
+<span class="w">  </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="k">is</span><span class="p">,</span><span class="n">ie</span>
+<span class="c">! adiabatic</span>
+<span class="w">     </span><span class="n">ei</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">gam</span><span class="o">-</span><span class="mf">1.0d0</span><span class="p">)</span>
+<span class="w">     </span><span class="n">cs</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">sqrt</span><span class="p">(</span><span class="n">gam</span><span class="o">*</span><span class="n">p</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="n">d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+<span class="c">! isotermal</span>
+<span class="c">!          ei(i,j,k) = p(i,j,k)</span>
+<span class="c">!          cs(i,j,k) = csiso</span>
+<span class="w">  </span><span class="k">enddo</span>
+<span class="k">  enddo</span>
+<span class="k">  enddo</span>
+<span class="k">      </span>
+<span class="k">  if</span><span class="p">(</span><span class="n">myid_w</span><span class="w"> </span><span class="o">==</span><span class="mi">0</span><span class="w"> </span><span class="p">)</span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;initial profile is set&quot;</span>
+<span class="w">  </span><span class="k">call </span><span class="n">BoundaryCondition</span>
+
+<span class="c">!$acc update device (d,v1,v2,v3)</span>
+<span class="c">!$acc update device (p,ei,cs)</span>
+<span class="c">!$acc update device (b1,b2,b3,bp)</span>
+<span class="c">!$acc update device (gp)</span>
+<span class="c">!$acc update device (Xcomp)</span>
+<span class="w">      </span>
+<span class="w">  </span><span class="k">return</span>
+<span class="k">end subroutine </span><span class="n">GenerateProblem</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              MHDTurbulence
+ was developed by Tomoya Takiwaki<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

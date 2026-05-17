@@ -1,0 +1,1210 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="High-performance 3D MHD solver (MPI + OpenMP) for large-scale turbulence simulations.">
+    <meta name="author" content="Tomoya Takiwaki" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>mpimod &ndash; MHDTurbulence</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+      <link href="../css/user.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">MHDTurbulence </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/main.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>mpimod
+      <small>Module</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 8.9% of total for modules and submodules.">82 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/mpiroutines.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/mpiroutines.f90.html'>mpiroutines.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">mpimod</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/mpimod.html#variable-bufinpmax">bufinpmax</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-bufinpmin">bufinpmin</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-bufoutmax">bufoutmax</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-bufoutmin">bufoutmin</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-comm3d">comm3d</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-coords">coords</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-ierr">ierr</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-mpi_comm_hyd">mpi_comm_hyd</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-mreq">mreq</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-myid">myid</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-myid_hyd">myid_hyd</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-myid_w">myid_w</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-n1m">n1m</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-n1p">n1p</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-n2m">n2m</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-n2p">n2p</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-n3m">n3m</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-n3p">n3p</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-nprocs">nprocs</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-nprocs_hyd">nprocs_hyd</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-nprocs_w">nprocs_w</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-nreq">nreq</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-nsub">nsub</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-reorder">reorder</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-req">req</a>
+            <a class="list-group-item" href="../module/mpimod.html#variable-stat">stat</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#subs-0"
+         aria-expanded="false" aria-controls="subs-0">
+         <h4 class="card-header bg-primary text-white">Subroutines</h4>
+      </a>
+      <div id="subs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/mpimod.html#proc-finalizempi">FinalizeMPI</a>
+            <a class="list-group-item" href="../module/mpimod.html#proc-getmpisum">GetMPIsum</a>
+            <a class="list-group-item" href="../module/mpimod.html#proc-initializempi">InitializeMPI</a>
+            <a class="list-group-item" href="../module/mpimod.html#proc-mpimaxfind">MPImaxfind</a>
+            <a class="list-group-item" href="../module/mpimod.html#proc-mpiminfind">MPIminfind</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+
+    <div class="col-md-9" id='text'>
+      
+<br>          <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='http://www.mpi-forum.org/docs/mpi-3.1/mpi31-report/node410.htm'>mpi</a></li>
+                  <li class="list-inline-item"><a href='config.html'>config</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~mpimod~~UsesGraph Pages: 1 -->
+<svg id="modulempimodUsesGraph" width="155pt" height="74pt"
+ viewBox="0.00 0.00 155.00 74.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~mpimod~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 70)">
+<title>module~~mpimod~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-70 151,-70 151,4 -4,4"/>
+<!-- module~mpimod -->
+<g id="module~~mpimod~~UsesGraph_node1" class="node">
+<title>module~mpimod</title>
+<polygon fill="none" stroke="black" points="147,-45 90,-45 90,-21 147,-21 147,-45"/>
+<text text-anchor="middle" x="118.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">mpimod</text>
+</g>
+<!-- module~config -->
+<g id="module~~mpimod~~UsesGraph_node2" class="node">
+<title>module~config</title>
+<g id="a_module~~mpimod~~UsesGraph_node2"><a xlink:href="../module/config.html" xlink:title="config">
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-66 0,-66 0,-42 54,-42 54,-66"/>
+<text text-anchor="middle" x="27" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">config</text>
+</a>
+</g>
+</g>
+<!-- module~mpimod&#45;&gt;module~config -->
+<g id="module~~mpimod~~UsesGraph_edge1" class="edge">
+<title>module~mpimod&#45;&gt;module~config</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M89.67,-39.53C81.56,-41.43 72.57,-43.54 64.03,-45.55"/>
+<polygon fill="#000000" stroke="#000000" points="63.22,-42.14 54.28,-47.83 64.82,-48.96 63.22,-42.14"/>
+</g>
+<!-- mpi -->
+<g id="module~~mpimod~~UsesGraph_node3" class="node">
+<title>mpi</title>
+<g id="a_module~~mpimod~~UsesGraph_node3"><a xlink:href="http://www.mpi-forum.org/docs/mpi-3.1/mpi31-report/node410.htm" xlink:title="mpi">
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">mpi</text>
+</a>
+</g>
+</g>
+<!-- module~mpimod&#45;&gt;mpi -->
+<g id="module~~mpimod~~UsesGraph_edge2" class="edge">
+<title>module~mpimod&#45;&gt;mpi</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M89.67,-26.47C81.56,-24.57 72.57,-22.46 64.03,-20.45"/>
+<polygon fill="#000000" stroke="#000000" points="64.82,-17.04 54.28,-18.17 63.22,-23.86 64.82,-17.04"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+          <div class="card">
+      <h3 class="card-header card-title bg-light">Used by</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: module~~mpimod~~UsedByGraph Pages: 1 -->
+<svg id="modulempimodUsedByGraph" width="207pt" height="410pt"
+ viewBox="0.00 0.00 207.00 410.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="module~~mpimod~~UsedByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 406)">
+<title>module~~mpimod~~UsedByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-406 203,-406 203,4 -4,4"/>
+<!-- module~mpimod -->
+<g id="module~~mpimod~~UsedByGraph_node1" class="node">
+<title>module~mpimod</title>
+<polygon fill="none" stroke="black" points="57,-213 0,-213 0,-189 57,-189 57,-213"/>
+<text text-anchor="middle" x="28.5" y="-198.6" font-family="Helvetica,sans-Serif" font-size="10.50">mpimod</text>
+</g>
+<!-- proc~asc_write -->
+<g id="module~~mpimod~~UsedByGraph_node2" class="node">
+<title>proc~asc_write</title>
+<g id="a_module~~mpimod~~UsedByGraph_node2"><a xlink:href="../proc/asc_write.html" xlink:title="ASC_WRITE">
+<polygon fill="#d9534f" stroke="#d9534f" points="183,-402 109,-402 109,-378 183,-378 183,-402"/>
+<text text-anchor="middle" x="146" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ASC_WRITE</text>
+</a>
+</g>
+</g>
+<!-- proc~asc_write&#45;&gt;module~mpimod -->
+<g id="module~~mpimod~~UsedByGraph_edge1" class="edge">
+<title>proc~asc_write&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M108.74,-379.93C102.95,-377.11 97.42,-373.52 93,-369 52.87,-327.96 37.62,-259.08 32.22,-223.61"/>
+<polygon fill="#000000" stroke="#000000" points="35.64,-222.77 30.79,-213.35 28.7,-223.74 35.64,-222.77"/>
+</g>
+<!-- proc~evaulatech -->
+<g id="module~~mpimod~~UsedByGraph_node3" class="node">
+<title>proc~evaulatech</title>
+<g id="a_module~~mpimod~~UsedByGraph_node3"><a xlink:href="../proc/evaulatech.html" xlink:title="EvaulateCh">
+<polygon fill="#d9534f" stroke="#d9534f" points="182.5,-360 109.5,-360 109.5,-336 182.5,-336 182.5,-360"/>
+<text text-anchor="middle" x="146" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">EvaulateCh</text>
+</a>
+</g>
+</g>
+<!-- proc~evaulatech&#45;&gt;module~mpimod -->
+<g id="module~~mpimod~~UsedByGraph_edge2" class="edge">
+<title>proc~evaulatech&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M109.4,-337.66C103.47,-334.85 97.73,-331.35 93,-327 61.81,-298.3 43.77,-250.83 35.36,-223.08"/>
+<polygon fill="#000000" stroke="#000000" points="38.63,-221.81 32.51,-213.16 31.91,-223.74 38.63,-221.81"/>
+</g>
+<!-- proc~generategrid -->
+<g id="module~~mpimod~~UsedByGraph_node4" class="node">
+<title>proc~generategrid</title>
+<g id="a_module~~mpimod~~UsedByGraph_node4"><a xlink:href="../proc/generategrid.html" xlink:title="GenerateGrid">
+<polygon fill="#d9534f" stroke="#d9534f" points="188.5,-318 103.5,-318 103.5,-294 188.5,-294 188.5,-318"/>
+<text text-anchor="middle" x="146" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">GenerateGrid</text>
+</a>
+</g>
+</g>
+<!-- proc~generategrid&#45;&gt;module~mpimod -->
+<g id="module~~mpimod~~UsedByGraph_edge3" class="edge">
+<title>proc~generategrid&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M107.84,-293.91C102.6,-291.39 97.48,-288.43 93,-285 70.53,-267.79 52.01,-240.67 40.88,-221.92"/>
+<polygon fill="#000000" stroke="#000000" points="43.91,-220.16 35.89,-213.22 37.83,-223.64 43.91,-220.16"/>
+</g>
+<!-- proc~generateproblem -->
+<g id="module~~mpimod~~UsedByGraph_node5" class="node">
+<title>proc~generateproblem</title>
+<g id="a_module~~mpimod~~UsedByGraph_node5"><a xlink:href="../proc/generateproblem.html" xlink:title="GenerateProblem">
+<polygon fill="#d9534f" stroke="#d9534f" points="199,-276 93,-276 93,-252 199,-252 199,-276"/>
+<text text-anchor="middle" x="146" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">GenerateProblem</text>
+</a>
+</g>
+</g>
+<!-- proc~generateproblem&#45;&gt;module~mpimod -->
+<g id="module~~mpimod~~UsedByGraph_edge4" class="edge">
+<title>proc~generateproblem&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M112.37,-251.99C105.84,-249.27 99.12,-246.22 93,-243 79.67,-235.99 65.62,-226.9 54.14,-218.97"/>
+<polygon fill="#000000" stroke="#000000" points="56.11,-216.07 45.92,-213.18 52.08,-221.8 56.11,-216.07"/>
+</g>
+<!-- proc~mpi_io_pack -->
+<g id="module~~mpimod~~UsedByGraph_node6" class="node">
+<title>proc~mpi_io_pack</title>
+<g id="a_module~~mpimod~~UsedByGraph_node6"><a xlink:href="../proc/mpi_io_pack.html" xlink:title="MPI_IO_Pack">
+<polygon fill="#d9534f" stroke="#d9534f" points="184.5,-234 107.5,-234 107.5,-210 184.5,-210 184.5,-234"/>
+<text text-anchor="middle" x="146" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">MPI_IO_Pack</text>
+</a>
+</g>
+</g>
+<!-- proc~mpi_io_pack&#45;&gt;module~mpimod -->
+<g id="module~~mpimod~~UsedByGraph_edge5" class="edge">
+<title>proc~mpi_io_pack&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M107.18,-215.12C94.31,-212.78 79.93,-210.17 67.07,-207.83"/>
+<polygon fill="#000000" stroke="#000000" points="67.61,-204.37 57.15,-206.03 66.36,-211.26 67.61,-204.37"/>
+</g>
+<!-- proc~mpi_io_write -->
+<g id="module~~mpimod~~UsedByGraph_node7" class="node">
+<title>proc~mpi_io_write</title>
+<g id="a_module~~mpimod~~UsedByGraph_node7"><a xlink:href="../proc/mpi_io_write.html" xlink:title="MPI_IO_Write">
+<polygon fill="#d9534f" stroke="#d9534f" points="186,-192 106,-192 106,-168 186,-168 186,-192"/>
+<text text-anchor="middle" x="146" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">MPI_IO_Write</text>
+</a>
+</g>
+</g>
+<!-- proc~mpi_io_write&#45;&gt;module~mpimod -->
+<g id="module~~mpimod~~UsedByGraph_edge6" class="edge">
+<title>proc~mpi_io_write&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M105.9,-187.11C93.42,-189.38 79.65,-191.88 67.27,-194.13"/>
+<polygon fill="#000000" stroke="#000000" points="66.47,-190.72 57.26,-195.95 67.72,-197.61 66.47,-190.72"/>
+</g>
+<!-- proc~output -->
+<g id="module~~mpimod~~UsedByGraph_node8" class="node">
+<title>proc~output</title>
+<g id="a_module~~mpimod~~UsedByGraph_node8"><a xlink:href="../proc/output.html" xlink:title="Output">
+<polygon fill="#d9534f" stroke="#d9534f" points="173,-150 119,-150 119,-126 173,-126 173,-150"/>
+<text text-anchor="middle" x="146" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Output</text>
+</a>
+</g>
+</g>
+<!-- proc~output&#45;&gt;module~mpimod -->
+<g id="module~~mpimod~~UsedByGraph_edge7" class="edge">
+<title>proc~output&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M118.88,-147.36C110.46,-150.69 101.19,-154.7 93,-159 79.67,-166.01 65.62,-175.1 54.14,-183.03"/>
+<polygon fill="#000000" stroke="#000000" points="52.08,-180.2 45.92,-188.82 56.11,-185.93 52.08,-180.2"/>
+</g>
+<!-- proc~realtimeanalysis -->
+<g id="module~~mpimod~~UsedByGraph_node9" class="node">
+<title>proc~realtimeanalysis</title>
+<g id="a_module~~mpimod~~UsedByGraph_node9"><a xlink:href="../proc/realtimeanalysis.html" xlink:title="RealTimeAnalysis">
+<polygon fill="#d9534f" stroke="#d9534f" points="199,-108 93,-108 93,-84 199,-84 199,-108"/>
+<text text-anchor="middle" x="146" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">RealTimeAnalysis</text>
+</a>
+</g>
+</g>
+<!-- proc~realtimeanalysis&#45;&gt;module~mpimod -->
+<g id="module~~mpimod~~UsedByGraph_edge8" class="edge">
+<title>proc~realtimeanalysis&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M107.84,-108.09C102.6,-110.61 97.48,-113.57 93,-117 70.53,-134.21 52.01,-161.33 40.88,-180.08"/>
+<polygon fill="#000000" stroke="#000000" points="37.83,-178.36 35.89,-188.78 43.91,-181.84 37.83,-178.36"/>
+</g>
+<!-- proc~timestepcontrol -->
+<g id="module~~mpimod~~UsedByGraph_node10" class="node">
+<title>proc~timestepcontrol</title>
+<g id="a_module~~mpimod~~UsedByGraph_node10"><a xlink:href="../proc/timestepcontrol.html" xlink:title="TimestepControl">
+<polygon fill="#d9534f" stroke="#d9534f" points="196,-66 96,-66 96,-42 196,-42 196,-66"/>
+<text text-anchor="middle" x="146" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">TimestepControl</text>
+</a>
+</g>
+</g>
+<!-- proc~timestepcontrol&#45;&gt;module~mpimod -->
+<g id="module~~mpimod~~UsedByGraph_edge9" class="edge">
+<title>proc~timestepcontrol&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M105.93,-66.08C101.25,-68.56 96.8,-71.51 93,-75 61.81,-103.7 43.77,-151.17 35.36,-178.92"/>
+<polygon fill="#000000" stroke="#000000" points="31.91,-178.26 32.51,-188.84 38.63,-180.19 31.91,-178.26"/>
+</g>
+<!-- program~main -->
+<g id="module~~mpimod~~UsedByGraph_node11" class="node">
+<title>program~main</title>
+<g id="a_module~~mpimod~~UsedByGraph_node11"><a xlink:href="../program/main.html" xlink:title="main">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="173,-24 119,-24 119,0 173,0 173,-24"/>
+<text text-anchor="middle" x="146" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">main</text>
+</a>
+</g>
+</g>
+<!-- program~main&#45;&gt;module~mpimod -->
+<g id="module~~mpimod~~UsedByGraph_edge10" class="edge">
+<title>program~main&#45;&gt;module~mpimod</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M118.99,-17.85C109.8,-21.03 100.01,-25.83 93,-33 52.87,-74.04 37.62,-142.92 32.22,-178.39"/>
+<polygon fill="#000000" stroke="#000000" points="28.7,-178.26 30.79,-188.65 35.64,-179.23 28.7,-178.26"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsedByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsedByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+      <br>
+
+
+        <section>
+          <h2>Variables</h2>
+            <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bufinpmax"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(2)
+            </td>
+            <td>::</td>
+            <td><strong>bufinpmax</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bufinpmin"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(2)
+            </td>
+            <td>::</td>
+            <td><strong>bufinpmin</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bufoutmax"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(2)
+            </td>
+            <td>::</td>
+            <td><strong>bufoutmax</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bufoutmin"></span>
+              real(kind=8),
+            </td>
+              <td>public,</td>
+            <td>
+              dimension(2)
+            </td>
+            <td>::</td>
+            <td><strong>bufoutmin</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-comm3d"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>comm3d</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-coords"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>coords</strong>(3)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ierr"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ierr</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mpi_comm_hyd"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mpi_comm_hyd</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mreq"></span>
+              integer,
+            </td>
+              <td>public,</td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>mreq</strong></td>
+<td> =</td>
+                <td>300</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-myid"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>myid</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-myid_hyd"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>myid_hyd</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-myid_w"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>myid_w</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n1m"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n1m</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n1p"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n1p</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n2m"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n2m</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n2p"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n2p</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n3m"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n3m</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n3p"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n3p</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nprocs"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nprocs</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nprocs_hyd"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nprocs_hyd</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nprocs_w"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nprocs_w</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nreq"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nreq</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nsub"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nsub</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-reorder"></span>
+              logical,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>reorder</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-req"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>req</strong>(mreq)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-stat"></span>
+              integer,
+            </td>
+              <td>public</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>stat</strong>(MPI_STATUS_SIZE,mreq)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+        </section>
+        <br>
+
+
+
+
+
+
+        <section>
+          <h2>Subroutines</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-finalizempi"></span> <h3>public  subroutine <a href='../proc/finalizempi.html'>FinalizeMPI</a>()  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+    <em>None</em>
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-getmpisum"></span> <h3>public  subroutine <a href='../proc/getmpisum.html'>GetMPIsum</a>(n, bufl, bufg)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n~13"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bufl"></span>
+              real(kind=8),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bufl</strong>(n)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bufg"></span>
+              real(kind=8),
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bufg</strong>(n)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-initializempi"></span> <h3>public  subroutine <a href='../proc/initializempi.html'>InitializeMPI</a>()  
+</h3></div>
+    <div class="card-body">
+          
+  <p>debug  </p>
+
+  <h4>Arguments</h4>
+    <em>None</em>
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-mpimaxfind"></span> <h3>public  subroutine <a href='../proc/mpimaxfind.html'>MPImaxfind</a>()  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+    <em>None</em>
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-mpiminfind"></span> <h3>public  subroutine <a href='../proc/mpiminfind.html'>MPIminfind</a>()  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+    <em>None</em>
+
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+
+
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              MHDTurbulence
+ was developed by Tomoya Takiwaki<br>              &copy; 2026 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>
