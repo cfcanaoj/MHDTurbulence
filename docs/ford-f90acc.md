@@ -3,7 +3,7 @@ summary: High-performance 3D MHD solver (MPI + OpenACC) for large-scale turbulen
 author: Tomoya Takiwaki  
 github: https://github.com/cfcanaoj/MHDTurbulence    
 src_dir: ../srcacc  
-output_dir: site  
+output_dir: ../doc/site/f90acc  
 docmark: !  
 predocmark: >  
 warn: true  

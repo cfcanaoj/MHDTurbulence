@@ -35,7 +35,9 @@ jobs:
       - name: Build documentation
         working-directory: docs
         run: |
-          ford ford.md
+          ford ford-f90acc.md
+          ford ford-f90omp.md
+          ford ford-f90cpu.md
 
       - name: Deploy to GitHub Pages
         if: github.event_name != 'pull_request'

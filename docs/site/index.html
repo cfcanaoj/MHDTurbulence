@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MHDTurbulence Documentation</title>
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fa;
+      color: #222;
+      line-height: 1.6;
+    }
+
+    header {
+      background: #1e293b;
+      color: white;
+      padding: 2rem;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    header p {
+      margin-top: 0.5rem;
+      opacity: 0.9;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .section-title {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      border-left: 5px solid #2563eb;
+      padding-left: 0.75rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: transform 0.15s ease,
+                  box-shadow 0.15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      margin-bottom: 1rem;
+      color: #444;
+    }
+
+    .card a {
+      display: inline-block;
+      text-decoration: none;
+      background: #2563eb;
+      color: white;
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .card a:hover {
+      background: #1d4ed8;
+    }
+
+    footer {
+      margin-top: 4rem;
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    code {
+      background: #e5e7eb;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>MHDTurbulence Documentation</h1>
+  <p>
+    Multi-implementation documentation portal for the MHDTurbulence project.
+  </p>
+</header>
+
+<main>
+
+  <section>
+    <h2 class="section-title">Implementations</h2>
+
+    <div class="cards">
+
+      <div class="card">
+        <h3>f90acc</h3>
+        <p>
+          OpenACC-based Fortran implementation targeting GPU acceleration.
+        </p>
+        <a href="./f90acc/index.html">
+          Open Documentation
+        </a>
+      </div>
+
+      <div class="card">
+        <h3>f90omp</h3>
+        <p>
+          OpenMP / OpenMP Target implementation for multicore CPUs and accelerators.
+        </p>
+        <a href="./f90omp/index.html">
+          Open Documentation
+        </a>
+      </div>
+
+      <div class="card">
+        <h3>f90cpu</h3>
+        <p>
+          Reference CPU-oriented Fortran implementation.
+        </p>
+        <a href="./f90cpu/index.html">
+          Open Documentation
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Project Repository</h2>
+
+    <p>
+      GitHub Repository:
+      <a href="https://github.com/cfcanaoj/MHDTurbulence">
+        cfcanaoj/MHDTurbulence
+      </a>
+    </p>
+
+  </section>
+
+  <section>
+    <h2 class="section-title">Build Notes</h2>
+
+    <p>
+      Each implementation is documented independently using
+      <code>FORD</code>.
+    </p>
+
+    <p>
+      Documentation is generated from source comments and module structures.
+    </p>
+
+  </section>
+
+</main>
+
+<footer>
+  Generated for the MHDTurbulence project.
+</footer>
+
+</body>
+</html>
+
