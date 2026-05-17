@@ -111,16 +111,4 @@ The typical performance in representative environments is shown below.
 3. `sqrt(<v_y^2>)`
 4. `A exp(\Gamma t)`
 
-The third columm is an average velocity that should be compared with the forth column in an appropriate time $1<t<6$.
-The fourth column is a reference exponential growth curve,
-
-\[
-A\exp(\Gamma t),
-\]
-
-with the hard-coded parameters
-
-- \(A = 1.2\times 10^{-3}\)
-- \(\Gamma = 1.49\)
-
-These values are used as a practical comparison metric for KH growth in this setup.
+The third columm is an average velocity that should be compared with the forth column in an appropriate time $1<t<6$. The fourth column is a reference exponential growth curve, $A\exp(\Gamma t)$ , with the hard-coded parameters. The parameters are used as a practical comparison metric for KH growth in this setup.
