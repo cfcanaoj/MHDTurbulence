@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "MHDTurbulence", "index.html", [
-    [ "src_cpp_omp", "index.html", null ],
+    [ "cpp_omp", "index.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
