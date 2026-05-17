@@ -534,11 +534,7 @@ v_x \leftarrow v_x + \Delta v\,\mathrm{rrv}\,(r-0.5),
 <h3 id="tracer-composition-field">Tracer / composition field</h3>
 <p><code>Xcomp(1,...)</code> is initialized as a smooth step-like tracer associated with the two layers, useful for visualizing mixing:</p>
 <div class="arithmatex">\[
-X_{\mathrm{comp}} =
-\frac{1}{2}\left[
-\tanh\left(\frac{y+0.5}{w}\right)
-- \tanh\left(\frac{y-0.5}{w}\right)
-\right].
+X_{\mathrm{comp}} = \frac{1}{2}\left[\tanh\left(\frac{y+0.5}{w}\right)- \tanh\left(\frac{y-0.5}{w}\right)\right].
 \]</div>
 <h3 id="boundary-conditions">Boundary conditions</h3>
 <p>Boundary conditions are applied in <code>config.f90</code>. In the default setup, reflection boundary conditions are used in the <span class="arithmatex">\(y\)</span>-direction and periodic boundary conditions are used in the other directions.</p>
