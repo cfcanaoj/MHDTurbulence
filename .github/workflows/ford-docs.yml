@@ -27,10 +27,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install ford graphviz
 
-      - name: Install Graphviz system package
+      - name: Install system packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y graphviz
+          sudo apt-get install -y graphviz doxygen
 
       - name: Build documentation
         working-directory: docs
@@ -38,6 +38,7 @@ jobs:
           ford ford-f90acc.md
           ford ford-f90omp.md
           ford ford-f90cpu.md
+          doxygen Doxyfile-src_cpp_omp
 
       - name: Deploy to GitHub Pages
         if: github.event_name != 'pull_request'
