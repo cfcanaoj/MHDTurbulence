@@ -121,29 +121,9 @@
     <h2 class="section-title">Implementations</h2>
 
     <div class="cards">
-
+      
       <div class="card">
-        <h3>f90acc</h3>
-        <p>
-          OpenACC-based Fortran implementation targeting GPU acceleration.
-        </p>
-        <a href="./f90acc/index.html">
-          Open Documentation
-        </a>
-      </div>
-
-      <div class="card">
-        <h3>f90omp</h3>
-        <p>
-          OpenMP / OpenMP Target implementation for multicore CPUs and accelerators.
-        </p>
-        <a href="./f90omp/index.html">
-          Open Documentation
-        </a>
-      </div>
-
-      <div class="card">
-        <h3>f90cpu</h3>
+        <h3>f90_omp_host</h3>
         <p>
           Reference CPU-oriented Fortran implementation.
         </p>
@@ -153,7 +133,37 @@
       </div>
 
       <div class="card">
-        <h3>cpp_omp</h3>
+        <h3>f90_acc_device</h3>
+        <p>
+          OpenACC-based Fortran implementation targeting GPU acceleration.
+        </p>
+        <a href="./f90acc/index.html">
+          Open Documentation
+        </a>
+      </div>
+
+      <div class="card">
+        <h3>f90_omp_device</h3>
+        <p>
+          OpenMP / OpenMP Target implementation for multicore CPUs and accelerators.
+        </p>
+        <a href="./f90omp/index.html">
+          Open Documentation
+        </a>
+      </div>
+
+      <div class="card">
+        <h3>cpp_kokkos_host</h3>
+        <p>
+          C++ MPI + Kokkos host implementation for multicore CPU execution.
+        </p>
+        <a href="./cpp_kokkos_host/index.html">
+          Open Documentation
+        </a>
+      </div>
+      
+      <div class="card">
+        <h3>cpp_omp_device</h3>
         <p>
           C++ MPI + OpenMP implementation for multicore and accelerator-oriented runs.
         </p>
@@ -172,15 +182,6 @@
         </a>
       </div>
 
-      <div class="card">
-        <h3>cpp_kokkos_host</h3>
-        <p>
-          C++ MPI + Kokkos host implementation for multicore CPU execution.
-        </p>
-        <a href="./cpp_kokkos_host/index.html">
-          Open Documentation
-        </a>
-      </div>
 
     </div>
   </section>
