@@ -102,83 +102,25 @@ The typical performance in representative environments is shown below.
 - Wall time: total elapsed wall-clock time
 - time/cell/step: wall-clock time per cell per time step
   
-### 1. Quick check: Text output (ASCII)
+### Quick check
 
-For quick inspection and debugging, ASCII output can be enabled in
-`config.f90`:
-```Fortran,
-logical,parameter:: asciiout = .true. !! Ascii-files are additionaly damped.
-```
-The data is damped as `ascdata/snap###-?????.csv`. Here ### is the mpi-process and ????? is the number of the snapshots. The format is "x y d vx vy p phi X". `gnuplot` is useful to quick check.
-```bash
-gnuplot
-set view map
-splot "ascdata/snap###-?????.csv" u 1:2:8 w pm3d
-```
-You can compare your data with [the sample](./sampledata). Since we use random perturbation. The pattern of the turbulence is not necessarily match the sample.
+`RealTimeAnalysis` evaluates bulk diagnostics during the run and writes them to `t-prof.csv`. The file `t-prof.csv` contains four columns:
 
-<img width="320" height="240" alt="initial" src="https://github.com/user-attachments/assets/90d21b9e-e3f7-4606-b425-8d4d8715aab3" />
-<img width="320" height="240" alt="final" src="https://github.com/user-attachments/assets/01ecbb59-c21b-4e38-8e6a-78d9e7433791" />
+1. `time`
+2. `mix`
+3. `sqrt(<v_y^2>)`
+4. `A exp(\Gamma t)`
 
+The third columm is an average velocity that should be compared with the forth column in an appropriate time $1<t<6$.
+The fourth column is a reference exponential growth curve,
 
-### 2. Full data visualization: XMF + binary (for VisIt / ParaView)
-For full 3D visualization, the code outputs binary data together with
-XMF metadata files.
+\[
+A\exp(\Gamma t),
+\]
 
-Generated files:
+with the hard-coded parameters
 
-    bindata/field?????.xmf
-    bindata/field?????.bin
-    bindata/grid1D.bin
-    bindata/grid2D.bin
-    bindata/grid3D.bin
+- \(A = 1.2\times 10^{-3}\)
+- \(\Gamma = 1.49\)
 
-Open the `.xmf` file directly in:
-
--   VisIt
--   ParaView
-
-### 3. Detailed analysis: Analysis program
-For more quantitative studies (spectra, statistics, etc.), use the analysis tools provided in the `analysis/` directory. The data is damped as `bindata/unf?????.dat`, `bindata/field?????.bin`, `bindata/grid1D.bin`, `bindata/grid2D.bin`, and `bindata/grid3D.bin`. 
-
-#### Build the analysis tool
-
-```bash
-cd ../analysis
-ln -s ../exe/bindata .
-make
-```
-
-Count time snapshots:
-
-```bash
-./CountBindata.sh
-cat control.dat
-```
-
-Run analysis:
-
-```bash
-sbatch sj_g00_ana.sh
-```
-
-Outputs are saved in `output/`.
-
-#### 2D plots and animation
-
-Copy `bindata/` and `output/` to the analysis server and:
-
-```bash
-make 2Dsnaps
-make movie
-```
-
-Images are saved in `figures/`, movies in `movie/anivor`.
-
-#### Spectrum
-
-```bash
-make spectrum
-```
-
----
+These values are used as a practical comparison metric for KH growth in this setup.
