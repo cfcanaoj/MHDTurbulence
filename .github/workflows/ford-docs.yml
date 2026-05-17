@@ -25,7 +25,7 @@ jobs:
       - name: Install Python packages
         run: |
           python -m pip install --upgrade pip
-          pip install ford graphviz mkdocs
+          pip install ford graphviz mkdocs mkdocs-material pymdown-extensions
 
       - name: Install system packages
         run: |
