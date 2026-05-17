@@ -1,7 +1,7 @@
-<map id="src_cpp_omp/mpi_config.hpp" name="src_cpp_omp/mpi_config.hpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,216,31"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="37,79,96,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="106,32,83,68,79,66,101,30"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="121,79,191,104"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="120,30,144,66,139,69,116,32"/>
+<map id="src_cpp_omp_device/mpi_config.hpp" name="src_cpp_omp_device/mpi_config.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,163,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="11,93,69,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="76,47,56,83,51,80,71,44"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="94,93,165,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="97,44,118,80,113,83,93,47"/>
 </map>
