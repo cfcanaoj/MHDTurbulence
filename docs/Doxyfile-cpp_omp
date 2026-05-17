@@ -89,7 +89,7 @@ WARN_FORMAT            = "$file:$line: $text"
 WARN_LOGFILE           =
 
 INPUT                  = ../src_cpp_omp \
-                         doxygen-src_cpp_omp-main.md
+                         doxygen-cpp_omp-main.md
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.cpp \
                          *.hpp \
@@ -109,7 +109,7 @@ INPUT_FILTER           =
 FILTER_PATTERNS        =
 FILTER_SOURCE_FILES    = NO
 FILTER_SOURCE_PATTERNS =
-USE_MDFILE_AS_MAINPAGE = doxygen-src_cpp_omp-main.md
+USE_MDFILE_AS_MAINPAGE = doxygen-cpp_omp-main.md
 
 SOURCE_BROWSER         = YES
 INLINE_SOURCES         = NO
@@ -126,7 +126,7 @@ COLS_IN_ALPHA_INDEX    = 5
 IGNORE_PREFIX          =
 
 GENERATE_HTML          = YES
-HTML_OUTPUT            = src_cpp_omp
+HTML_OUTPUT            = cpp_omp
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            =
 HTML_FOOTER            =

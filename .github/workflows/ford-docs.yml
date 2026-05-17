@@ -38,7 +38,7 @@ jobs:
           ford ford-f90acc.md
           ford ford-f90omp.md
           ford ford-f90cpu.md
-          doxygen Doxyfile-src_cpp_omp
+          doxygen Doxyfile-cpp_omp
 
       - name: Deploy to GitHub Pages
         if: github.event_name != 'pull_request'
