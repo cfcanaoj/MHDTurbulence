@@ -1,0 +1,70 @@
+/**
+ * @file config.hpp
+ * @brief 
+ * @author Tomoya Takiwaki
+ * @date 2026-02-14
+*/
+
+#ifndef CONFIG_HPP_
+#define CONFIG_HPP_
+namespace config {
+  inline constexpr double time_max = 15.0e0;
+  inline constexpr double dtout = time_max/100;
+
+  inline constexpr int stepmax{600000}; // max step 
+  inline constexpr int stepsnap = stepmax/100;
+
+  inline constexpr int ngridtotal1{150}; // total resolution for x
+  inline constexpr int ngridtotal2{150}; // total resolution for y
+  inline constexpr int ngridtotal3{150}; // total resolution for z
+  
+  inline constexpr double x1min(-0.5),x1max(+0.5); // computing region for x
+  inline constexpr double x2min(-1.0),x2max(+1.0); // computing region for y
+  inline constexpr double x3min(-0.5),x3max(+0.5); // computing region for z
+
+  inline constexpr int ntiles[3]   = {2,2,1};
+  inline constexpr int periodic[3] = {1,0,1}; //1:periodic
+
+  // Boundary condition types
+  inline constexpr int periodicb   = 1;
+  inline constexpr int reflection  = 2;
+  inline constexpr int outflow     = 3;
+  
+  inline constexpr int boundary_xin  = periodicb;
+  inline constexpr int boundary_xout = periodicb;
+  inline constexpr int boundary_yin  = reflection;
+  inline constexpr int boundary_yout = reflection;
+  inline constexpr int boundary_zin  = periodicb;
+  inline constexpr int boundary_zout = periodicb;
+  
+  inline constexpr bool asciiout = true ;// Ascii-files are additionaly damped.
+  inline constexpr bool benchmarkmode = true ;// If true, only initial and final outputs are damped. 
+};
+
+namespace resolution_mod {
+  inline constexpr int stepmax  = config::stepmax; // max step 
+  inline constexpr int stepsnap = config::stepsnap;
+  inline double time_sim = 0.0e0;
+  inline double time_out = 0.0e0;
+  inline double dt;
+  inline constexpr double time_max = config::time_max;
+  inline constexpr double dtout = config::dtout;
+  
+  inline constexpr int ngrid1 = config::ngridtotal1/config::ntiles[0]; //! resolution for x
+  inline constexpr int ngrid2 = config::ngridtotal2/config::ntiles[1]; //! resolution for y
+  inline constexpr int ngrid3 = config::ngridtotal3/config::ntiles[2]; //! resolution for z
+  inline constexpr int ngh{2};  //! number of ghost mesh
+  inline constexpr int itot = ngrid1 + 2 * ngh+1; //! Like ZEUS-2D
+  inline constexpr int jtot = ngrid2 + 2 * ngh+1; // 
+  inline constexpr int ktot = ngrid3 + 2 * ngh+1; // 
+  inline constexpr int is = ngh; //! |0 1 | 2 for ngh =2
+  inline constexpr int js = ngh; // 
+  inline constexpr int ks = ngh; // 
+  inline constexpr int ie = is + ngrid1-1; //! 65 | 66 67 | for nx =64 
+  inline constexpr int je = js + ngrid2-1;
+  inline constexpr int ke = ks + ngrid3-1;
+  inline constexpr double x1min=config::x1min,x1max=config::x1max;
+  inline constexpr double x2min=config::x2min,x2max=config::x2max;
+  inline constexpr double x3min=config::x3min,x3max=config::x3max;
+};
+#endif
