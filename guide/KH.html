@@ -336,6 +336,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#real-time-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-time analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -429,6 +440,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#real-time-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-time analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -456,37 +478,35 @@
 <h2 id="problem-setup-kelvinhelmholtz-instability">Problem setup: Kelvin–Helmholtz instability</h2>
 <p>The initial condition is defined in <code>GenerateProblem</code> in <code>main.f90</code>.</p>
 <h3 id="hydrodynamic-variables">Hydrodynamic variables</h3>
-<p>Uniform density and pressure with <span class="arithmatex">\(<span class="arithmatex">\(\rho = 1\)</span>\)</span> and <span class="arithmatex">\(<span class="arithmatex">\(p = 1\)</span>\)</span>.
-A shear flow in the <strong>x-direction</strong> (two shear layers centered at <span class="arithmatex">\(<span class="arithmatex">\(y=\pm 0.5\)</span>\)</span>):</p>
+<p>Uniform density and pressure with <span class="arithmatex">\(\rho = 1\)</span> and <span class="arithmatex">\(p = 1\)</span>.
+A shear flow in the <strong>x-direction</strong> with two shear layers centered at <span class="arithmatex">\(y=\pm 0.5\)</span>:</p>
 <ul>
-<li>
-<div class="arithmatex">\[\Delta v = 2.0\]</div>
-</li>
-<li>shear-layer width <span class="arithmatex">\(<span class="arithmatex">\(w = 0.05\)</span>\)</span></li>
+<li><span class="arithmatex">\(\Delta v = 2.0\)</span></li>
+<li>shear-layer width <span class="arithmatex">\(w = 0.05\)</span></li>
 </ul>
 <div class="arithmatex">\[
 v_x(y)=\frac{\Delta v}{2}\left[\tanh\left(\frac{y+0.5}{w}\right)-\tanh\left(\frac{y-0.5}{w}\right)-1\right]
 \]</div>
 <p>A small perturbation in the <strong>y-direction</strong> to seed KH roll-up (sinusoidal in x, localized around the layers):</p>
 <ul>
-<li>amplitude <span class="arithmatex">\(<span class="arithmatex">\(10^{-3}\)</span>\)</span></li>
-<li>localization width <span class="arithmatex">\(<span class="arithmatex">\(\sigma = 0.2\)</span>\)</span></li>
+<li>amplitude <span class="arithmatex">\(10^{-2}\)</span></li>
+<li>localization width <span class="arithmatex">\(\sigma = 0.2\)</span></li>
+</ul>
+<p>[
+v_y(x,y)=10^{-2}\sin(2\pi x)\left[e^{-(y+0.5)^2/\sigma^2}+e^{-(y-0.5)^2/\sigma^2}\right]
+]
+[
+v_z = 0
+]</p>
+<p>Additionally, the code contains a random perturbation term for <span class="arithmatex">\(v_x\)</span>, but in the current setup it is disabled:</p>
+<ul>
+<li><span class="arithmatex">\(\mathrm{rrv}=0.0\times 10^{-2}\)</span></li>
+<li>if enabled, the perturbation is</li>
 </ul>
 <div class="arithmatex">\[
-v_y(x,y)=10^{-3}\sin(2\pi x)\left[e^{-(y+0.5)^2/\sigma^2}+e^{-(y-0.5)^2/\sigma^2}\right]
-$$
-$$
-v_z = 0
+v_x \leftarrow v_x + \Delta v\,\mathrm{rrv}\,(r-0.5),
+\qquad r\in[0,1)
 \]</div>
-<p>Additionally, a small <strong>random perturbation</strong> is added to <span class="arithmatex">\(<span class="arithmatex">\(v_x\)</span>\)</span> (1% of <span class="arithmatex">\(<span class="arithmatex">\(\Delta v\)</span>\)</span>):</p>
-<ul>
-<li>
-<div class="arithmatex">\[\mathrm{rrv}=10^{-2}\]</div>
-</li>
-<li>
-<div class="arithmatex">\[v_x \leftarrow v_x + \Delta v\,\mathrm{rrv}\,(r-0.5)\) where \(r\in[0,1)\]</div>
-</li>
-</ul>
 <h3 id="magnetic-field">Magnetic field</h3>
 <p>In the current KH setup, the magnetic field is initialized to zero:</p>
 <div class="arithmatex">\[
@@ -494,6 +514,12 @@ v_z = 0
 \]</div>
 <h3 id="tracer-composition-field">Tracer / composition field</h3>
 <p><code>Xcomp(1,...)</code> is initialized as a smooth step-like tracer associated with the two layers, useful for visualizing mixing.</p>
+<div class="arithmatex">\[
+X_{\mathrm{comp}} = \frac{1}{2}\left[
+\tanh\left(\frac{y+0.5}{w}\right)
+- \tanh\left(\frac{y-0.5}{w}\right)
+\right]
+\]</div>
 <h3 id="boundary-conditions">Boundary conditions</h3>
 <p>Boundary conditions are applied in <code>config.f90</code>. In the default, reflection boundary is taken for y-direction and periodic boundart is taken for other directions.</p>
 <pre><code class="language-Fortran">  integer,parameter:: periodicb=1,reflection=2,outflow=3
@@ -501,6 +527,50 @@ v_z = 0
   integer,parameter:: boundary_yin=reflection, boundary_yout=reflection
   integer,parameter:: boundary_zin=periodicb , boundary_zout=periodicb
 </code></pre>
+<h3 id="real-time-analysis">Real-time analysis</h3>
+<p><code>RealTimeAnalysis</code> in <code>src_f90_acc_device/main.f90</code> evaluates bulk diagnostics during the run and writes them to <code>t-prof.csv</code>.</p>
+<p>The routine computes the cell-volume integral over the local MPI domain,</p>
+<div class="arithmatex">\[
+\Delta V_{ijk} =
+\left(x1a_{i+1}-x1a_i\right)
+\left(x2a_{j+1}-x2a_j\right)
+\left(x3a_{k+1}-x3a_k\right),
+\]</div>
+<p>then reduces the following quantities over all MPI ranks:</p>
+<div class="arithmatex">\[
+V = \sum_{ijk}\Delta V_{ijk},
+\]</div>
+<div class="arithmatex">\[
+M = \sum_{ijk} X_{\mathrm{comp},ijk}\left(1-X_{\mathrm{comp},ijk}\right)\Delta V_{ijk},
+\]</div>
+<div class="arithmatex">\[
+S_{v_y} = \sum_{ijk} v_{y,ijk}^2\,\Delta V_{ijk}.
+\]</div>
+<p>The reported diagnostics are</p>
+<div class="arithmatex">\[
+\mathrm{mix} = \frac{M}{V},
+\]</div>
+<div class="arithmatex">\[
+\langle v_y^2 \rangle^{1/2} = \sqrt{\frac{S_{v_y}}{V}}.
+\]</div>
+<p>Here, <code>mix</code> is a simple mixing indicator based on the tracer field. It is near zero in unmixed regions where <span class="arithmatex">\(X_{\mathrm{comp}}\)</span> is close to 0 or 1, and becomes larger where the two layers are mixed.</p>
+<p>The file <code>t-prof.csv</code> contains four columns:</p>
+<ol>
+<li><code>time</code></li>
+<li><code>mix</code></li>
+<li><code>sqrt(&lt;v_y^2&gt;)</code></li>
+<li><code>A exp(\Gamma t)</code></li>
+</ol>
+<p>The fourth column is a reference exponential growth curve,</p>
+<div class="arithmatex">\[
+A\exp(\Gamma t),
+\]</div>
+<p>with the hard-coded parameters</p>
+<ul>
+<li><span class="arithmatex">\(A = 1.2\times 10^{-3}\)</span></li>
+<li><span class="arithmatex">\(\Gamma = 1.49\)</span></li>
+</ul>
+<p>These values are used as a practical comparison metric for KH growth in this setup. The source comment notes that this is not a general analytic growth rate for finite-width shear layers, but an empirical reference value used for this problem.</p>
 
 
 
