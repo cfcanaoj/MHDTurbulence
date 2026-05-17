@@ -1,0 +1,52 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "openmp-native",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/openmp-native",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "Kokkos_ENABLE_OPENMP": "ON",
+        "Kokkos_ARCH_NATIVE": "ON"
+      }
+    },
+    {
+      "name": "cuda-ampere80",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/cuda-ampere80",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "Kokkos_ENABLE_CUDA": "ON",
+        "Kokkos_ARCH_AMPERE80": "ON"
+      }
+    },
+    {
+      "name": "cuda-hopper90",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/cuda-hopper90",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "Kokkos_ENABLE_CUDA": "ON",
+        "Kokkos_ARCH_HOPPER90": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "openmp-native",
+      "configurePreset": "openmp-native",
+      "jobs": 8
+    },
+    {
+      "name": "cuda-ampere80",
+      "configurePreset": "cuda-ampere80",
+      "jobs": 8
+    },
+    {
+      "name": "cuda-hopper90",
+      "configurePreset": "cuda-hopper90",
+      "jobs": 8
+    }
+  ]
+}
