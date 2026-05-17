@@ -75,11 +75,7 @@ $$
 `Xcomp(1,...)` is initialized as a smooth step-like tracer associated with the two layers, useful for visualizing mixing:
 
 $$
-X_{\mathrm{comp}} =
-\frac{1}{2}\left[
-\tanh\left(\frac{y+0.5}{w}\right)
-- \tanh\left(\frac{y-0.5}{w}\right)
-\right].
+X_{\mathrm{comp}} = \frac{1}{2}\left[\tanh\left(\frac{y+0.5}{w}\right)- \tanh\left(\frac{y-0.5}{w}\right)\right].
 $$
 
 ### Boundary conditions
