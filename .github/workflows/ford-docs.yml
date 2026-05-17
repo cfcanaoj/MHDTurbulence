@@ -42,6 +42,8 @@ jobs:
           doxygen Doxyfile-cpp_kokkos_device
           doxygen Doxyfile-cpp_kokkos_host
           mkdocs build -f mkdocs.yml --clean
+          mkdir -p site/guide
+          cp -R ../.mkdocs-site/guide/. site/guide/
 
       - name: Deploy to GitHub Pages
         if: github.event_name != 'pull_request'
