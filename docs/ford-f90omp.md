@@ -3,7 +3,7 @@ summary: High-performance 3D MHD solver (MPI + OpenMP) for large-scale turbulenc
 author: Tomoya Takiwaki  
 github: https://github.com/cfcanaoj/MHDTurbulence    
 src_dir: ../srcomp  
-output_dir: ../doc/site/f90omp 
+output_dir: ../docs/site/f90omp 
 docmark: !  
 predocmark: >  
 warn: true  
@@ -24,6 +24,5 @@ creation_date: %Y-%m-%d
 ---  
   
 This site contains the automatically generated API documentation for MHDTurbulence. 
-
 
 
