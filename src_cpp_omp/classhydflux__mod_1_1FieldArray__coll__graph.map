@@ -1,0 +1,9 @@
+<map id="hydflux_mod::FieldArray&lt; T &gt;" name="hydflux_mod::FieldArray&lt; T &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,137,224,163"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="30,5,71,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="56,44,64,78,78,112,100,135,96,139,74,115,59,79,51,45"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="95,5,134,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="117,44,117,137,112,137,112,44"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="158,5,218,31"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="180,44,144,115,126,139,122,136,139,112,175,42"/>
+</map>
