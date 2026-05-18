@@ -16,6 +16,7 @@ var namespaces_dup =
       [ "boundary_yout", "namespaceconfig.html#a8788b4692637da35aba5743951de6c42", null ],
       [ "boundary_zin", "namespaceconfig.html#ab74e5222fa2168c4e9e5dcf43d618a4a", null ],
       [ "boundary_zout", "namespaceconfig.html#a9a4bc36ba2e88fcc1a00066b789daef9", null ],
+      [ "debug_checks", "namespaceconfig.html#a5a34aadd8a40b817f590f46a91d15986", null ],
       [ "dtout", "namespaceconfig.html#af72957c0ac103149f94a51226f8b365c", null ],
       [ "ngridtotal1", "namespaceconfig.html#abac924953342775692041b7f32c226b4", null ],
       [ "ngridtotal2", "namespaceconfig.html#a87105e200b1ba13d934be3a2d4907aa1", null ],

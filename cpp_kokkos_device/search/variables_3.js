@@ -10,11 +10,12 @@ var searchData=
   ['d_5fys_7',['d_Ys',['../classboundary__mod_1_1BoundaryArray.html#ad7abfd74f22a31a621f2eaca09b7692c',1,'boundary_mod::BoundaryArray']]],
   ['d_5fze_8',['d_Ze',['../classboundary__mod_1_1BoundaryArray.html#a2b2350bf9bd310888b03516c8fcafd99',1,'boundary_mod::BoundaryArray']]],
   ['d_5fzs_9',['d_Zs',['../classboundary__mod_1_1BoundaryArray.html#a8517d270aea51e2fa970f56cee0d7721',1,'boundary_mod::BoundaryArray']]],
-  ['data_10',['data',['../classhydro__arrays__mod_1_1Array4D.html#af0a6d3bca28faf5e4f8f0aed95fefff7',1,'hydro_arrays_mod::Array4D::data'],['../classmpi__dataio__mod_1_1FieldArray.html#a1f311f069564342ff324d542ca1f5f44',1,'mpi_dataio_mod::FieldArray::data'],['../classmpi__dataio__mod_1_1GridArray.html#afc36a83e52eb38a4b519a5f1f6d921f8',1,'mpi_dataio_mod::GridArray::data'],['../classhydflux__mod_1_1FieldArray.html#ab1c18af73fb0951718e62996a356faa9',1,'hydflux_mod::FieldArray::data']]],
+  ['data_10',['data',['../classhydflux__mod_1_1FieldArray.html#ab1c18af73fb0951718e62996a356faa9',1,'hydflux_mod::FieldArray::data'],['../classmpi__dataio__mod_1_1FieldArray.html#a1f311f069564342ff324d542ca1f5f44',1,'mpi_dataio_mod::FieldArray::data'],['../classmpi__dataio__mod_1_1GridArray.html#afc36a83e52eb38a4b519a5f1f6d921f8',1,'mpi_dataio_mod::GridArray::data'],['../classhydro__arrays__mod_1_1Array4D.html#af0a6d3bca28faf5e4f8f0aed95fefff7',1,'hydro_arrays_mod::Array4D::data']]],
   ['datadir_11',['datadir',['../namespacempi__dataio__mod.html#ab95bb2d698f578c91fb60b025f251824',1,'mpi_dataio_mod']]],
-  ['dir1_12',['dir1',['../namespacempi__config__mod.html#ae541842e1d7ae7e25e4745f2fc46369b',1,'mpi_config_mod']]],
-  ['dir2_13',['dir2',['../namespacempi__config__mod.html#a7155ce6519ed4f6a5911dfe429bef951',1,'mpi_config_mod']]],
-  ['dir3_14',['dir3',['../namespacempi__config__mod.html#ae79c94790e69847dcdfd2e8cad63c0e4',1,'mpi_config_mod']]],
-  ['dt_15',['dt',['../namespaceresolution__mod.html#a2b4e44a77f6c19b0dbe06f31e5a786c2',1,'resolution_mod']]],
-  ['dtout_16',['dtout',['../namespaceconfig.html#af72957c0ac103149f94a51226f8b365c',1,'config::dtout'],['../namespaceresolution__mod.html#a196ae72339deb3c10824a28cc038f7f6',1,'resolution_mod::dtout']]]
+  ['debug_5fchecks_12',['debug_checks',['../namespaceconfig.html#a5a34aadd8a40b817f590f46a91d15986',1,'config']]],
+  ['dir1_13',['dir1',['../namespacempi__config__mod.html#ae541842e1d7ae7e25e4745f2fc46369b',1,'mpi_config_mod']]],
+  ['dir2_14',['dir2',['../namespacempi__config__mod.html#a7155ce6519ed4f6a5911dfe429bef951',1,'mpi_config_mod']]],
+  ['dir3_15',['dir3',['../namespacempi__config__mod.html#ae79c94790e69847dcdfd2e8cad63c0e4',1,'mpi_config_mod']]],
+  ['dt_16',['dt',['../namespaceresolution__mod.html#a2b4e44a77f6c19b0dbe06f31e5a786c2',1,'resolution_mod']]],
+  ['dtout_17',['dtout',['../namespaceconfig.html#af72957c0ac103149f94a51226f8b365c',1,'config::dtout'],['../namespaceresolution__mod.html#a196ae72339deb3c10824a28cc038f7f6',1,'resolution_mod::dtout']]]
 ];
