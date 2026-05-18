@@ -61,8 +61,8 @@ var NAVTREEINDEX =
 [
 "annotated.html",
 "classhydflux__mod_1_1GridArray.html#a7877eee244c445a96fd58f1bc5b19c67",
-"mhd_8hpp.html#a8300690815402cacfdb8d31d66b37dfe",
-"namespacempi__config__mod.html#a42db619131e5481da2b96039713e70f5"
+"mhd_8hpp.html#a7d52e76608169b5d7cf6a47d2d0312fa",
+"namespacempi__config__mod.html#a3e4c0fb58f1eb47bf761f55b5a707efe"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

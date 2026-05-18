@@ -101,6 +101,7 @@ $(document).ready(function(){initNavTree('main_8cpp.html',''); initResizable(); 
 <code>#include &lt;cstdio&gt;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
 <code>#include &lt;cerrno&gt;</code><br />
+<code>#include &lt;cstdlib&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;chrono&gt;</code><br />
 <code>#include &lt;random&gt;</code><br />
@@ -127,6 +128,8 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a631eb40b2a98404be47bb748c068383e" id="r_a631eb40b2a98404be47bb748c068383e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a631eb40b2a98404be47bb748c068383e">ValidateState</a> (const char *label, <a class="el" href="classhydflux__mod_1_1FieldArray.html">hydflux_mod::FieldArray</a>&lt; double &gt; &amp;U, <a class="el" href="classhydflux__mod_1_1FieldArray.html">hydflux_mod::FieldArray</a>&lt; double &gt; &amp;P, int step)</td></tr>
+<tr class="separator:a631eb40b2a98404be47bb748c068383e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96ba1a368646b66d3323542e0722aa91" id="r_a96ba1a368646b66d3323542e0722aa91"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a96ba1a368646b66d3323542e0722aa91">RealTimeAnalysis</a> (const <a class="el" href="classhydflux__mod_1_1GridArray.html">GridArray</a>&lt; double &gt; &amp;G, const <a class="el" href="classhydflux__mod_1_1FieldArray.html">FieldArray</a>&lt; double &gt; &amp;P)</td></tr>
 <tr class="separator:a96ba1a368646b66d3323542e0722aa91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b7c6ca2467855163915432ba75804e9" id="r_a2b7c6ca2467855163915432ba75804e9"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a2b7c6ca2467855163915432ba75804e9">GenerateGrid</a> (<a class="el" href="classhydflux__mod_1_1GridArray.html">hydflux_mod::GridArray</a>&lt; double &gt; &amp;G)</td></tr>
@@ -181,11 +184,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00086">86</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00123">123</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="mhd_8cpp_source.html#l00022">hydflux_mod::G</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="main_8cpp_source.html#l00248">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="main_8cpp_source.html#l00285">main()</a>.</p>
 
 </div>
 </div>
@@ -229,11 +232,11 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00126">126</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00163">163</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="mhd_8cpp_source.html#l00026">hydflux_mod::chg</a>, <a class="el" href="mhd_8cpp_source.html#l00022">hydflux_mod::G</a>, <a class="el" href="mhd_8cpp_source.html#l00027">hydflux_mod::gam</a>, <a class="el" href="mhd_8hpp_source.html#l00296">hydflux_mod::mbm1</a>, <a class="el" href="mhd_8hpp_source.html#l00296">hydflux_mod::mbm2</a>, <a class="el" href="mhd_8hpp_source.html#l00296">hydflux_mod::mbm3</a>, <a class="el" href="mhd_8hpp_source.html#l00296">hydflux_mod::mbps</a>, <a class="el" href="mhd_8hpp_source.html#l00295">hydflux_mod::mden</a>, <a class="el" href="mhd_8hpp_source.html#l00295">hydflux_mod::meto</a>, <a class="el" href="mhd_8hpp_source.html#l00295">hydflux_mod::mrv1</a>, <a class="el" href="mhd_8hpp_source.html#l00295">hydflux_mod::mrv2</a>, <a class="el" href="mhd_8hpp_source.html#l00295">hydflux_mod::mrv3</a>, <a class="el" href="mhd_8hpp_source.html#l00299">hydflux_mod::mst</a>, <a class="el" href="mhd_8hpp_source.html#l00283">hydflux_mod::nbm1</a>, <a class="el" href="mhd_8hpp_source.html#l00283">hydflux_mod::nbm2</a>, <a class="el" href="mhd_8hpp_source.html#l00283">hydflux_mod::nbm3</a>, <a class="el" href="mhd_8hpp_source.html#l00283">hydflux_mod::nbps</a>, <a class="el" href="mhd_8hpp_source.html#l00280">hydflux_mod::ncomp</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::ncsp</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::nden</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::nene</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::npre</a>, <a class="el" href="mhd_8hpp_source.html#l00284">hydflux_mod::nst</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::nve1</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::nve2</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::nve3</a>, <a class="el" href="mhd_8cpp_source.html#l00025">hydflux_mod::P</a>, and <a class="el" href="mhd_8cpp_source.html#l00023">hydflux_mod::U</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="main_8cpp_source.html#l00248">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="main_8cpp_source.html#l00285">main()</a>.</p>
 
 </div>
 </div>
@@ -263,9 +266,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00248">248</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00285">285</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="mhd_8cpp_source.html#l00033">hydflux_mod::AllocateHydroVariables()</a>, <a class="el" href="config_8hpp_source.html#l00041">config::benchmarkmode</a>, <a class="el" href="mhd_8cpp_source.html#l00952">hydflux_mod::ControlTimestep()</a>, <a class="el" href="mhd_8cpp_source.html#l01066">hydflux_mod::DampPsi()</a>, <a class="el" href="mhd_8cpp_source.html#l00079">hydflux_mod::DeallocateHydroVariables()</a>, <a class="el" href="mhd_8cpp_source.html#l01014">hydflux_mod::EvaluateCh()</a>, <a class="el" href="mhd_8cpp_source.html#l00024">hydflux_mod::Fx</a>, <a class="el" href="mhd_8cpp_source.html#l00024">hydflux_mod::Fy</a>, <a class="el" href="mhd_8cpp_source.html#l00024">hydflux_mod::Fz</a>, <a class="el" href="mhd_8cpp_source.html#l00022">hydflux_mod::G</a>, <a class="el" href="main_8cpp_source.html#l00086">GenerateGrid()</a>, <a class="el" href="main_8cpp_source.html#l00126">GenerateProblem()</a>, <a class="el" href="mhd_8cpp_source.html#l00424">hydflux_mod::GetNumericalFluxD()</a>, <a class="el" href="mpi__config_8cpp_source.html#l00034">mpi_config_mod::gpu_aware</a>, <a class="el" href="output_8cpp_source.html#l00415">Output()</a>, <a class="el" href="mhd_8cpp_source.html#l00025">hydflux_mod::P</a>, <a class="el" href="main_8cpp_source.html#l00026">RealTimeAnalysis()</a>, <a class="el" href="mhd_8cpp_source.html#l00023">hydflux_mod::U</a>, <a class="el" href="mhd_8cpp_source.html#l00854">hydflux_mod::UpdateConservU()</a>, and <a class="el" href="mhd_8cpp_source.html#l00890">hydflux_mod::UpdatePrimitvP()</a>.</p>
+<p class="reference">References <a class="el" href="mhd_8cpp_source.html#l00033">hydflux_mod::AllocateHydroVariables()</a>, <a class="el" href="config_8hpp_source.html#l00041">config::benchmarkmode</a>, <a class="el" href="mhd_8cpp_source.html#l00952">hydflux_mod::ControlTimestep()</a>, <a class="el" href="mhd_8cpp_source.html#l01066">hydflux_mod::DampPsi()</a>, <a class="el" href="mhd_8cpp_source.html#l00079">hydflux_mod::DeallocateHydroVariables()</a>, <a class="el" href="mhd_8cpp_source.html#l01014">hydflux_mod::EvaluateCh()</a>, <a class="el" href="mhd_8cpp_source.html#l00024">hydflux_mod::Fx</a>, <a class="el" href="mhd_8cpp_source.html#l00024">hydflux_mod::Fy</a>, <a class="el" href="mhd_8cpp_source.html#l00024">hydflux_mod::Fz</a>, <a class="el" href="mhd_8cpp_source.html#l00022">hydflux_mod::G</a>, <a class="el" href="main_8cpp_source.html#l00123">GenerateGrid()</a>, <a class="el" href="main_8cpp_source.html#l00163">GenerateProblem()</a>, <a class="el" href="mhd_8cpp_source.html#l00424">hydflux_mod::GetNumericalFluxD()</a>, <a class="el" href="mpi__config_8cpp_source.html#l00034">mpi_config_mod::gpu_aware</a>, <a class="el" href="output_8cpp_source.html#l00415">Output()</a>, <a class="el" href="mhd_8cpp_source.html#l00025">hydflux_mod::P</a>, <a class="el" href="main_8cpp_source.html#l00063">RealTimeAnalysis()</a>, <a class="el" href="mhd_8cpp_source.html#l00023">hydflux_mod::U</a>, <a class="el" href="mhd_8cpp_source.html#l00854">hydflux_mod::UpdateConservU()</a>, <a class="el" href="mhd_8cpp_source.html#l00890">hydflux_mod::UpdatePrimitvP()</a>, and <a class="el" href="main_8cpp_source.html#l00027">ValidateState()</a>.</p>
 
 </div>
 </div>
@@ -303,11 +306,65 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00026">26</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00063">63</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="mhd_8cpp_source.html#l00022">hydflux_mod::G</a>, <a class="el" href="mhd_8hpp_source.html#l00284">hydflux_mod::nst</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::nve2</a>, and <a class="el" href="mhd_8cpp_source.html#l00025">hydflux_mod::P</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="main_8cpp_source.html#l00248">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="main_8cpp_source.html#l00285">main()</a>.</p>
+
+</div>
+</div>
+<a id="a631eb40b2a98404be47bb748c068383e" name="a631eb40b2a98404be47bb748c068383e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a631eb40b2a98404be47bb748c068383e">&#9670;&#160;</a></span>ValidateState()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void ValidateState </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>label</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classhydflux__mod_1_1FieldArray.html">hydflux_mod::FieldArray</a>&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>U</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classhydflux__mod_1_1FieldArray.html">hydflux_mod::FieldArray</a>&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>P</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>step</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00027">27</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="mhd_8hpp_source.html#l00295">hydflux_mod::meto</a>, <a class="el" href="mhd_8hpp_source.html#l00283">hydflux_mod::nbm1</a>, <a class="el" href="mhd_8hpp_source.html#l00283">hydflux_mod::nbm2</a>, <a class="el" href="mhd_8hpp_source.html#l00283">hydflux_mod::nbm3</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::ncsp</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::nden</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::nene</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::npre</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::nve1</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::nve2</a>, <a class="el" href="mhd_8hpp_source.html#l00282">hydflux_mod::nve3</a>, <a class="el" href="mhd_8cpp_source.html#l00025">hydflux_mod::P</a>, and <a class="el" href="mhd_8cpp_source.html#l00023">hydflux_mod::U</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="main_8cpp_source.html#l00285">main()</a>.</p>
 
 </div>
 </div>
@@ -317,7 +374,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_415429b0e1e84004ff9e06078b69719c.html">src_cpp_kokkos_device</a></li><li class="navelem"><a class="el" href="main_8cpp.html">main.cpp</a></li>
-    <li class="footer">Generated on Sun May 17 2026 10:16:40 for MHDTurbulence by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Mon May 18 2026 08:55:13 for MHDTurbulence by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>

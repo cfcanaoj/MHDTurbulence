@@ -1,5 +1,6 @@
 var NAVTREEINDEX2 =
 {
+"mhd_8hpp.html#a7d52e76608169b5d7cf6a47d2d0312fa":[3,0,1,7,16],
 "mhd_8hpp.html#a8300690815402cacfdb8d31d66b37dfe":[3,0,1,7,25],
 "mhd_8hpp.html#a9bcb13b99083f4ce3f1ea7ea83c7cd8b":[3,0,1,7,60],
 "mhd_8hpp.html#aa0969c4300a7fdadd0ba9ffaf54a0d18":[3,0,1,7,6],
@@ -212,8 +213,8 @@ var NAVTREEINDEX2 =
 "namespacehydro__arrays__mod.html":[1,0,3],
 "namespacehydro__arrays__mod.html#a6cc98f431aeb8ac230397dfde98cedfc":[1,0,3,1],
 "namespacehydro__arrays__mod.html#aaaf6f3cb36a454e1bfcc9fef9fa5fbbd":[1,0,3,2],
-"namespacemembers.html":[1,1,0,0],
 "namespacemembers.html":[1,1,0],
+"namespacemembers.html":[1,1,0,0],
 "namespacemembers_b.html":[1,1,0,1],
 "namespacemembers_c.html":[1,1,0,2],
 "namespacemembers_d.html":[1,1,0,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX2 =
 "namespacempi__config__mod.html#a307a865940c9a079592ace0eed8f35b7":[1,0,4,23],
 "namespacempi__config__mod.html#a3392ed1bb533fca4874d3a7aa1029e63":[1,0,4,18],
 "namespacempi__config__mod.html#a33abf998f7c7f0d25fa6b078d8da6f92":[1,0,4,12],
-"namespacempi__config__mod.html#a3450c533a749885ef3ca0f19eef86bd5":[1,0,4,29],
-"namespacempi__config__mod.html#a3e4c0fb58f1eb47bf761f55b5a707efe":[1,0,4,1]
+"namespacempi__config__mod.html#a3450c533a749885ef3ca0f19eef86bd5":[1,0,4,29]
 };
