@@ -14,7 +14,6 @@ var config_8hpp =
     [ "boundary_yout", "config_8hpp.html#a8788b4692637da35aba5743951de6c42", null ],
     [ "boundary_zin", "config_8hpp.html#ab74e5222fa2168c4e9e5dcf43d618a4a", null ],
     [ "boundary_zout", "config_8hpp.html#a9a4bc36ba2e88fcc1a00066b789daef9", null ],
-    [ "debug_checks", "config_8hpp.html#a5a34aadd8a40b817f590f46a91d15986", null ],
     [ "dt", "config_8hpp.html#a2b4e44a77f6c19b0dbe06f31e5a786c2", null ],
     [ "dtout", "config_8hpp.html#af72957c0ac103149f94a51226f8b365c", null ],
     [ "dtout", "config_8hpp.html#a196ae72339deb3c10824a28cc038f7f6", null ],
