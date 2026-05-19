@@ -281,7 +281,7 @@ $(document).ready(function(){initNavTree('main_8cpp_source.html',''); initResiza
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>  (void)rho1; (void)rho2; (void)B0; <span class="comment">// currently symmetric / B0 unused in reference file</span></div>
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span> </div>
 <div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>  <span class="comment">// Random perturbation strength (Fortran rrv)</span></div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> rrv = 1.0e-2;</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> rrv = 0.0e-2;</div>
 <div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span> </div>
 <div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>  <span class="comment">// Isothermal: choose csiso so that p = rho*csiso^2 matches Fortran p=1 when rho=1</span></div>
 <div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>  <span class="comment">//csiso = 1.0;</span></div>
@@ -303,7 +303,7 @@ $(document).ready(function(){initNavTree('main_8cpp_source.html',''); initResiza
 <div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        <a class="code hl_variable" href="namespacehydflux__mod.html#a23f0dad0c4ec0c5c6e0e5fd41a91bcc1">P</a>(<a class="code hl_variable" href="namespacehydflux__mod.html#a4b27304271c533bf9a5c5bf207d82104">npre</a>,k,j,i) = 1.0;</div>
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        <a class="code hl_variable" href="namespacehydflux__mod.html#a23f0dad0c4ec0c5c6e0e5fd41a91bcc1">P</a>(<a class="code hl_variable" href="namespacehydflux__mod.html#ad93c5acca733cb37bcb8c570b2b4719b">nve1</a>,k,j,i) = 0.5 * dv * (tanh_p - tanh_m - 1.0);</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        <a class="code hl_variable" href="namespacehydflux__mod.html#a23f0dad0c4ec0c5c6e0e5fd41a91bcc1">P</a>(<a class="code hl_variable" href="namespacehydflux__mod.html#adf18d9b1f9055ba8136ec41779d0c75f">nve2</a>,k,j,i) = 1.0e-3 * std::sin(2.0*pi*x) *</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        <a class="code hl_variable" href="namespacehydflux__mod.html#a23f0dad0c4ec0c5c6e0e5fd41a91bcc1">P</a>(<a class="code hl_variable" href="namespacehydflux__mod.html#adf18d9b1f9055ba8136ec41779d0c75f">nve2</a>,k,j,i) = 1.0e-2 * std::sin(2.0*pi*x) *</div>
 <div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                        ( std::exp(- (y + 0.5)*(y + 0.5)/(sig*sig))</div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                        + std::exp(- (y - 0.5)*(y - 0.5)/(sig*sig)) );</div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        <a class="code hl_variable" href="namespacehydflux__mod.html#a23f0dad0c4ec0c5c6e0e5fd41a91bcc1">P</a>(<a class="code hl_variable" href="namespacehydflux__mod.html#a53206a461d154787f7306f18527ca417">nve3</a>,k,j,i) = 0.0;</div>
@@ -608,7 +608,7 @@ $(document).ready(function(){initNavTree('main_8cpp_source.html',''); initResiza
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_415429b0e1e84004ff9e06078b69719c.html">src_cpp_kokkos_device</a></li><li class="navelem"><a class="el" href="main_8cpp.html">main.cpp</a></li>
-    <li class="footer">Generated on Mon May 18 2026 08:56:42 for MHDTurbulence by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Tue May 19 2026 10:42:56 for MHDTurbulence by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>
