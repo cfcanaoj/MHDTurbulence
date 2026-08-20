@@ -12,9 +12,13 @@ all: ${exed}/${exe}
 
 fc ?= mpifort
 fopt ?= -g -traceback -O2
-foptopenacc ?= -Minfo=accel -acc -mcmodel=medium
+#foptopenacc ?= -Minfo=accel -acc -mcmodel=medium
+foptopenacc ?= -Minfo=mp -mp=gpu -mcmodel=medium
+
+
 cpp ?= cc -E -x c
-solomon_defs = -DSOLOMON_FORTRAN -DOFFLOAD_BY_OPENACC -D_OPENACC=201711 -I./solomon
+#solomon_defs = -DSOLOMON_FORTRAN -DOFFLOAD_BY_OPENACC -D_OPENACC=201711 -I./solomon
+solomon_defs = -DSOLOMON_FORTRAN -DOFFLOAD_BY_OPENMP_TARGET -DOFFLOAD_BY_OPENMP_TARGET_DISTRIBUTE -I./solomon
 
 SOURCES = main.F90 output.F90 boundary.F90 mhd.F90 mpiroutines.F90 config.F90
 OBJS = $(SOURCES:.F90=.o)
