@@ -1,0 +1,144 @@
+#include <solomon.hpp>
+
+module mpimod
+  use config, only: ntiles, periodic
+  use mpi
+  implicit none
+  integer, parameter :: mreq  = 300
+  integer :: stat(MPI_STATUS_SIZE,mreq)                     
+  integer :: req(mreq)
+  
+  integer :: ierr,myid_w, nprocs_w
+  integer :: mpi_comm_hyd,myid_hyd, nprocs_hyd
+  integer :: comm3d,myid, nprocs
+  integer :: coords(3)
+  logical :: reorder
+  integer :: n1m, n1p, n2m, n2p, n3m, n3p
+  integer :: nreq, nsub
+  integer ::   gpuid, ngpus
+PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(myid_w))
+  
+  real(8),dimension(2):: bufinpmin, bufoutmin
+PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(bufinpmin,bufoutmin))
+  real(8),dimension(2):: bufinpmax, bufoutmax
+PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(bufinpmax,bufoutmax))
+
+contains
+subroutine InitializeMPI
+  USE_SOLOMON_RUNTIME
+  implicit none
+  integer::key,color
+  integer::np_hyd
+
+! Initialize MPI
+  call MPI_INIT( ierr )
+  call MPI_COMM_SIZE( MPI_COMM_WORLD, nprocs_w, ierr )
+  call MPI_COMM_RANK( MPI_COMM_WORLD, myid_w  , ierr )
+  
+  if(myid_w == 0) then
+     print *, "MPI process=",nprocs_w
+     print *, "decomposition=",ntiles(1),ntiles(2),ntiles(3)
+  endif
+
+  call MPI_BCAST(ntiles,3,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+  call MPI_BCAST(periodic,3,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
+
+! Making 3D strucure
+  np_hyd = ntiles(1)*ntiles(2)*ntiles(3)
+  color = int(myid_w/np_hyd)
+  key   = myid_w   
+  call MPI_COMM_SPLIT(MPI_COMM_WORLD,color,key,mpi_comm_hyd,ierr)
+  call MPI_COMM_SIZE( mpi_comm_hyd, nprocs_hyd, ierr )
+  call MPI_COMM_RANK( mpi_comm_hyd, myid_hyd , ierr )     
+  
+! Create a virtual Cartesian topology for the domain decomposition.
+!
+  call MPI_CART_CREATE( mpi_comm_hyd, 3, ntiles, periodic &
+       &                    , reorder, comm3d, ierr )
+  call MPI_COMM_RANK( comm3d, myid,     ierr )
+  call MPI_COMM_SIZE( comm3d, nprocs,   ierr )
+!
+! Find the ranks of my neighbors; find my virtual Cartesian coords.
+!
+  call MPI_CART_SHIFT( comm3d, 0, 1, n1m, n1p, ierr )
+  call MPI_CART_SHIFT( comm3d, 1, 1, n2m, n2p, ierr )
+  call MPI_CART_SHIFT( comm3d, 2, 1, n3m, n3p, ierr )
+  !
+  call MPI_CART_COORDS( comm3d, myid, 3, coords, ierr )
+
+!> debug  
+  call MPI_Comm_set_errhandler(comm3d, MPI_ERRORS_RETURN, ierr)
+  
+  ngpus = get_num_devices_for_offloading()
+  if(myid_w == 0) then
+     print *, "num of GPUs = ", ngpus
+  end if
+
+  if(ngpus == 0) then
+     gpuid = -1
+  else
+     gpuid = mod(myid_w, ngpus)
+  endif
+  
+  if(gpuid >= 0) then
+     call set_default_device_for_offloading(gpuid)
+  end if
+MEMCPY_H2D(myid_w)
+  return
+end subroutine InitializeMPI
+
+subroutine FinalizeMPI
+  implicit none
+  call MPI_FINALIZE(ierr)
+end subroutine FinalizeMPI
+
+subroutine MPIminfind
+  implicit none
+  integer :: err_len
+  character(len=MPI_MAX_ERROR_STRING) :: err_string
+USE_DEVICE_DATA_FROM_HOST(bufinpmin,bufoutmin)
+       call MPI_ALLREDUCE( bufinpmin(1), bufoutmin(1), 1 &
+     &                   , MPI_2DOUBLE_PRECISION   &
+     &                   , MPI_MINLOC, comm3d, ierr)      
+PRAGMA_ACC_END_HOST_DATA
+       if (ierr /= MPI_SUCCESS) then
+          call MPI_Error_string(ierr, err_string, err_len, ierr)
+          print *,"error in MPIminfind", trim(err_string)
+       endif
+end subroutine MPIminfind
+
+subroutine MPImaxfind
+  implicit none
+  integer :: err_len
+  character(len=MPI_MAX_ERROR_STRING) :: err_string
+USE_DEVICE_DATA_FROM_HOST(bufinpmax,bufoutmax)
+       call MPI_ALLREDUCE( bufinpmax(1), bufoutmax(1), 1 &
+     &                   , MPI_2DOUBLE_PRECISION   &
+     &                   , MPI_MAXLOC, comm3d, ierr)
+PRAGMA_ACC_END_HOST_DATA
+       if (ierr /= MPI_SUCCESS) then
+          call MPI_Error_string(ierr, err_string, err_len, ierr)
+          print *,"error in MPIminfind", trim(err_string)
+       endif
+end subroutine MPImaxfind
+
+subroutine GetMPIsum(n,bufl,bufg)
+  implicit none
+  integer,intent(in) :: n
+  real(8),intent(in) :: bufl(n)
+  real(8),intent(out):: bufg(n)
+  if(ntiles(1)*ntiles(2)*ntiles(3) /= 1)then 
+USE_DEVICE_DATA_FROM_HOST(bufl,bufg)
+       call MPI_ALLREDUCE( bufl, bufg, n &
+     &                   , MPI_DOUBLE_PRECISION   &
+     &                   , MPI_SUM, comm3d, ierr)
+PRAGMA_ACC_END_HOST_DATA
+    else
+PRAGMA_ACC_SERIAL()
+       bufg(:) = bufl(:)
+PRAGMA_ACC_END_SERIAL
+    endif
+    
+end subroutine GetMPIsum
+
+end module mpimod

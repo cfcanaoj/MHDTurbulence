@@ -1,0 +1,42 @@
+///
+/// @file solomon/util/va_args.hpp
+/// @author Yohei MIKI (The University of Tokyo)
+/// @author Francesco Pretto (for implementation of _NUM_ARGS and NUM_ARGS)
+/// @brief manipulation of variadic arguments
+///
+/// @copyright Copyright (c) 2024 Yohei MIKI
+///
+/// The MIT License is applied to this software, see LICENSE.txt
+///
+#if !defined(SOLOMON_UTIL_VA_ARGS_HPP)
+#define SOLOMON_UTIL_VA_ARGS_HPP
+
+#if __cplusplus >= 202002L
+// __VA_OPT__ is C++20 feature (https://cpprefjp.github.io/lang/cpp20/va_opt.html)
+#define APPEND_ARGS(...) __VA_OPT__(, ) __VA_ARGS__
+#else  //__cplusplus >= 202002L
+// fallback implementation: C++17 or lower do not have __VA_OPT__
+// #if defined(__GNUC__)
+// use GCC extension
+#define APPEND_ARGS(...) , ##__VA_ARGS__
+// #endif  // defined(__GNUC__)
+#endif  //__cplusplus >= 202002L
+
+#include "impl/num_args.hpp"// include NUM_ARGS(...) from auto-generated file
+#include "impl/retrieve_args.hpp"// include EXTRACT_ARGS_N(...) and RETRIEVE_ARGS_N(...) from auto-generated file
+
+#define ARGS_WITH_NUM(...) NUM_ARGS(__VA_ARGS__) APPEND_ARGS(__VA_ARGS__)
+
+#define _EXTRACT_ARGS(N, ...) UTIL_CLOAK_CAT(EXTRACT_ARGS_, N)(__VA_ARGS__)
+///
+/// @brief extract first N arguments
+///
+#define EXTRACT_ARGS(...) _EXTRACT_ARGS(__VA_ARGS__)
+
+#define _RETRIEVE_ARGS(N, ...) UTIL_CLOAK_CAT(RETRIEVE_ARGS_, N)(__VA_ARGS__)
+///
+/// @brief retrieve (N + 1)-th and latter arguments
+///
+#define RETRIEVE_ARGS(...) _RETRIEVE_ARGS(__VA_ARGS__)
+
+#endif  // !defined(SOLOMON_UTIL_VA_ARGS_HPP)
