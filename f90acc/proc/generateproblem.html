@@ -164,9 +164,9 @@
             <li class="list-group-item">
               <ul class="list-inline">
                   <li class="list-inline-item"><a href='../module/eosmod.html'>eosmod</a></li>
-                  <li class="list-inline-item"><a href='../module/mpimod.html'>mpimod</a></li>
-                  <li class="list-inline-item"><a href='../module/basicmod.html'>basicmod</a></li>
                   <li class="list-inline-item"><a href='../module/boundarymod.html'>boundarymod</a></li>
+                  <li class="list-inline-item"><a href='../module/basicmod.html'>basicmod</a></li>
+                  <li class="list-inline-item"><a href='../module/mpimod.html'>mpimod</a></li>
               </ul>
             </li>
             <li class="list-group-item">
@@ -627,7 +627,7 @@ implementation in a submodule of an interface in a parent module.
 
 
 <span class="k">  if</span><span class="p">(</span><span class="n">myid_w</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">write</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">rrv</span><span class="o">*</span><span class="mi">10</span><span class="mf">0.0d0</span><span class="w"> </span><span class="p">&amp;</span>
-<span class="w">       </span><span class="p">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;% of Randam Perturbation imposed on velocity&quot;</span>
+<span class="w">       </span><span class="p">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="s2">"% of Randam Perturbation imposed on velocity"</span>
 <span class="w">  </span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
 <span class="w">  </span><span class="n">seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">myid_w</span><span class="o">*</span><span class="n">in</span><span class="o">*</span><span class="n">jn</span><span class="o">*</span><span class="n">kn</span>
 <span class="w">  </span><span class="k">call </span><span class="nb">random_seed</span><span class="p">(</span><span class="n">PUT</span><span class="o">=</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">))</span>
@@ -666,7 +666,7 @@ implementation in a submodule of an interface in a parent module.
 <span class="k">  enddo</span>
 <span class="k">  enddo</span>
 <span class="k">      </span>
-<span class="k">  if</span><span class="p">(</span><span class="n">myid_w</span><span class="w"> </span><span class="o">==</span><span class="mi">0</span><span class="w"> </span><span class="p">)</span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;initial profile is set&quot;</span>
+<span class="k">  if</span><span class="p">(</span><span class="n">myid_w</span><span class="w"> </span><span class="o">==</span><span class="mi">0</span><span class="w"> </span><span class="p">)</span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="s2">"initial profile is set"</span>
 <span class="w">  </span><span class="k">call </span><span class="n">BoundaryCondition</span>
 
 <span class="c">!$acc update device (d,v1,v2,v3)</span>

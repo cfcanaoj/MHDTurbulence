@@ -436,7 +436,7 @@ implementation in a submodule of an interface in a parent module.
 <span class="c">!$acc end host_data</span>
 <span class="w">       </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ierr</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">MPI_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
 <span class="k">          call </span><span class="n">MPI_Error_string</span><span class="p">(</span><span class="n">ierr</span><span class="p">,</span><span class="w"> </span><span class="n">err_string</span><span class="p">,</span><span class="w"> </span><span class="n">err_len</span><span class="p">,</span><span class="w"> </span><span class="n">ierr</span><span class="p">)</span>
-<span class="w">          </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;error in MPIminfind&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">err_string</span><span class="p">)</span>
+<span class="w">          </span><span class="k">print</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="s2">"error in MPIminfind"</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">err_string</span><span class="p">)</span>
 <span class="w">       </span><span class="k">endif</span>
 <span class="k">end subroutine </span><span class="n">MPIminfind</span>
 </pre></div>

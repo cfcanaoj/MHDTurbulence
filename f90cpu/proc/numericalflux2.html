@@ -163,8 +163,8 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
               <ul class="list-inline">
-                  <li class="list-inline-item"><a href='../module/basicmod.html'>basicmod</a></li>
                   <li class="list-inline-item"><a href='../module/fluxmod.html'>fluxmod</a></li>
+                  <li class="list-inline-item"><a href='../module/basicmod.html'>basicmod</a></li>
               </ul>
             </li>
             <li class="list-group-item">
@@ -637,7 +637,7 @@ implementation in a submodule of an interface in a parent module.
 <span class="w">     </span><span class="p">&amp;</span><span class="w">                    </span><span class="o">-</span><span class="mf">0.5d0</span><span class="o">*</span><span class="n">chg</span><span class="o">*</span><span class="p">(</span><span class="n">rigtco</span><span class="p">(</span><span class="n">mubu</span><span class="p">)</span><span class="o">-</span><span class="n">leftco</span><span class="p">(</span><span class="n">mubu</span><span class="p">))</span><span class="w">        </span><span class="c">! finite volume</span>
 <span class="w">         </span><span class="n">nflux2</span><span class="p">(</span><span class="n">mbps</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mf">0.5d0</span><span class="o">*</span><span class="p">(</span><span class="n">leftco</span><span class="p">(</span><span class="n">mubu</span><span class="p">)</span><span class="o">+</span><span class="n">rigtco</span><span class="p">(</span><span class="n">mubu</span><span class="p">))</span><span class="w"> </span><span class="p">&amp;</span>
 <span class="w">     </span><span class="p">&amp;</span><span class="w">                    </span><span class="o">-</span><span class="mf">0.5d0</span><span class="o">/</span><span class="n">chg</span><span class="o">*</span><span class="p">(</span><span class="n">rigtco</span><span class="p">(</span><span class="n">mubp</span><span class="p">)</span><span class="o">-</span><span class="n">leftco</span><span class="p">(</span><span class="n">mubp</span><span class="p">)))</span><span class="o">*</span><span class="n">chg</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="c">! finite volume</span>
-<span class="c">!         print *, &quot;bpf2&quot;,nflux2(mbps,i,j,k)</span>
+<span class="c">!         print *, "bpf2",nflux2(mbps,i,j,k)</span>
 
 <span class="w">      </span><span class="k">enddo</span>
 <span class="k">      enddo</span>
