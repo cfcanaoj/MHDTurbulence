@@ -11,7 +11,15 @@ all: ${exed}/${exe}
 #################
 
 fc ?= mpifort
-fopt ?= -g -traceback -O2
+
+FC_VERSION := $(shell $(fc) --version 2>/dev/null | head -n 1)
+ifneq ($(findstring GNU Fortran,$(FC_VERSION)),)
+  fopt ?= -g -O2
+  foptoffload ?= -fopenacc -mcmodel=medium
+else
+  fopt ?= -g -traceback -O2
+  foptoffload ?= -Minfo=accel -acc -mcmodel=medium
+endif
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
@@ -29,7 +37,6 @@ solomon_defs ?= -DOFFLOAD_BY_OPENACC
 ifeq ($(USE_ACC_PARALLEL),1)
   solomon_defs += -DOFFLOAD_BY_OPENACC_PARALLEL
 endif
-foptoffload ?= -Minfo=accel -acc -mcmodel=medium
 
 inc = -I$(SOLOMON_DIR)
 
@@ -61,9 +68,10 @@ preprocess: $(GENS)
 
 spp/%.f90: %.F90
 	mkdir -p spp
-	$(SOLOMON_CPP) -P -x c++ -DSOLOMON_FORTRAN $(SOLOMON_DEF) $< > spp/$*.i.f90
-	sed 's/^#pragma /!$$/g' spp/$*.i.f90 > $@
-	rm -f spp/$*.i.f90
+	sed 's,//,__SOLOMON_FC_CONCAT__,g' $< > spp/$*.src.F90
+	$(SOLOMON_CPP) -P -x c -DSOLOMON_FORTRAN $(SOLOMON_DEF) spp/$*.src.F90 > spp/$*.i.f90
+	sed -e 's/^#pragma /!$$/g' -e 's/__SOLOMON_FC_CONCAT__/\/\//g' spp/$*.i.f90 > $@
+	rm -f spp/$*.src.F90 spp/$*.i.f90
 
 %.o: spp/%.f90
 	${fc} ${fopt} ${foptoffload} -c $< -o $@
