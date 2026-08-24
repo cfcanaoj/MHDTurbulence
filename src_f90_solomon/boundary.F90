@@ -1,4 +1,4 @@
-#include <solomon.hpp>
+#include "solomon_fortran.hpp"
 
 module boundarymod
   use config, only: periodicb, reflection, outflow &
@@ -11,7 +11,7 @@ module boundarymod
 
   integer,parameter:: nbc = 9+ncomp
   integer,parameter:: nv1 = 3, nv2 = 4, nv3 = 5
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(nbc))
+SOLOMON_DECLARE_CREATE_ACC_ONLY(nbc)
  
 !!  real(8),dimension(mgn,jn,kn,nbc):: varsendXstt,varsendXend
 !!  real(8),dimension(in,mgn,kn,nbc):: varsendYstt,varsendYend
@@ -280,8 +280,8 @@ PRAGMA_ACC_END_KERNELS
   
   else ! single
 
+  SOLOMON_MPI_D2H(varsendXstt,varsendXend)
   n1mdir: if (n1m /= MPI_PROC_NULL) then
-USE_DEVICE_DATA_FROM_HOST(varsendXstt,varrecvXstt)
      nreq = nreq + 1         
      call MPI_IRECV(varrecvXstt,mgn*jn*kn*nbc &
     & , MPI_DOUBLE &
@@ -291,7 +291,6 @@ USE_DEVICE_DATA_FROM_HOST(varsendXstt,varrecvXstt)
      call MPI_ISEND(varsendXstt,mgn*jn*kn*nbc &
     & , MPI_DOUBLE &
     & , n1m, 1200, comm3d, req(nreq), ierr)
-PRAGMA_ACC_END_HOST_DATA
   else !n1dir
 
 PRAGMA_ACC_KERNELS()
@@ -318,7 +317,6 @@ PRAGMA_ACC_END_KERNELS
   endif n1mdir
   
   n1pdir: if (n1p /= MPI_PROC_NULL) then
-USE_DEVICE_DATA_FROM_HOST(varsendXend,varrecvXend)
      nreq = nreq + 1
      call MPI_IRECV(varrecvXend,mgn*jn*kn*nbc &
     & , MPI_DOUBLE &
@@ -328,7 +326,6 @@ USE_DEVICE_DATA_FROM_HOST(varsendXend,varrecvXend)
      call MPI_ISEND(varsendXend,mgn*jn*kn*nbc &
     & , MPI_DOUBLE &
     & , n1p, 1100, comm3d, req(nreq), ierr)
-PRAGMA_ACC_END_HOST_DATA
      
   else ! n1pdir
      
@@ -353,7 +350,15 @@ PRAGMA_ACC_LOOP(COLLAPSE(3), AS_INDEPENDENT, AS_PRIVATE(n))
   enddo
 PRAGMA_ACC_END_KERNELS
   endif n1pdir
-  if(nreq .ne. 0) call MPI_WAITALL ( nreq, req, stat, ierr )
+  if(nreq .ne. 0) then
+     call MPI_WAITALL ( nreq, req, stat, ierr )
+     if (n1m /= MPI_PROC_NULL) then
+        SOLOMON_MPI_H2D(varrecvXstt)
+     endif
+     if (n1p /= MPI_PROC_NULL) then
+        SOLOMON_MPI_H2D(varrecvXend)
+     endif
+  endif
   nreq = 0
   endif single
   
@@ -413,8 +418,8 @@ PRAGMA_ACC_LOOP(COLLAPSE(3), AS_INDEPENDENT, AS_PRIVATE(n))
 PRAGMA_ACC_END_KERNELS
   else ! single
 
+     SOLOMON_MPI_D2H(varsendYstt,varsendYend)
      n2mdir: if (n2m /= MPI_PROC_NULL) then
-USE_DEVICE_DATA_FROM_HOST(varsendYstt,varrecvYstt)
         nreq = nreq + 1         
         call MPI_IRECV(varrecvYstt,mgn*in*kn*nbc &
     & , MPI_DOUBLE &
@@ -424,7 +429,6 @@ USE_DEVICE_DATA_FROM_HOST(varsendYstt,varrecvYstt)
         call MPI_ISEND(varsendYstt,mgn*in*kn*nbc &
     & , MPI_DOUBLE &
     & , n2m, 2200, comm3d, req(nreq), ierr)
-PRAGMA_ACC_END_HOST_DATA
      else
 PRAGMA_ACC_KERNELS()
 PRAGMA_ACC_LOOP(COLLAPSE(3), AS_INDEPENDENT, AS_PRIVATE(n))
@@ -450,7 +454,6 @@ PRAGMA_ACC_END_KERNELS
      endif n2mdir
      
      n2pdir: if (n2p /= MPI_PROC_NULL) then
-USE_DEVICE_DATA_FROM_HOST(varsendYend,varrecvYend)
         nreq = nreq + 1
         call MPI_IRECV(varrecvYend,mgn*in*kn*nbc &
     & , MPI_DOUBLE &
@@ -460,7 +463,6 @@ USE_DEVICE_DATA_FROM_HOST(varsendYend,varrecvYend)
         call MPI_ISEND(varsendYend,mgn*in*kn*nbc &
     & , MPI_DOUBLE &
     & , n2p, 2100, comm3d, req(nreq), ierr)
-PRAGMA_ACC_END_HOST_DATA
      else ! n2pdir
 PRAGMA_ACC_KERNELS()
 PRAGMA_ACC_LOOP(COLLAPSE(3), AS_INDEPENDENT, AS_PRIVATE(n))
@@ -486,7 +488,15 @@ PRAGMA_ACC_END_KERNELS
         
         endif n2pdir
      
-     if(nreq .ne. 0) call MPI_WAITALL ( nreq, req, stat, ierr )
+     if(nreq .ne. 0) then
+        call MPI_WAITALL ( nreq, req, stat, ierr )
+        if (n2m /= MPI_PROC_NULL) then
+           SOLOMON_MPI_H2D(varrecvYstt)
+        endif
+        if (n2p /= MPI_PROC_NULL) then
+           SOLOMON_MPI_H2D(varrecvYend)
+        endif
+     endif
      nreq = 0
   endif single
 
@@ -545,8 +555,8 @@ PRAGMA_ACC_LOOP(COLLAPSE(3), AS_INDEPENDENT, AS_PRIVATE(n))
 PRAGMA_ACC_END_KERNELS
   else ! single
 
+     SOLOMON_MPI_D2H(varsendZstt,varsendZend)
      n3mdir: if (n3m /= MPI_PROC_NULL) then
-USE_DEVICE_DATA_FROM_HOST(varsendZstt,varrecvZstt)
         nreq = nreq + 1         
         call MPI_IRECV(varrecvZstt,mgn*in*jn*nbc &
     & , MPI_DOUBLE &
@@ -556,7 +566,6 @@ USE_DEVICE_DATA_FROM_HOST(varsendZstt,varrecvZstt)
         call MPI_ISEND(varsendZstt,mgn*in*jn*nbc &
     & , MPI_DOUBLE &
     & , n3m, 3200, comm3d, req(nreq), ierr)
-PRAGMA_ACC_END_HOST_DATA
      else
         
 PRAGMA_ACC_KERNELS()
@@ -584,7 +593,6 @@ PRAGMA_ACC_END_KERNELS
      endif n3mdir
      
      n3pdir: if (n3p /= MPI_PROC_NULL) then
-USE_DEVICE_DATA_FROM_HOST(varsendZend,varrecvZend)
         nreq = nreq + 1
         call MPI_IRECV(varrecvZend,mgn*in*jn*nbc &
     & , MPI_DOUBLE &
@@ -594,7 +602,6 @@ USE_DEVICE_DATA_FROM_HOST(varsendZend,varrecvZend)
         call MPI_ISEND(varsendZend,mgn*in*jn*nbc &
     & , MPI_DOUBLE &
     & , n3p, 3100, comm3d, req(nreq), ierr)
-PRAGMA_ACC_END_HOST_DATA
      else
         PRAGMA_ACC_KERNELS()
 PRAGMA_ACC_LOOP(COLLAPSE(3), AS_INDEPENDENT, AS_PRIVATE(n))
@@ -619,7 +626,15 @@ PRAGMA_ACC_LOOP(COLLAPSE(3), AS_INDEPENDENT, AS_PRIVATE(n))
   enddo
 PRAGMA_ACC_END_KERNELS
      endif n3pdir
-     if(nreq .ne. 0) call MPI_WAITALL ( nreq, req, stat, ierr )
+     if(nreq .ne. 0) then
+        call MPI_WAITALL ( nreq, req, stat, ierr )
+        if (n3m /= MPI_PROC_NULL) then
+           SOLOMON_MPI_H2D(varrecvZstt)
+        endif
+        if (n3p /= MPI_PROC_NULL) then
+           SOLOMON_MPI_H2D(varrecvZend)
+        endif
+     endif
      nreq = 0
   endif single
 
