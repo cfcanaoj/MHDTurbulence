@@ -1,4 +1,4 @@
-#include <solomon.hpp>
+#include "solomon_fortran.hpp"
 
 !==================================================
 ! DATA IO

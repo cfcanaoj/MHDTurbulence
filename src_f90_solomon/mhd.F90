@@ -1,4 +1,4 @@
-#include <solomon.hpp>
+#include "solomon_fortran.hpp"
 
 module basicmod
   use config, only: nhymax, nhydis, timemax, dtout & 
@@ -37,24 +37,24 @@ module basicmod
       real(8),dimension(ncomp,in,jn,kn):: DXcomp
       real(8),dimension(ncomp,in,jn,kn)::  Xcomp
             
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(ngrid1,ngrid2,ngrid3))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(mgn))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(in,jn,kn))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(is,js,ks))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(ie,je,ke))
+SOLOMON_DECLARE_CREATE_ACC_ONLY(ngrid1,ngrid2,ngrid3)
+SOLOMON_DECLARE_CREATE_ACC_ONLY(mgn)
+SOLOMON_DECLARE_CREATE_ACC_ONLY(in,jn,kn)
+SOLOMON_DECLARE_CREATE_ACC_ONLY(is,js,ks)
+SOLOMON_DECLARE_CREATE_ACC_ONLY(ie,je,ke)
       
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(dt))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(x1a,x1b))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(x2a,x2b))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(x3a,x3b))
+SOLOMON_DECLARE_CREATE_ACC_ONLY(dt)
+SOLOMON_DECLARE_CREATE_ACC_ONLY(x1a,x1b)
+SOLOMON_DECLARE_CREATE_ACC_ONLY(x2a,x2b)
+SOLOMON_DECLARE_CREATE_ACC_ONLY(x3a,x3b)
       
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(d,et,mv1,mv2,mv3))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(p,ei,v1,v2,v3,cs))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(b1,b2,b3,bp))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(gp,gp1a,gp2a,gp3a))
+SOLOMON_DECLARE_CREATE_ACC_ONLY(d,et,mv1,mv2,mv3)
+SOLOMON_DECLARE_CREATE_ACC_ONLY(p,ei,v1,v2,v3,cs)
+SOLOMON_DECLARE_CREATE_ACC_ONLY(b1,b2,b3,bp)
+SOLOMON_DECLARE_CREATE_ACC_ONLY(gp,gp1a,gp2a,gp3a)
 
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(ncomp))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(Dxcomp,Xcomp))
+SOLOMON_DECLARE_CREATE_ACC_ONLY(ncomp)
+SOLOMON_DECLARE_CREATE_ACC_ONLY(Dxcomp,Xcomp)
       
       end module basicmod
       
@@ -62,7 +62,7 @@ PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(Dxcomp,Xcomp))
       implicit none
 ! adiabatic
       real(8),parameter::gam=5.0d0/3.0d0 ! adiabatic index
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(gam))
+SOLOMON_DECLARE_CREATE_ACC_ONLY(gam)
 ! isothermal
 !      real(8)::csiso  !! isothemal sound speed
 !!$acc declare create(csiso)
@@ -95,9 +95,9 @@ PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(gam))
       real(8),dimension(mflx,in,jn,kn):: nflux1,nflux2,nflux3
       real(8),dimension(in,jn,kn):: grvsrc1,grvsrc2,grvsrc3
 
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(chg))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(svc,nflux1,nflux2,nflux3))
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(grvsrc1,grvsrc2,grvsrc3))
+SOLOMON_DECLARE_CREATE(chg)
+SOLOMON_DECLARE_CREATE(svc,nflux1,nflux2,nflux3)
+SOLOMON_DECLARE_CREATE(grvsrc1,grvsrc2,grvsrc3)
       end module fluxmod
       
       subroutine ConsvVariable
@@ -186,8 +186,8 @@ subroutine TimestepControl
   real(8)::ctot
   integer::i,j,k
 
-PRAGMA_ACC_KERNELS()
   dtmin=1.0d90
+PRAGMA_ACC_KERNELS()
 PRAGMA_ACC_LOOP(COLLAPSE(3), REDUCTION(min:dtmin))
   do k=ks,ke
   do j=js,je
@@ -205,16 +205,17 @@ PRAGMA_ACC_LOOP(COLLAPSE(3), REDUCTION(min:dtmin))
   enddo
   enddo
   enddo
+PRAGMA_ACC_END_KERNELS
+SOLOMON_DEVICE_TO_HOST(dtmin)
+
   bufinpmin(1) = dtmin
   bufinpmin(2) = dble(myid_w)
-PRAGMA_ACC_END_KERNELS
   call MPIminfind
-PRAGMA_ACC_KERNELS()
+
   dtmin =     bufoutmin(1)
   theid = int(bufoutmin(2))
   dt = 0.05d0 * dtmin
-PRAGMA_ACC_END_KERNELS
-MEMCPY_D2H(dt)
+SOLOMON_HOST_TO_DEVICE(dt)
   
   return
 end subroutine TimestepControl
@@ -1654,11 +1655,11 @@ subroutine EvaulateCh
   real(8),parameter:: huge=1.0d90
   integer::theid
 
-PRAGMA_ACC_KERNELS()
   chd = 0.0d0
   ch1l = 0.0d0; ch2l = 0.0d0; ch3l = 0.0d0
   dhd = huge
   dh1l =  huge; dh2l =  huge; dh3l =  huge
+PRAGMA_ACC_KERNELS()
 PRAGMA_ACC_LOOP(COLLAPSE(3), REDUCTION(max:chd))
   do k=ks,ke
   do j=js,je
@@ -1688,15 +1689,17 @@ PRAGMA_ACC_LOOP(COLLAPSE(3), REDUCTION(max:chd))
   enddo
   enddo
   enddo
+PRAGMA_ACC_END_KERNELS
+SOLOMON_DEVICE_TO_HOST(chd)
+
   bufinpmax(1) = chd
   bufinpmax(2) = dble(myid_w)
-PRAGMA_ACC_END_KERNELS
   call MPImaxfind
-PRAGMA_ACC_KERNELS()
+
   chd = bufoutmax(1)
   theid = int(bufoutmax(2)) 
   chg      =      chd
-PRAGMA_ACC_END_KERNELS
+SOLOMON_HOST_TO_DEVICE(chg)
   
   return
 end subroutine  EvaulateCh
@@ -1711,10 +1714,10 @@ end subroutine  EvaulateCh
       real(8):: dhl,dh1l,dh2l,dh3l
       real(8),parameter:: huge=1.0d90 
 
-PRAGMA_ACC_KERNELS()
       dh1l=huge
       dh2l=huge
       dh3l=huge
+PRAGMA_ACC_KERNELS()
 PRAGMA_ACC_LOOP(COLLAPSE(3), AS_INDEPENDENT)
       do k=ks,ke
       do j=js,je

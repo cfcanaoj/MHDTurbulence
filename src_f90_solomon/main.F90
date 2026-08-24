@@ -1,4 +1,4 @@
-#include <solomon.hpp>
+#include "solomon_fortran.hpp"
 
 program main
   USE_SOLOMON_RUNTIME
@@ -242,17 +242,14 @@ subroutine RealTimeAnalysis
   logical, save :: is_inited
   data is_inited / .false. /
 
-DATA_ACCESS_BY_DEVICE(ACC_CLAUSE_CREATE(dv,vol,mix,avevy,local,global))
-PRAGMA_ACC_SERIAL()
   mix   = 0.0d0
   avevy = 0.0d0
   vol   = 0.0d0
-PRAGMA_ACC_END_SERIAL
 PRAGMA_ACC_KERNELS()
 PRAGMA_ACC_LOOP(COLLAPSE(3), AS_PRIVATE(dv), REDUCTION(+:vol,mix,avevy))
   do k=ks,ke
   do j=js,je
-  do i=js,ie
+  do i=is,ie
      dv     = (x1a(i+1)-x1a(i)) * (x2a(j+1)-x2a(j)) * (x3a(k+1)-x3a(k))
      vol    = vol    + dv
      mix    = mix    + Xcomp(1,i,j,k) * (1.0d0- Xcomp(1,i,j,k)) * dv
@@ -261,21 +258,18 @@ PRAGMA_ACC_LOOP(COLLAPSE(3), AS_PRIVATE(dv), REDUCTION(+:vol,mix,avevy))
   enddo
   enddo
 PRAGMA_ACC_END_KERNELS
-PRAGMA_ACC_SERIAL()
+SOLOMON_DEVICE_TO_HOST(vol,mix,avevy)
+
   local(1) = vol
   local(2) = mix
   local(3) = avevy
-PRAGMA_ACC_END_SERIAL
   call GetMPIsum(vmax,local,global)
-PRAGMA_ACC_SERIAL()
+
   vol    = global(1)
   mix    = global(2)
   avevy  = global(3)
   mix = mix/vol
   avevy = sqrt(avevy/vol)
-PRAGMA_ACC_END_SERIAL
-MEMCPY_D2H(mix,avevy)
-PRAGMA_ACC_END_DATA
   
   if(myid_w ==0 ) then 
      if(.not. is_inited)then

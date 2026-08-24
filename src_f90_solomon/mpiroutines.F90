@@ -1,4 +1,4 @@
-#include <solomon.hpp>
+#include "solomon_fortran.hpp"
 
 module mpimod
   use config, only: ntiles, periodic
@@ -16,12 +16,12 @@ module mpimod
   integer :: n1m, n1p, n2m, n2p, n3m, n3p
   integer :: nreq, nsub
   integer ::   gpuid, ngpus
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(myid_w))
+SOLOMON_DECLARE_CREATE_ACC_ONLY(myid_w)
   
   real(8),dimension(2):: bufinpmin, bufoutmin
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(bufinpmin,bufoutmin))
+SOLOMON_DECLARE_CREATE_ACC_ONLY(bufinpmin,bufoutmin)
   real(8),dimension(2):: bufinpmax, bufoutmax
-PRAGMA_ACC_DECLARE(ACC_CLAUSE_CREATE(bufinpmax,bufoutmax))
+SOLOMON_DECLARE_CREATE_ACC_ONLY(bufinpmax,bufoutmax)
 
 contains
 subroutine InitializeMPI
@@ -74,15 +74,12 @@ subroutine InitializeMPI
      print *, "num of GPUs = ", ngpus
   end if
 
-  if(ngpus == 0) then
+  if(ngpus <= 0) then
      gpuid = -1
   else
      gpuid = mod(myid_w, ngpus)
-  endif
-  
-  if(gpuid >= 0) then
      call set_default_device_for_offloading(gpuid)
-  end if
+  endif
 MEMCPY_H2D(myid_w)
   return
 end subroutine InitializeMPI
@@ -96,11 +93,9 @@ subroutine MPIminfind
   implicit none
   integer :: err_len
   character(len=MPI_MAX_ERROR_STRING) :: err_string
-USE_DEVICE_DATA_FROM_HOST(bufinpmin,bufoutmin)
        call MPI_ALLREDUCE( bufinpmin(1), bufoutmin(1), 1 &
      &                   , MPI_2DOUBLE_PRECISION   &
      &                   , MPI_MINLOC, comm3d, ierr)      
-PRAGMA_ACC_END_HOST_DATA
        if (ierr /= MPI_SUCCESS) then
           call MPI_Error_string(ierr, err_string, err_len, ierr)
           print *,"error in MPIminfind", trim(err_string)
@@ -111,11 +106,9 @@ subroutine MPImaxfind
   implicit none
   integer :: err_len
   character(len=MPI_MAX_ERROR_STRING) :: err_string
-USE_DEVICE_DATA_FROM_HOST(bufinpmax,bufoutmax)
        call MPI_ALLREDUCE( bufinpmax(1), bufoutmax(1), 1 &
      &                   , MPI_2DOUBLE_PRECISION   &
      &                   , MPI_MAXLOC, comm3d, ierr)
-PRAGMA_ACC_END_HOST_DATA
        if (ierr /= MPI_SUCCESS) then
           call MPI_Error_string(ierr, err_string, err_len, ierr)
           print *,"error in MPIminfind", trim(err_string)
@@ -128,15 +121,11 @@ subroutine GetMPIsum(n,bufl,bufg)
   real(8),intent(in) :: bufl(n)
   real(8),intent(out):: bufg(n)
   if(ntiles(1)*ntiles(2)*ntiles(3) /= 1)then 
-USE_DEVICE_DATA_FROM_HOST(bufl,bufg)
        call MPI_ALLREDUCE( bufl, bufg, n &
      &                   , MPI_DOUBLE_PRECISION   &
      &                   , MPI_SUM, comm3d, ierr)
-PRAGMA_ACC_END_HOST_DATA
     else
-PRAGMA_ACC_SERIAL()
        bufg(:) = bufl(:)
-PRAGMA_ACC_END_SERIAL
     endif
     
 end subroutine GetMPIsum
