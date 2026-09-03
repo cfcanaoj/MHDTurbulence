@@ -324,7 +324,7 @@ end subroutine TimestepControl
       real(8):: ptl,css,cts,etot
       
 !$acc kernels      
-!$acc loop collapse(2) independent private(i, Pleftc1, Pleftc2, Plefte,Prigtc1, Prigtc2, Prigte,dsv,dsvp,dsvm,etot,ptl,css,cts,leftco,rigtco,nflux)
+!$acc loop collapse(3) independent private(i, Pleftc1, Pleftc2, Plefte,Prigtc1, Prigtc2, Prigte,dsv,dsvp,dsvm,etot,ptl,css,cts,leftco,rigtco,nflux)
       do k=ks,ke
       do j=js,je
       do i=is,ie+1
@@ -518,7 +518,7 @@ end subroutine TimestepControl
       real(8):: ptl,css,cts,etot
 
 !$acc kernels
-!$acc loop collapse(2) independent private(j, Pleftc1, Pleftc2, Plefte,Prigtc1, Prigtc2, Prigte,dsv,dsvp,dsvm,etot,ptl,css,cts,leftco,rigtco,nflux)
+!$acc loop collapse(3) independent private(j, Pleftc1, Pleftc2, Plefte,Prigtc1, Prigtc2, Prigte,dsv,dsvp,dsvm,etot,ptl,css,cts,leftco,rigtco,nflux)
       do k=ks,ke
       do i=is,ie
       do j=js,je+1
