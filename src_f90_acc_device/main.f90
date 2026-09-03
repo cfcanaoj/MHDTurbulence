@@ -1,5 +1,6 @@
 program main
   use omp_lib
+  use openacc
   use basicmod
   use mpimod
   use boundarymod
@@ -9,6 +10,7 @@ program main
   logical::is_final
   logical,parameter:: forceoutput=.true., usualoutput=.false.
   data is_final /.false./
+  call acc_init(acc_device_nvidia)
   call InitializeMPI
   if(myid_w == 0) print *, "setup grids and fields"
   if(myid_w == 0) print *, "grid size for x y z",ngrid1*ntiles(1),ngrid2*ntiles(2),ngrid3*ntiles(3)
@@ -123,7 +125,7 @@ subroutine GenerateProblem
   real(8):: pi
   real(8):: den, B0, rho1, rho2, dv, wid, sig
  
-  integer,dimension(2) :: seed
+  integer,dimension(8) :: seed
   real(8),dimension(1) :: rnum
   real(8),parameter :: rrv =0.0d-2
   real(8):: dv_harm
@@ -169,9 +171,10 @@ subroutine GenerateProblem
 
   if(myid_w == 0) write(6,*) rrv*100.0d0 &
        & , "% of Randam Perturbation imposed on velocity"
+  seed = 0
   seed(1) = 1
   seed(2) = 1 + myid_w*in*jn*kn
-  call random_seed(PUT=seed(1:2))
+  call random_seed(PUT=seed)
   
 ! pert     
   do k=ks,ke 
